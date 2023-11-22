@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ThirdpartydetailComponent } from './components/thirdpartydetail/thirdpartycreate.component';
+import { ThirdpartydetailComponent } from './components/thirdpartydetail/thirdpartydetail.component';
 import { ThirdpartyhomeComponent } from './components/thirdpartyhome/thirdpartyhome.component';
 import { ThirdpartylistComponent } from './components/thirdpartylist/thirdpartylist.component';
 
