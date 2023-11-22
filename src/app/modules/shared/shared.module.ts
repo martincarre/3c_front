@@ -1,23 +1,25 @@
 // Basic Module imports:
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedRoutingModule } from './shared-routing.module';
 
 // Shared Components:
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 // Bootstrap imports:
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule } from '@angular/router';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 
 
 @NgModule({
   declarations: [
-    NavbarComponent
+    NavbarComponent,
+    SidenavComponent
   ],
   imports: [
     CommonModule,
-    SharedRoutingModule,
+    RouterModule,
     // Bootstrap imports:
     NgbDropdownModule
   ],
@@ -25,7 +27,9 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     // Shared Components:
     NavbarComponent,
     // Bootstrap exports:
-    NgbDropdownModule
+    NgbDropdownModule,
+    // Components: 
+    SidenavComponent,
   ]
 })
 export class SharedModule { }
