@@ -9,7 +9,7 @@ import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 // Bootstrap imports:
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { ToastGlobalComponent } from './components/toast/toast-global.component';
@@ -31,7 +31,8 @@ import { ToastGlobalComponent } from './components/toast/toast-global.component'
     FormlyBootstrapModule,
 
     // Bootstrap imports:
-    NgbDropdownModule
+    NgbDropdownModule,
+    NgbToastModule,
   ],
   exports: [
     // Modules: 
@@ -43,6 +44,7 @@ import { ToastGlobalComponent } from './components/toast/toast-global.component'
     SidenavComponent,
     // Bootstrap exports:
     NgbDropdownModule,
+    NgbToastModule,
   ]
 })
 export class SharedModule { }
