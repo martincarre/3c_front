@@ -7,7 +7,6 @@ interface NavItemDropdown {
   url: string;
 }
 
-
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',

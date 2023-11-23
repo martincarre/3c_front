@@ -1,18 +1,19 @@
 // Module imports:
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
 
 // Shared Components:
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { ToastGlobalComponent } from './components/toast/toast-global.component';
+import { ToastsContainer } from './components/toast/toast-container.component';
 
 // Bootstrap imports:
 import { NgbDropdownModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
-import { RouterModule } from '@angular/router';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
-import { ToastGlobalComponent } from './components/toast/toast-global.component';
 
 
 
@@ -20,7 +21,8 @@ import { ToastGlobalComponent } from './components/toast/toast-global.component'
   declarations: [
     NavbarComponent,
     SidenavComponent,
-    ToastGlobalComponent
+    ToastGlobalComponent,
+    ToastsContainer,
   ],
   imports: [
     // Module imports:
@@ -44,7 +46,6 @@ import { ToastGlobalComponent } from './components/toast/toast-global.component'
     SidenavComponent,
     // Bootstrap exports:
     NgbDropdownModule,
-    NgbToastModule,
   ]
 })
 export class SharedModule { }
