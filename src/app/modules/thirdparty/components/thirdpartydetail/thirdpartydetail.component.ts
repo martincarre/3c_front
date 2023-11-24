@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { ThirdpartyService } from '../../services/thirdparty.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../../../core/services/toast.service';
+
 
 @Component({
   selector: 'app-thirdpartydetail',
@@ -145,11 +147,13 @@ export class ThirdpartydetailComponent {
 
   constructor(
     private thirdpartyService: ThirdpartyService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) { }
 
   onSubmit(model: any) {
     this.thirdpartyService.addThirdparty(model).subscribe(res => {
+      this.toastService.show('bg-success text-light', 'Succcess!!', 'Super!', 15000);
       console.log(res);
       this.router.navigate(['/thirdparty/list']);
     });
