@@ -99,7 +99,10 @@ export class ThirdpartydetailComponent {
           type: 'select',
           props: {
             label: 'Ciudad',
-            placeholder: 'Madrid',
+            options: [
+              { label: 'Madrid', value: 'MAD'},
+              { label: 'Barcelona', value: 'BCN'},
+            ],
             required: true,
           },
         },
@@ -109,7 +112,10 @@ export class ThirdpartydetailComponent {
           type: 'select',
           props: {
             label: 'Provincia',
-            placeholder: 'Madrid',
+            options: [
+              { label: 'Madrid', value: 'MAD'},
+              { label: 'Barcelona', value: 'BCN'},
+            ],
             required: true,
           },
         },
