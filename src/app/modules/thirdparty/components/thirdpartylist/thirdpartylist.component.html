@@ -1,1 +1,33 @@
-{{ tpList | json }}
+<div class="container mt-4">
+    <ngx-datatable 
+    class="material" 
+    [rows]="tpList" 
+    [headerHeight]="50" 
+    [footerHeight]="50" 
+    [rowHeight]="'auto'"
+    [columnMode]="columnMode.force"
+    >
+  
+      <!-- Column for Fiscal ID -->
+      <ngx-datatable-column name="NIF/CIF" prop="fiscalId"></ngx-datatable-column>
+  
+      <!-- Column for Fiscal Name -->
+      <ngx-datatable-column name="Denominación" prop="fiscalName"></ngx-datatable-column>
+  
+      <!-- Column for Postal Code -->
+      <ngx-datatable-column name="Código Postal" prop="postalCode"></ngx-datatable-column>
+  
+      <!-- Column for City -->
+      <ngx-datatable-column name="Ciudad" prop="city"></ngx-datatable-column>
+  
+      <!-- Action buttons column -->
+      <ngx-datatable-column name="Acciones" [sortable]="false">
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <button class="btn btn-info btn-sm" (click)="viewDetails(row)" style="margin-right: 0.75rem;"><span class="bi-gear-fill"></span></button>
+          <button class="btn btn-danger btn-sm" (click)="deleteThirdparty(row)"><span class="bi-trash-fill"></span></button>
+        </ng-template>
+      </ngx-datatable-column>
+  
+    </ngx-datatable>
+  </div>
+  

@@ -13,9 +13,4 @@ export class ToastGlobalComponent {
   
   constructor(private toastService: ToastService) {}
 
-  // ngAfterViewInit() {
-  //   this.toastService.setTemplate('standard', this.standardTpl as TemplateRef<any>);
-  //   this.toastService.setTemplate('success', this.successTpl as TemplateRef<any>);
-  //   this.toastService.setTemplate('danger', this.dangerTpl as TemplateRef<any>);
-  // }
 }

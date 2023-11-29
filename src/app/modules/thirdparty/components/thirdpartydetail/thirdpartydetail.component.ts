@@ -1,9 +1,11 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { ThirdpartyService } from '../../services/thirdparty.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
+import { Thirdparty } from '../../models/thirdparty.model';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -11,11 +13,17 @@ import { ToastService } from '../../../../core/services/toast.service';
   templateUrl: './thirdpartydetail.component.html',
   styleUrls: ['./thirdpartydetail.component.scss']
 })
-export class ThirdpartydetailComponent {
+export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   createMode: boolean = true;
-  form = new FormGroup({});
+  currentId: string | undefined | null;
+  editMode: boolean = false;
+  private currentTP: Thirdparty | undefined;
+  private tpSub: Subscription = new Subscription();
+  private submitSub: Subscription = new Subscription();
+
+  tpForm = new FormGroup({});
   model = {};
-  title: string = this.createMode ? 'Nuevo tercero: ' : '';
+  title: string = 'Nuevo tercero';
   fields: FormlyFieldConfig[] = [
     
     {
@@ -40,6 +48,9 @@ export class ThirdpartydetailComponent {
                 this.title = field.form.controls.fiscalName.value;
               }
             }
+          },
+          expressions: {
+            'props.disabled': 'formState.disabled'
           }
         },
         {
@@ -51,6 +62,9 @@ export class ThirdpartydetailComponent {
             placeholder: 'A12345678',
             required: true,
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
       ]
     },
@@ -68,6 +82,9 @@ export class ThirdpartydetailComponent {
             placeholder: 'Calle & número ',
             required: true,
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
         {
           key: 'addressComp',
@@ -76,6 +93,9 @@ export class ThirdpartydetailComponent {
             label: 'Complemento',
             placeholder: 'Piso, puerta, etc.',
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
       ]
     },
@@ -92,6 +112,9 @@ export class ThirdpartydetailComponent {
             placeholder: '28000',
             required: true,
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
         {
           className: 'col-4',
@@ -105,6 +128,9 @@ export class ThirdpartydetailComponent {
             ],
             required: true,
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
         {
           className: 'col-4',
@@ -118,6 +144,9 @@ export class ThirdpartydetailComponent {
             ],
             required: true,
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
       ]
     },
@@ -137,6 +166,9 @@ export class ThirdpartydetailComponent {
             label: 'Teléfono',
             placeholder: '912-345-678',
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
         {
           className: 'col-4',
@@ -146,22 +178,76 @@ export class ThirdpartydetailComponent {
             label: 'Email',
             placeholder: 'info@empresa.com',
           },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
         },
       ]
     }
   ];
 
+  formEditMode: FormlyFormOptions = {
+    formState: {
+      disabled: false,
+    },
+  };
+
   constructor(
     private thirdpartyService: ThirdpartyService,
     private router: Router,
+    private route: ActivatedRoute,
     private toastService: ToastService
   ) { }
 
-  onSubmit(model: any) {
-    this.thirdpartyService.addThirdparty(model).subscribe(res => {
-      this.toastService.show('bg-success text-light', 'Succcess!!', 'Super!', 15000);
-      console.log(res);
-      this.router.navigate(['/thirdparty/list']);
-    });
+  ngOnInit(): void {
+    this.currentId = this.route.snapshot.params['id'];
+    if (this.currentId) {
+      this.createMode = false;
+      this.formEditMode.formState.disabled = true;
+      this.fetchThirdParty(this.currentId);
+    }
+  }
+
+  private fetchThirdParty(id: string): void {
+    this.tpSub = this.thirdpartyService.fetchThirdPartyById(id)
+      .subscribe((thirdparty: Thirdparty) => {
+        this.currentTP = thirdparty;
+        this.model = thirdparty;
+        this.title = thirdparty.fiscalName;
+      });
+  }
+
+  onEdit(): void {
+    this.formEditMode.formState.disabled = !this.formEditMode.formState.disabled;
+    this.editMode = !this.editMode;
+  }
+
+  onSubmit(): void {
+    const tp = this.tpForm.value as Thirdparty;
+    if (this.createMode) {
+      this.submitSub = this.thirdpartyService.addThirdparty(tp)
+      .subscribe(res => {
+        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
+        console.log(res);
+        this.router.navigate(['/thirdparty/list']);
+      });
+    }
+    else { 
+      this.submitSub = this.thirdpartyService.updateThirdparty(tp)
+      .subscribe(res => {
+        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
+        console.log(res);
+        this.router.navigate(['/thirdparty/list']);
+      });
+    }
+  }
+
+  onClose(): void {
+    this.router.navigate(['/thirdparty']);
+  }
+
+  ngOnDestroy(): void {
+    this.tpSub.unsubscribe();
+    this.submitSub.unsubscribe();
   }
 }
