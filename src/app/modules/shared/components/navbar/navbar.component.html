@@ -3,8 +3,8 @@
         <a class="navbar-brand">3c</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                <li class="nav-item" *ngFor="let itemDropDown of navItemsDropdowns">
-                    <a role="button" class="nav-link" id="{{ itemDropDown.id }}" [routerLink]="itemDropDown.url"><i class="{{ itemDropDown.ico }}"></i> {{ itemDropDown.name }}</a>
+                <li class="nav-item" *ngFor="let item of navItems">
+                    <a role="button" class="nav-link" id="{{ item.id }}" [routerLink]="item.url"><i class="{{ item.ico }}"></i> {{ item.name }}</a>
                 </li>
             </ul>
         </div>

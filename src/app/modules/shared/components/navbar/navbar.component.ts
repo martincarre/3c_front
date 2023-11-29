@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-interface NavItemDropdown {
+interface NavItem {
   name: string;
   ico?: string;
   id: string;
@@ -13,11 +13,16 @@ interface NavItemDropdown {
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  navItemsDropdowns: NavItemDropdown[] = [
+  navItems: NavItem[] = [
     {
       name: 'Terceros',
       id: 'thirdparty',
       url: '/thirdparty'
-    }
+    },
+    {
+      name: 'Operaciones',
+      id: 'operation',
+      url: '/operation'
+    },
   ];
 }
