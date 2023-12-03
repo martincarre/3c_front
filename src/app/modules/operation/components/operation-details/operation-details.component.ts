@@ -1,185 +1,41 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Operation } from '../../models/operation.model';
+import { Subscription } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
+import { OperationService } from '../../services/operation.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from 'src/app/core/services/toast.service';
+import { thirdpartyFormlyForm } from 'src/app/modules/thirdparty/models/thirdparty.formly-form';
+import { operationCompFormlyForm, operationDetailFormlyForm } from '../../models/operation.formly-form';
 
 @Component({
   selector: 'app-operation-details',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './operation-details.component.html',
   styleUrl: './operation-details.component.scss'
 })
 export class OperationDetailsComponent {
   createMode: boolean = true;
+  currentTab: string = 'tp';
   currentId: string | undefined | null;
   editMode: boolean = false;
   private currentOP: Operation | undefined;
-  private tpSub: Subscription = new Subscription();
+  private opSub: Subscription = new Subscription();
   private submitSub: Subscription = new Subscription();
 
+  opForm = new FormGroup({});
+
+  detailOpForm = new FormGroup({});
+  detailOpModel = {};
+  detailOpFields: FormlyFieldConfig[];
+  
+  opCompForm = new FormGroup({});
+  opCompModel = {};
+  opCompFields: FormlyFieldConfig[];
+  
   tpForm = new FormGroup({});
-  model = {};
-  title: string = 'Nuevo tercero';
-  fields: FormlyFieldConfig[] = [
-    
-    {
-      fieldGroupClassName: 'row',
-      fieldGroup: 
-      [
-        {
-          className: 'col-8',
-          key: 'fiscalName',
-          type: 'input',
-          props: {
-            label: 'Denominación social',
-            placeholder: 'Empresa',
-            required: true,
-            change: (field: any) => {
-              this.title = this.title + field.form.controls.fiscalName.value;
-            }
-          },
-          hooks: {
-            onInit: (field: any) => {
-              if (!this.createMode) {
-                this.title = field.form.controls.fiscalName.value;
-              }
-            }
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-        {
-          className: 'col-4',
-          key: 'fiscalId',
-          type: 'input',
-          props: {
-            label: 'NIF/CIF',
-            placeholder: 'A12345678',
-            required: true,
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-      ]
-    },
-    {
-      className: 'section-label',
-      template: '<hr /><h5 class="card-title">Dirección:</h5>',
-    },
-    {
-      fieldGroup: [
-        {
-          key: 'address',
-          type: 'input',
-          props: {
-            label: 'Calle',
-            placeholder: 'Calle & número ',
-            required: true,
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-        {
-          key: 'addressComp',
-          type: 'input',
-          props: {
-            label: 'Complemento',
-            placeholder: 'Piso, puerta, etc.',
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-      ]
-    },
-    {
-      fieldGroupClassName: 'row',
-      fieldGroup: 
-      [
-        {
-          className: 'col-3',
-          key: 'postalCode',
-          type: 'input',
-          props: {
-            label: 'Código postal',
-            placeholder: '28000',
-            required: true,
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-        {
-          className: 'col-4',
-          key: 'city',
-          type: 'select',
-          props: {
-            label: 'Ciudad',
-            options: [
-              { label: 'Madrid', value: 'MAD'},
-              { label: 'Barcelona', value: 'BCN'},
-            ],
-            required: true,
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-        {
-          className: 'col-4',
-          key: 'state',
-          type: 'select',
-          props: {
-            label: 'Provincia',
-            options: [
-              { label: 'Madrid', value: 'MAD'},
-              { label: 'Barcelona', value: 'BCN'},
-            ],
-            required: true,
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-      ]
-    },
-    {
-      className: 'section-label',
-      template: '<hr /><h5 class="card-title">Contacto general:</h5>',
-    },
-    {
-      fieldGroupClassName: 'row',
-      fieldGroup: 
-      [
-        {
-          className: 'col-4',
-          key: 'phone',
-          type: 'input',
-          props: {
-            label: 'Teléfono',
-            placeholder: '912-345-678',
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-        {
-          className: 'col-4',
-          key: 'email',
-          type: 'input',
-          props: {
-            label: 'Email',
-            placeholder: 'info@empresa.com',
-          },
-          expressions: {
-            'props.disabled': 'formState.disabled'
-          }
-        },
-      ]
-    }
-  ];
+  tpModel = {};
+  tpFields: FormlyFieldConfig[];
 
   formEditMode: FormlyFormOptions = {
     formState: {
@@ -188,11 +44,15 @@ export class OperationDetailsComponent {
   };
 
   constructor(
-    private thirdpartyService: ThirdpartyService,
+    private operationService: OperationService,
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService
-  ) { }
+  ) {
+    this.detailOpFields = operationDetailFormlyForm;
+    this.tpFields = thirdpartyFormlyForm;
+    this.opCompFields = operationCompFormlyForm;
+  }
 
   ngOnInit(): void {
     this.currentId = this.route.snapshot.params['id'];
@@ -204,12 +64,18 @@ export class OperationDetailsComponent {
   }
 
   private fetchThirdParty(id: string): void {
-    this.tpSub = this.thirdpartyService.fetchThirdPartyById(id)
-      .subscribe((thirdparty: Thirdparty) => {
-        this.currentTP = thirdparty;
-        this.model = thirdparty;
-        this.title = thirdparty.fiscalName;
-      });
+
+    // this.tpSub = this.thirdpartyService.fetchThirdPartyById(id)
+    //   .subscribe((thirdparty: Thirdparty) => {
+    //     this.currentTP = thirdparty;
+    //     this.model = thirdparty;
+    //     this.title = thirdparty.fiscalName;
+    //   });
+  }
+
+  openTab(tab: string): void {
+    console.log('Change tab to: ', tab);
+    this.currentTab = tab;
   }
 
   onEdit(): void {
@@ -218,31 +84,39 @@ export class OperationDetailsComponent {
   }
 
   onSubmit(): void {
-    const tp = this.tpForm.value as Thirdparty;
+    const op = this.opForm.value as Operation;
     if (this.createMode) {
-      this.submitSub = this.thirdpartyService.addThirdparty(tp)
-      .subscribe(res => {
-        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
-        console.log(res);
-        this.router.navigate(['/thirdparty/list']);
-      });
+      console.log('create', op);
+      // this.submitSub = this.thirdpartyService.addThirdparty(tp)
+      // .subscribe(res => {
+      //   this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
+      //   console.log(res);
+      //   this.router.navigate(['/thirdparty/list']);
+      // });
     }
     else { 
-      this.submitSub = this.thirdpartyService.updateThirdparty(tp)
-      .subscribe(res => {
-        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
-        console.log(res);
-        this.router.navigate(['/thirdparty/list']);
-      });
+      console.log('update', op);
+      // this.submitSub = this.thirdpartyService.updateThirdparty(tp)
+      // .subscribe(res => {
+      //   this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
+      //   console.log(res);
+      //   this.router.navigate(['/thirdparty/list']);
+      // });
     }
   }
 
-  onClose(): void {
-    this.router.navigate(['/thirdparty']);
+  onClose(): void { // TODO: Centralize to refactor this. To put in the shared module.
+    if (this.detailOpForm.touched || this.tpForm.touched) {
+      const confirmation = confirm('¿Estás seguro de que quieres salir sin guardar?'); // TODO: Change to modal.
+      console.log(confirmation);
+      if (confirmation) {
+        this.router.navigate(['/operation']);
+      }
+    }
   }
 
   ngOnDestroy(): void {
-    this.tpSub.unsubscribe();
+    this.opSub.unsubscribe();
     this.submitSub.unsubscribe();
   }
 }

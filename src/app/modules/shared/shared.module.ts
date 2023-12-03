@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule } from '@ngx-formly/core';
 import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
 
@@ -12,18 +12,23 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 // Bootstrap imports:
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormlyFieldFile } from './formly-helpers/types/file-type.component';
 
 @NgModule({
   declarations: [
     NavbarComponent,
     SidenavComponent,
+    FormlyFieldFile,
   ],
   imports: [
     // Module imports:
     CommonModule,
     RouterModule,
-
-    FormlyModule.forRoot(),
+    ReactiveFormsModule,
+    
+    FormlyModule.forRoot({
+      types: [{ name: 'file', component: FormlyFieldFile, wrappers: ['form-field'] }],
+    }),
     FormlyBootstrapModule,
 
     // Bootstrap imports:
@@ -37,6 +42,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     // Shared Components:
     NavbarComponent,
     SidenavComponent,
+    FormlyFieldFile,
     // Bootstrap exports:
     NgbDropdownModule,
   ]

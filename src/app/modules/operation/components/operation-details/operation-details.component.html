@@ -1,18 +1,46 @@
-<div class="card shadow">
-    <div class="card-header d-flex justify-content-between align-items-center item-display-card">
-        <h4>
-            {{ title }}
-        </h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+<form [formGroup]="opForm">
+    <div class="card shadow">
+        <div class="p-2">
+            <div class="d-flex justify-content-between align-items-center">
+    
+                <ul class="nav nav-tabs mb-0">
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" (click)="openTab('tp')" [ngClass]="{ 'active': currentTab == 'tp' }" >
+                            Cliente
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" (click)="openTab('op')" [ngClass]="{ 'active': currentTab == 'op' }">
+                            Detalles Operación
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a type="button" class="nav-link" (click)="openTab('di')" [ngClass]="{ 'active': currentTab == 'di' }">
+                            Documentos e información
+                        </a>
+                    </li>
+                </ul>
+                <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+            </div>
+            <div class="card-body">
+                @switch (currentTab) {
+                    @case ('tp') {
+                        <formly-form [form]="tpForm" [fields]="tpFields" [model]="tpModel" [options]="formEditMode"></formly-form>   
+                    }
+                    @case ('op') {             
+                        <formly-form [form]="detailOpForm" [fields]="detailOpFields" [model]="detailOpModel" [options]="formEditMode"></formly-form>
+                    }
+                    @case ('di') {             
+                        <formly-form [form]="opCompForm" [fields]="opCompFields" [model]="opCompModel" [options]="formEditMode"></formly-form>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="card-footer form-actions">
+            <button *ngIf="!createMode && !editMode" type="button" class="btn btn-warning" (click)="onEdit()">Modificar</button>
+            <button *ngIf="createMode || editMode" type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="opForm.invalid">Enviar</button>
+            <button *ngIf="!createMode && editMode" type="button" class="btn btn-info" (click)="onEdit()">Cancelar</button>
+        </div>
     </div>
-    <div class="card-body">
-        <form [formGroup]="tpForm">
-            <formly-form [form]="tpForm" [fields]="fields" [model]="model" [options]="formEditMode"></formly-form>
-        </form>
-    </div>
-    <div class="card-footer form-actions">
-        <button *ngIf="!createMode && !editMode" type="button" class="btn btn-warning" (click)="onEdit()">Modificar</button>
-        <button *ngIf="createMode || editMode" type="submit" class="btn btn-primary" (click)="onSubmit()" [disabled]="tpForm.invalid">Enviar</button>
-        <button *ngIf="!createMode && editMode" type="button" class="btn btn-info" (click)="onEdit()">Cancelar</button>
-    </div>
-</div>
+</form>
