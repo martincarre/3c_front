@@ -6,11 +6,15 @@ import { ToastsContainer } from './components/toast/toast-container.component';
 import { ToastGlobalComponent } from './components/toast/toast-global.component';
 import { ConfirmationModalContent } from './components/confirmation-modal/confirmation-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { SpinnerInterceptor } from './interceptors/spinner';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 
 
 @NgModule({
   declarations: [
     ToastsContainer,
+    SpinnerComponent,
     ToastGlobalComponent,
     ConfirmationModalContent
   ],
@@ -20,8 +24,12 @@ import { ReactiveFormsModule } from '@angular/forms';
     NgbToastModule,
     NgbModalModule,
   ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
+  ],
   exports: [
     ToastsContainer,
+    SpinnerComponent,
     ConfirmationModalContent,
     NgbToastModule,
   ]
