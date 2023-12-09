@@ -8,4 +8,5 @@ export interface Thirdparty {
     state: string;
     phone?: string;
     email?: string;
+    tpType: string;
 };

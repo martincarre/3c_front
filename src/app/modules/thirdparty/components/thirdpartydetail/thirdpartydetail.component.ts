@@ -7,6 +7,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { Thirdparty } from '../../models/thirdparty.model';
 import { Subscription } from 'rxjs';
 import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
+import { ExtInfoService } from 'src/app/core/services/extInfo.service';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private thirdpartyService: ThirdpartyService,
+    private extInfoService: ExtInfoService,
     private router: Router,
     private route: ActivatedRoute,
     private toastService: ToastService
@@ -48,6 +50,15 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
       this.createMode = false;
       this.formEditMode.formState.disabled = true;
       this.fetchThirdParty(this.currentId);
+    }
+  }
+
+  tpLookUp(): void {
+    const fiscalId = this.tpForm.get('fiscalId')?.value;
+    if (fiscalId) {
+      this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: any) => {
+        console.log(tpInfo);
+      });
     }
   }
 

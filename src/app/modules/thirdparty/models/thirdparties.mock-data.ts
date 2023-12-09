@@ -2,6 +2,7 @@ import { Thirdparty } from "./thirdparty.model";
 
 export const THIRDPARTIES: Thirdparty[] = [
     {
+        tpType: 'client',
         fiscalName: 'Fiscal Name 1',
         fiscalId: 'Fiscal Id 1',
         address: 'Address 1',
@@ -13,6 +14,7 @@ export const THIRDPARTIES: Thirdparty[] = [
         email: 'Email 1'
     },
     {
+        tpType: 'supplier',
         fiscalName: 'Fiscal Name 2',
         fiscalId: 'Fiscal Id 2',
         address: 'Address 2',
@@ -24,6 +26,7 @@ export const THIRDPARTIES: Thirdparty[] = [
         email: 'Email 2'
     },
     {
+        tpType: 'client',
         fiscalName: 'Fiscal Name 3',
         fiscalId: 'Fiscal Id 3',
         address: 'Address 3',
@@ -35,6 +38,7 @@ export const THIRDPARTIES: Thirdparty[] = [
         email: 'Email 3'
     },
     {
+        tpType: 'supplier',
         fiscalName: 'Fiscal Name 4',
         fiscalId: 'Fiscal Id 4',
         address: 'Address 4',
@@ -46,6 +50,7 @@ export const THIRDPARTIES: Thirdparty[] = [
         email: 'Email 4'
     },
     {
+        tpType: 'supplier',
         fiscalName: 'Fiscal Name 5',
         fiscalId: 'Fiscal Id 5',
         address: 'Address 5',
@@ -57,6 +62,7 @@ export const THIRDPARTIES: Thirdparty[] = [
         email: 'Email 5'
     },
     {
+        tpType: 'client',
         fiscalName: 'Fiscal Name 6',
         fiscalId: 'Fiscal Id 6',
         address: 'Address 6',

@@ -86,13 +86,9 @@ export class OperationDetailsComponent implements OnDestroy {
   }
 
   onSubmit(): void {
-    const op = this.opForm.value as Operation;
-    if (this.createMode) {
-      console.log('create', op);
-    }
-    else { 
-      console.log('update', op);
-    }
+    const op = this.opForm.value;
+    console.log('create', op);
+
   }
 
   ngOnDestroy(): void {

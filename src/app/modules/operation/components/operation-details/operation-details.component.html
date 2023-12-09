@@ -15,7 +15,7 @@
                     </div>
                     <formly-form [form]="opDetailForm" [fields]="opDetailFields" [model]="opDetailModel" [options]="opDetailOptions"></formly-form>
                         <div class="d-flex justify-content-center mt-3">
-                        <button type="submit" [disabled]="opForm.invalid || opDetailForm.invalid || opEcoDetailForm.invalid" class="d-inline-flex align-items-center btn btn-success btn-lg px-4 rounded-pill">
+                        <button type="submit" (click)="onSubmit()" [disabled]="opForm.invalid || opDetailForm.invalid || opEcoDetailForm.invalid || !calculationResult" class="d-inline-flex align-items-center btn btn-success btn-lg px-4 rounded-pill">
                             Enviar
                             <i class="bi-send-fill ms-3"></i>
                         </button>
@@ -31,13 +31,13 @@
     </div>
 </div>
 
-<div class="container border shadow p-2">
+<div class="container border rounded shadow p-2">
     <div class="row">
         <div class="col-md-6 col-12">
             <label for="fiscalId">NIF</label>
             <input id="fiscalId" type="text" class="form-control" [formControl]="fiscalId">
         </div>
-        <button class="btn btn-outline-primary col-md-6 col-12" (click)="onSearch()" [disabled]="fiscalId.invalid">Search</button>
+        <button class="btn btn-outline-primary col-md-4 col-12" (click)="onSearch()" [disabled]="fiscalId.invalid">Search</button>
     </div>
     <hr /> 
     <div class="border">

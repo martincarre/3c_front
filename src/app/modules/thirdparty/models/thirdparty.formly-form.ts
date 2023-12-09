@@ -1,12 +1,49 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
 
-export const thirdpartyFormlyForm: FormlyFieldConfig[] = [    
+export const thirdpartyFormlyForm: FormlyFieldConfig[] = [   
+    // Fiscal ID and tp type (client or supplier) 
+    {
+        fieldGroupClassName: 'row align-items-end justify-content-left',
+        fieldGroup: [
+            {
+                className: 'col-lg-3 col-12',
+                key: 'tpType',
+                type: 'select',
+                defaultValue: 'client',
+                props: {
+                    label: 'Tipo de tercero',
+                    options: [
+                        { label: 'Cliente', value: 'client' },
+                        { label: 'Proveedor', value: 'supplier' },
+                    ],
+                    required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
+            },
+            {
+                className: 'col-lg-3 col-12',
+                key: 'fiscalId',
+                type: 'input',
+                props: {
+                label: 'NIF/CIF',
+                placeholder: 'A12345678',
+                required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
+            },
+        ]
+    },
+    // Fiscal name and type
     {
         fieldGroupClassName: 'row',
         fieldGroup: 
         [
         {
-            className: 'col-6',
+            className: 'col-lg-6 col-12',
             key: 'fiscalName',
             type: 'input',
             props: {
@@ -18,21 +55,9 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             'props.disabled': 'formState.disabled'
             }
         },
+        
         {
-            className: 'col-3',
-            key: 'fiscalId',
-            type: 'input',
-            props: {
-            label: 'NIF/CIF',
-            placeholder: 'A12345678',
-            required: true,
-            },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
-        {
-            className: 'col-3',
+            className: 'col-lg-4 col-12',
             key: 'type',
             type: 'select',
             props: {
@@ -51,6 +76,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         },
         ]
     },
+    // Address street number, floor, door
     {
         className: 'section-label',
         template: '<hr /><h5 class="card-title">Dirección:</h5>',
@@ -82,12 +108,13 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         },
         ]
     },
+    // Postal info - Postcode, city, state
     {
         fieldGroupClassName: 'row',
         fieldGroup: 
         [
         {
-            className: 'col-3',
+            className: 'col-lg-4 col-12',
             key: 'postalCode',
             type: 'input',
             props: {
@@ -100,7 +127,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             }
         },
         {
-            className: 'col-4',
+            className: 'col-lg-4 col-12',
             key: 'city',
             type: 'select',
             props: {
@@ -116,7 +143,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             }
         },
         {
-            className: 'col-4',
+            className: 'col-lg-4 col-12',
             key: 'state',
             type: 'select',
             props: {
@@ -132,7 +159,8 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             }
         },
         ]
-    },
+    }, 
+    // Additionnal info - Contact
     {
         className: 'section-label',
         template: '<hr /><h5 class="card-title">Contacto general:</h5>',
@@ -142,7 +170,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         fieldGroup: 
         [
         {
-            className: 'col-4',
+            className: 'col-lg-4 col-12',
             key: 'phone',
             type: 'input',
             props: {
@@ -154,7 +182,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             }
         },
         {
-            className: 'col-4',
+            className: 'col-lg-4 col-12',
             key: 'email',
             type: 'input',
             props: {
