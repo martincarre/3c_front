@@ -56,8 +56,12 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   tpLookUp(): void {
     const fiscalId = this.tpForm.get('fiscalId')?.value;
     if (fiscalId) {
-      this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: any) => {
-        console.log(tpInfo);
+      this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: Thirdparty) => {
+        console.log('response', tpInfo);
+        this.currentTP = tpInfo;
+        this.model = tpInfo;
+        console.log('model', this.model);
+        this.title = tpInfo.fiscalName;
       });
     }
   }
@@ -105,3 +109,5 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     this.submitSub.unsubscribe();
   }
 }
+
+

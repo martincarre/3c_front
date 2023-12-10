@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, Subscription, catchError, of, switchMap, takeUntil, tap, throwError } from 'rxjs';
+import { Observable, Subscription, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
+import { ToastService } from './toast.service';
 
 interface AuthResponse {
     access_token: string;
@@ -15,6 +16,29 @@ interface ErrorResponse {
     status: number;
 };
 
+interface CompanyInfo {
+    denominacion: string;
+    nombreComercial: string[];
+    domicilioSocial: string;
+    localidad: string;
+    formaJuridica: string;
+    cnae: string;
+    fechaUltimoBalance: string;
+    identificativo: string;
+    situacion: string;
+    telefono: number[];
+    fax: number[];
+    web: string[];
+    email: string;
+    cargoPrincipal: string;
+    cargoPrincipalPuesto: string;
+    capitalSocial: number;
+    ventas: number;
+    anioVentas: number;
+    empleados: number;
+    fechaConstitucion: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ExtInfoService implements OnDestroy{
     private endPointUri: string;
@@ -24,7 +48,8 @@ export class ExtInfoService implements OnDestroy{
     private authSub: Subscription = new Subscription();
 
 	constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private toastService: ToastService
     ) {
         this.endPointUri = environment.extInfoService.endpoint.base;
         this.authSub = this.auth().subscribe();
@@ -74,10 +99,46 @@ export class ExtInfoService implements OnDestroy{
                     'Accept': 'application/json'
                 });
 
-                return this.http.get<any>(`${this.endPointUri}${environment.extInfoService.endpoint.paths.getBasicInfo}${fiscalId}/test`, { headers });
+                return this.http.get<any>(`${this.endPointUri}${environment.extInfoService.endpoint.paths.getBasicInfo}${fiscalId}/test`, { headers })
+                .pipe(
+                    map((response: CompanyInfo) => {
+                        return {
+                            fiscalName: response.denominacion, // Done
+                            fiscalId: response.identificativo, // Done
+                            address: response.domicilioSocial, // Todo
+                            city: response.localidad, // Todo
+                            postalCode: '', // Todo
+                            state: '', // Todo
+                            phone: response.telefono[0].toString(), // Done
+                            fax: response.fax[0].toString(), // Done
+                            website: response.web[0], // Done
+                            email: response.email, // Done
+                            alias: response.nombreComercial[0], 
+                            companyType: response.formaJuridica, // Done
+                            activityCode: response.cnae,
+                            latestFSDate: response.fechaUltimoBalance, // Done
+                            equity: response.capitalSocial, // Done
+                            sales: response.ventas, // Done 
+                            salesYear: response.anioVentas, // Done
+                            employees: response.empleados, // Done
+                            constitutionDate: response.fechaConstitucion, // Done
+                            companyStatus: response.situacion, 
+                        }
+                    })
+                );
             }),
             catchError(error => {
-                console.error('Error fetching TP Info:', error);
+                switch(error.status) {
+                    case 404: 
+                        this.toastService.show('bg-danger text-light', 'Este tercero no está en la base de datos', 'Tercero no encontrado',  7000);
+                        break;
+                    case 401:
+                        this.toastService.show('bg-danger text-light', 'No autorizado - hay un problema con el servicio de datos', 'No autorizado', 7000);
+                        break;
+                    default:
+                        this.toastService.show('bg-danger text-light', `Hay un problema con el servicio de datos: ${error.message}`, 'Error Desconocido', 7000);
+                        break;
+                };
                 return throwError(() => error);
             })
         );

@@ -12,9 +12,12 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 // Bootstrap imports:
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+
+// Formly imports:
 import { FormlyFieldFile } from './formly-helpers/types/file-type.component';
 import { FormlyFieldButton } from './formly-helpers/types/button-type.component';
 import { ObjectTypeComponent } from './formly-helpers/types/object-type.component';
+import { spanishIdValidationMessage, spanishIdValidator } from './validators/spanishId.validator';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,13 @@ import { ObjectTypeComponent } from './formly-helpers/types/object-type.componen
     ReactiveFormsModule,
     
     FormlyModule.forRoot({
+      validators: [
+        { name: 'id', validation: spanishIdValidator },
+      ],
+      validationMessages: [
+        { name: 'required', message: 'Este campo es obligatorio' },
+        { name: 'id', message:  spanishIdValidationMessage },
+      ],
       types: [
         { name: 'object', component: ObjectTypeComponent },
         { name: 'file', component: FormlyFieldFile, wrappers: ['form-field'] },

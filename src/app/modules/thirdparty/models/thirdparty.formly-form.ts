@@ -1,4 +1,5 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
+import { spanishIdValidator } from "../../shared/validators/spanishId.validator";
 
 export const thirdpartyFormlyForm: FormlyFieldConfig[] = [   
     // Fiscal ID and tp type (client or supplier) 
@@ -27,12 +28,15 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
                 key: 'fiscalId',
                 type: 'input',
                 props: {
-                label: 'NIF/CIF',
-                placeholder: 'A12345678',
-                required: true,
+                    label: 'NIF/CIF',
+                    placeholder: 'A12345678',
+                    required: true,
+                },
+                validators: {
+                    validation: ['id']
                 },
                 expressions: {
-                'props.disabled': 'formState.disabled'
+                    'props.disabled': 'formState.disabled'
                 }
             },
         ]
@@ -58,7 +62,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         
         {
             className: 'col-lg-4 col-12',
-            key: 'type',
+            key: 'companyType',
             type: 'select',
             props: {
             label: 'Tipo de persona jurídica',
@@ -152,7 +156,6 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
                 { label: 'Madrid', value: 'MAD'},
                 { label: 'Barcelona', value: 'BCN'},
             ],
-            required: true,
             },
             expressions: {
             'props.disabled': 'formState.disabled'
@@ -163,7 +166,87 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
     // Additionnal info - Contact
     {
         className: 'section-label',
-        template: '<hr /><h5 class="card-title">Contacto general:</h5>',
+        template: '<hr /><h5 class="card-title">Datos de contacto generales:</h5>',
+    },
+    // Tel and email
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+        {
+            className: 'col-lg-6 col-12',
+            key: 'phone',
+            type: 'input',
+            props: {
+                label: 'Teléfono',
+                placeholder: '912-345-678',
+                addonRight: {
+                    class:'bi-telephone-fill'
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        {
+            className: 'col-lg-6 col-12',
+            key: 'email',
+            type: 'input',
+            props: {
+                label: 'Email',
+                placeholder: 'info@empresa.com',
+                addonRight: {
+                    text: '@'
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        ]
+    },
+    // Fax and website
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+        {
+            className: 'col-lg-6 col-12',
+            key: 'website',
+            type: 'input',
+            props: {
+                label: 'Web',
+                placeholder: 'www.empresa.com',
+                addonRight: {
+                    class:'bi-globe'
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        {
+            className: 'col-lg-6 col-12',
+            key: 'fax',
+            type: 'input',
+            props: {
+                label: 'Fax',
+                placeholder: '912-345-678',
+                addonRight: 
+                {
+                    class: 'bi-printer-fill'
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        ]
+    },
+    // Additionnal info - Economic / Financial
+    {
+        className: 'section-label',
+        template: '<hr /><h5 class="card-title">Información adicional:</h5>',
     },
     {
         fieldGroupClassName: 'row',
@@ -171,11 +254,14 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         [
         {
             className: 'col-lg-4 col-12',
-            key: 'phone',
+            key: 'sales',
             type: 'input',
             props: {
-            label: 'Teléfono',
-            placeholder: '912-345-678',
+                type: 'number',
+                label: 'Ventas anuales',
+                addonRight: {
+                    text: '€',
+                }
             },
             expressions: {
             'props.disabled': 'formState.disabled'
@@ -183,16 +269,82 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         },
         {
             className: 'col-lg-4 col-12',
-            key: 'email',
+            key: 'equity',
             type: 'input',
             props: {
-            label: 'Email',
-            placeholder: 'info@empresa.com',
+                type: 'number',
+                label: 'Capital social',
+                addonRight: {
+                    text: '€',
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        {
+            className: 'col-lg-4 col-12',
+            key: 'latestFSDate',
+            type: 'input',
+            props: {
+                type: 'text',
+                label: 'Fecha último balance',
+                addonRight: {
+                    class:'bi-calendar-event-fill'
+                }
             },
             expressions: {
             'props.disabled': 'formState.disabled'
             }
         },
         ]
-    }
+    },
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+        {
+            className: 'col-lg-4 col-12',
+            key: 'employees',
+            type: 'input',
+            props: {
+                type: 'number',
+                label: 'Nûmero de empleados',
+                addonRight: {
+                    class: 'bi-people-fill',
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        {
+            className: 'col-lg-4 col-12',
+            key: 'activityCode',
+            type: 'input',
+            props: {
+                type: 'text',
+                label: 'CNAE',
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        {
+            className: 'col-lg-4 col-12',
+            key: 'constitutionDate',
+            type: 'input',
+            props: {
+                type: 'text',
+                label: 'Fecha de constitución',
+                addonRight: {
+                    class:'bi-calendar-check-fill'
+                }
+            },
+            expressions: {
+            'props.disabled': 'formState.disabled'
+            }
+        },
+        ]
+    },
 ];
