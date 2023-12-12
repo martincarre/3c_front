@@ -1,0 +1,24 @@
+export interface Thirdparty {
+    tpType: string;
+    alias?: string;
+    fiscalName: string;
+    fiscalId: string;
+    companyType?: string;
+    address: string;
+    addressComp: string;
+    city: string;
+    postalCode: string;
+    state: string;
+    phone?: string;
+    fax?: string;
+    website?: string;
+    email?: string;
+    activityCode?: string;
+    latestFSDate?: string;
+    equity?: number;
+    sales?: number;
+    salesYear?: number;
+    employees?: number;
+    constitutionDate?: string;
+    companyStatus?: string;
+};
