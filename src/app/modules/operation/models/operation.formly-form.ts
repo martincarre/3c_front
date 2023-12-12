@@ -1,4 +1,5 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
+import { of } from "rxjs";
 
 export const operationForm: any = [
   // Title
@@ -278,5 +279,25 @@ export const operationEconomicDetailsForm: FormlyFieldConfig[] = [
         }
       },
     ]
-  }
+  },
+  // Partner
+  { 
+    template: '<hr />',
+  },
+  {
+    fieldGroupClassName: 'd-flex align-items-center justify-content-center',
+    fieldGroup: [
+      {
+        className: 'col-12',
+        key: 'partner',
+        type: 'typeahead',
+        props: {
+          label: 'Partner',
+          placeholder: 'Buscar un proveedor',
+          typeSearched: 'partner',
+          required: true,
+        }
+      },
+    ]
+  },
 ];

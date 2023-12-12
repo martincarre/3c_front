@@ -30,17 +30,6 @@
         </div>
     </div>
 </div>
-
-<div class="container border rounded shadow p-2">
-    <div class="row">
-        <div class="col-md-6 col-12">
-            <label for="fiscalId">NIF</label>
-            <input id="fiscalId" type="text" class="form-control" [formControl]="fiscalId">
-        </div>
-        <button class="btn btn-outline-primary col-md-4 col-12" (click)="onSearch()" [disabled]="fiscalId.invalid">Search</button>
-    </div>
-    <hr /> 
-    <div class="border">
-        {{ tpInfo | json }}
-    </div>
+<div class="container row">
+    {{ opEcoDetailForm.value | json }}
 </div>

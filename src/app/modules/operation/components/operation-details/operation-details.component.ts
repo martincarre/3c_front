@@ -60,13 +60,6 @@ export class OperationDetailsComponent implements OnDestroy {
   ngOnInit(): void {
   }
 
-  onSearch(): void {
-    this.extInfoService.getTpInfo(this.fiscalId.value).subscribe((res: any) => {
-      console.log(res);
-      this.tpInfo = res;
-    });
-  }
-
   calculateQuote(): void { 
     const ecoDetails = { 
       rate: this.opEcoDetailForm.value.rate?  this.opEcoDetailForm.value.rate/ 100 : null,

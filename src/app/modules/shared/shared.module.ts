@@ -12,12 +12,16 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 // Bootstrap imports:
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Formly imports:
 import { FormlyFieldFile } from './formly-helpers/types/file-type.component';
 import { FormlyFieldButton } from './formly-helpers/types/button-type.component';
 import { ObjectTypeComponent } from './formly-helpers/types/object-type.component';
 import { spanishIdValidationMessage, spanishIdValidator } from './validators/spanishId.validator';
+import { FormlyFieldTypeahead } from './formly-helpers/types/typeahead-type.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 
 @NgModule({
   declarations: [
@@ -26,6 +30,7 @@ import { spanishIdValidationMessage, spanishIdValidator } from './validators/spa
     FormlyFieldFile,
     ObjectTypeComponent,
     FormlyFieldButton,
+    FormlyFieldTypeahead,
   ],
   imports: [
     // Module imports:
@@ -42,6 +47,7 @@ import { spanishIdValidationMessage, spanishIdValidator } from './validators/spa
         { name: 'id', message:  spanishIdValidationMessage },
       ],
       types: [
+        { name: 'typeahead', component: FormlyFieldTypeahead, wrappers: ['form-field'] },
         { name: 'object', component: ObjectTypeComponent },
         { name: 'file', component: FormlyFieldFile, wrappers: ['form-field'] },
         { name: 'button', component: FormlyFieldButton, wrappers: ['form-field'], defaultOptions: { props: { btnType: 'default', type: 'button',},},}
@@ -51,6 +57,8 @@ import { spanishIdValidationMessage, spanishIdValidator } from './validators/spa
 
     // Bootstrap imports:
     NgbDropdownModule,
+    NgbTypeaheadModule,
+    NgSelectModule,
   ],
   exports: [
     // Modules: 
@@ -62,6 +70,8 @@ import { spanishIdValidationMessage, spanishIdValidator } from './validators/spa
     SidenavComponent,
     // Bootstrap exports:
     NgbDropdownModule,
+    NgbTypeaheadModule,
+    NgSelectModule,
   ]
 })
 export class SharedModule { }
