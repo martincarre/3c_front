@@ -35,7 +35,7 @@ export const operationForm: any = [
     [
       {
         className: 'col-lg-6 col-12',
-        key: 'rent',
+        key: 'target',
         type: 'input',
         props: {
             type: 'number',
@@ -43,7 +43,7 @@ export const operationForm: any = [
               text: '€',
             },
             min: 50,
-            label: 'Cuota',
+            label: 'Target',
             required: true,
         },
         expressions: {
@@ -147,7 +147,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
         key: 'description',
         type: 'textarea',
         props: {
-          label: 'Descripción o mensaje adicional',
+          label: 'Descripción adicional',
           placeholder: '',
           rows: 4,
         },
@@ -217,6 +217,7 @@ export const operationEconomicDetailsForm: FormlyFieldConfig[] = [
         className: 'col-lg-6 col-12',
         key: 'andOneRv',
         type: 'checkbox',
+        defaultValue: false,
         props: {
           formCheck: 'inline-switch',
           label: 'VR última cuota',
@@ -255,6 +256,7 @@ export const operationEconomicDetailsForm: FormlyFieldConfig[] = [
         className: 'col-lg-6 col-12',
         key: 'rateSwitch',
         type: 'checkbox',
+        defaultValue: false,
         props: {
           formCheck: 'inline-switch',
           label: 'Tasa',
@@ -294,6 +296,7 @@ export const operationEconomicDetailsForm: FormlyFieldConfig[] = [
         className: 'col-lg-6 col-12',
         key: 'comSwitch',
         type: 'checkbox',
+        defaultValue: false,
         props: {
           formCheck: 'inline-switch',
           label: 'Comisión',

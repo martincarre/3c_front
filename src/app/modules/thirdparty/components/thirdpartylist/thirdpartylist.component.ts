@@ -54,7 +54,6 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
       )
       .subscribe((data: any[]) => {
         this.tpList = data;
-        console.log(this.tpList);
       });
   }
 

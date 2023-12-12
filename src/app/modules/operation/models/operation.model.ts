@@ -1,5 +1,5 @@
 export interface Operation {
-    tpFiscalId: string;
+    partnerId: string;
     investment: number;
     date: string;
     item: string;
@@ -7,6 +7,6 @@ export interface Operation {
     tenor: number;
     rv: number;
     margin: number;
-    reference: string;
+    description: string;
     // attachments: Blob[]; // Check this one later -> How do I do this? 
 }

@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h4 class="modal-title">A quien quisieras hacer llegar esta cotización?</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <formly-form [form]="sendForm" [fields]="sendFormFields" [model]="model" [options]="sendFormOptions"></formly-form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSend()" [disabled]="sendForm.invalid">
+        Enviar
+        <i class="bi-send-fill ms-3"></i>
+    </button>
+</div>

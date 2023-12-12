@@ -1,13 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Operation } from '../../models/operation.model';
-import { Subject, Subscription, takeUntil, tap } from 'rxjs';
+import { Subject, Subscription, map, takeUntil, tap } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { OperationService } from '../../services/operation.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } from '../../models/operation.formly-form';
 import { ExtInfoService } from 'src/app/core/services/extInfo.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
 
 @Component({
   selector: 'app-operation-details',
@@ -48,9 +50,10 @@ export class OperationDetailsComponent implements OnDestroy {
 
   constructor(
     private operationService: OperationService,
-    private extInfoService: ExtInfoService,
+    private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
+    private modalService: NgbModal,
   ) {
     this.opFields = operationForm;
     this.opDetailFields = operationsDetailsForm;
@@ -66,7 +69,7 @@ export class OperationDetailsComponent implements OnDestroy {
       commission: this.opEcoDetailForm.value.commission? this.opEcoDetailForm.value.commission/ 100 : null,
       margin: this.opEcoDetailForm.value.margin / 100,  
       selector: this.opForm.value.quoteSelection === 'rent' ? true : false,
-      amount: this.opForm.value.rent,
+      amount: this.opForm.value.target,
       duration: this.opEcoDetailForm.value.andOneRv? this.opForm.value.tenor + 1 : this.opForm.value.tenor,
       rv: this.opEcoDetailForm.value.andOneRv? 0 : this.opEcoDetailForm.value.rv / 100,
     }
@@ -84,11 +87,28 @@ export class OperationDetailsComponent implements OnDestroy {
       partnerId: this.opDetailForm.value.partner.fiscalId,
       make: this.opDetailForm.value.equipmentMake,
       model: this.opDetailForm.value.equipmentModel,
+      [this.opForm.value.quoteSelection === 'rent' ? 'rent' : 'investment' ]: this.calculationResult,
+      [this.opForm.value.quoteSelection === 'rent' ? 'investment' : 'rent' ]: this.opForm.value.target,
+      tenor: this.opForm.value.tenor,
       description: this.opDetailForm.value.description,
-      ...this.opForm.value
     }
-    console.log('create', op);
-
+    const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
+    sendModalRef.componentInstance.data = op;
+    sendModalRef.result
+      .then((modalRes: any) => {
+        console.log(modalRes);
+        this.operationService.createOperation(op, modalRes).subscribe(
+          (res: any) => {
+            console.log(res)
+            this.toastService.show('bg-success text-light', res.message, 'Éxito!', 7000);
+            this.router.navigate(['../list'], { relativeTo: this.route });
+          }
+        )
+      })
+      .catch((err: any) => {
+        console.error(err);
+      })
+    
   }
 
   ngOnDestroy(): void {

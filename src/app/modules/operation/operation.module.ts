@@ -4,11 +4,13 @@ import { OperationRoutingModule } from './operation-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { OperationDashboardComponent } from './components/operation-dashboard/operation-dashboard.component';
 import { OperationDetailsComponent } from './components/operation-details/operation-details.component';
+import { OperationConfirmationModalComponent } from './components/operation-confirmation-modal/operation-confirmation-modal.component';
 
 @NgModule({
   declarations: [
     OperationDashboardComponent,
     OperationDetailsComponent,
+    OperationConfirmationModalComponent,
   ],
   imports: [
     CommonModule,

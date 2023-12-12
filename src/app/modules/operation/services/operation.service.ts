@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
-import { Observable } from 'rxjs';
+import { Observable, delay, of } from 'rxjs';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ export class OperationService {
   private _periodicity: number = 12;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private toastService: ToastService,
   ) { }
 
   public getQuote(ecoDetails: any): number | Error {
@@ -25,5 +27,11 @@ export class OperationService {
     } else {
       return pv;
     }
+  }
+
+  public createOperation(op: any, contactDetails: any): Observable<any> {
+    return of({op: op, contactDetails: contactDetails, message: 'Nueva operación creada', status: 200}).pipe(
+      delay(1500)
+    );
   }
 }
