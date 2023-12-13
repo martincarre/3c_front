@@ -8,6 +8,8 @@ import { Thirdparty } from '../../models/thirdparty.model';
 import { Subscription } from 'rxjs';
 import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
 import { ExtInfoService } from 'src/app/core/services/extInfo.service';
+import { DocumentSnapshot } from '@angular/fire/firestore';
+import { SpinnerService } from 'src/app/core/services/spinner.service';
 
 
 @Component({
@@ -39,7 +41,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private extInfoService: ExtInfoService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private spinnerService: SpinnerService,
   ) {
     this.fields = thirdpartyFormlyForm;
    }
@@ -56,22 +59,27 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   tpLookUp(): void {
     const fiscalId = this.tpForm.get('fiscalId')?.value;
     if (fiscalId) {
+      this.spinnerService.show();
       this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: Thirdparty) => {
         console.log('response', tpInfo);
         this.currentTP = tpInfo;
         this.model = tpInfo;
         console.log('model', this.model);
         this.title = tpInfo.fiscalName;
+        this.spinnerService.hide();
       });
     }
   }
 
   private fetchThirdParty(id: string): void {
-    this.tpSub = this.thirdpartyService.fetchThirdPartyById(id)
-      .subscribe((thirdparty: Thirdparty) => {
+    this.spinnerService.show();
+    this.thirdpartyService.fetchThirdPartyById(id)
+      .then((tpRef: DocumentSnapshot) => {
+        const thirdparty = { id: tpRef.id, ...tpRef.data() } as Thirdparty;
         this.currentTP = thirdparty;
         this.model = thirdparty;
         this.title = thirdparty.fiscalName;
+        this.spinnerService.hide();
       });
   }
 
@@ -81,22 +89,37 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.spinnerService.show();
     const tp = this.tpForm.value as Thirdparty;
     if (this.createMode) {
-      this.submitSub = this.thirdpartyService.addThirdparty(tp)
-      .subscribe(res => {
-        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
-        console.log(res);
+      this.thirdpartyService.addThirdparty(tp)
+      .then(res => {
+        this.spinnerService.hide();
+        this.toastService.show('bg-success text-light', `${tp.fiscalName} creado exitosamente!`, 'Éxito!', 7000);
         this.router.navigate(['/thirdparty/list']);
+      })
+      .catch(err => {
+        this.spinnerService.hide();
+        console.error(err);
+        this.toastService.show('bg-danger text-light', err, 'Error!', 7000);
       });
     }
     else {
-      this.submitSub = this.thirdpartyService.updateThirdparty(tp)
-      .subscribe(res => {
-        this.toastService.show('bg-success text-light', res.message, 'Succcess!', 7000);
-        console.log(res);
-        this.router.navigate(['/thirdparty/list']);
-      });
+      if (this.currentTP && this.currentTP.id) { 
+        this.thirdpartyService.updateThirdparty(this.currentTP.id, tp)
+        .then(res => {
+          this.spinnerService.hide();
+          this.toastService.show('bg-success text-light', `${this.currentTP?.fiscalName} se ha actualizado con éxito!`, 'Éxito!', 7000);
+          this.router.navigate(['/thirdparty/list']);
+        })
+        .catch(err => {
+          this.spinnerService.hide();
+          console.error(err);
+          this.toastService.show('bg-danger text-light', err, 'Error!', 7000);
+        });
+      } else { 
+        console.error('No currentTP ID');
+      }
     }
   }
 

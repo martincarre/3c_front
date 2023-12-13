@@ -64,15 +64,15 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             className: 'col-lg-4 col-12',
             key: 'companyType',
             type: 'select',
+            defaultValue: 'sa',
             props: {
-            label: 'Tipo de persona jurídica',
-            options: [
-                { label: 'Sociedad Anonima', value: 'sa' },
-                { label: 'Sociedad Limitada', value: 'sl' },
-                { label: 'Autónomo', value: 'au' },
-                { label: 'Otro', value: 'ot' },
-            ],
-            required: true,
+                label: 'Tipo de persona jurídica',
+                options: [
+                    { label: 'Sociedad Anonima', value: 'sa' },
+                    { label: 'Sociedad Limitada', value: 'sl' },
+                    { label: 'Autónomo', value: 'au' },
+                    { label: 'Otro', value: 'ot' },
+                ],
             },
             expressions: {
             'props.disabled': 'formState.disabled'
@@ -102,6 +102,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         {
             key: 'addressComp',
             type: 'input',
+            defaultValue: '',
             props: {
             label: 'Complemento',
             placeholder: 'Piso, puerta, etc.',

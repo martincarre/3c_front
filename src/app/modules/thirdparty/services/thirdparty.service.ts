@@ -1,74 +1,62 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Firestore, collection, addDoc, where, query, getDocs, and, deleteDoc, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { Thirdparty } from '../models/thirdparty.model';
-import { THIRDPARTIES } from '../models/thirdparties.mock-data';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThirdpartyService {
-  
-  private geographicData: any[] = [];
+  private fs: Firestore = inject(Firestore);
+  private tpCollection;
   private thirdparties: BehaviorSubject<Thirdparty[]> = new BehaviorSubject<Thirdparty[]>([]);
 
   constructor(
     private http: HttpClient
   ) {
-    this.fetchThirdparties();
+    this.tpCollection = collection(this.fs, 'thirdparties');
+  }
+
+  
+  public async fetchThirdPartyById(id: string): Promise<any>{
+    const tpRef = doc(this.tpCollection, id);
+    return await getDoc(tpRef);
   }
   
-  
-  public getThirdparties(): Observable<Thirdparty[]>{
-    return this.thirdparties.asObservable();
+  public addThirdparty(thirdparty: Thirdparty): Promise<any>{
+    return addDoc(this.tpCollection, thirdparty);
   }
-  
-  public fetchThirdPartyById(id: string): Observable<Thirdparty>{
-    const found = this.thirdparties.value.find(tp => tp.fiscalId === id);
-    if (!found) {
-      return throwError(() => new Error('Thirdparty not found'));
+
+  public async updateThirdparty(tpId: string, thirdparty: Thirdparty): Promise<any>{
+    const tpRef = doc(this.tpCollection, tpId);
+    return await updateDoc(tpRef, thirdparty as Partial<Thirdparty>);
+    // const found = this.thirdparties.value.find(tp => tp.fiscalId === thirdparty.fiscalId);
+    // if (!found) {
+    //   return throwError(() => new Error('Thirdparty not found'));
+    // }
+    // const result = this.thirdparties.getValue().filter(tp => tp.fiscalId !== thirdparty.fiscalId);
+    // result.push(thirdparty);
+    // this.thirdparties.next(result);
+    // return of({ message: 'Thirdparty updated'});
+  }
+
+  public async deleteThirdparty(tpId: string): Promise<any>{
+    const tpRef = doc(this.tpCollection, tpId);
+    return await deleteDoc(tpRef);
+  }
+
+  public async fetchThirdparties(tpType?: string, userBased?: boolean): Promise<any> {
+    const constraints = [];
+    if (tpType) {
+      constraints.push(where('tpType', '==', tpType));
     }
-    return of(found);
-  }
-  
-  public addThirdparty(thirdparty: Thirdparty): Observable<any>{
-    this.thirdparties.next([...this.thirdparties.getValue(), thirdparty])
-    return of({ message: 'Thirdparty added'});
-  }
-
-  public updateThirdparty(thirdparty: Thirdparty): Observable<any>{
-    const found = this.thirdparties.value.find(tp => tp.fiscalId === thirdparty.fiscalId);
-    if (!found) {
-      return throwError(() => new Error('Thirdparty not found'));
+    if (userBased) {
+      // TODO
     }
-    const result = this.thirdparties.getValue().filter(tp => tp.fiscalId !== thirdparty.fiscalId);
-    result.push(thirdparty);
-    this.thirdparties.next(result);
-    return of({ message: 'Thirdparty updated'});
-  }
-
-  public deleteThirdparty(fiscalId: string): Promise<any>{
-    return new Promise((resolve, reject) => {
-      const result: any = this.thirdparties.getValue().filter(tp => tp.fiscalId !== fiscalId)
-      console.log(result);
-      if (!result || result.error) {
-        reject({
-          status: 404,
-          message: result.error
-        });
-      }
-      this.thirdparties.next(result);
-      resolve({
-        status: 200,
-        message: 'Thirdparty deleted'
-      });
-    });
-  }
-
-  private fetchThirdparties(): void {
-    of(THIRDPARTIES).pipe(delay(500)).subscribe(thirdparties => {
-      this.thirdparties.next(thirdparties);
+    const q = query(this.tpCollection, ...constraints);
+    return (await getDocs(q)).docs.map(tps => {
+      return { id: tps.id, ...tps.data() }
     });
   }
 }

@@ -6,6 +6,7 @@ import { Subscription, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import { SpinnerService } from 'src/app/core/services/spinner.service';
 
 @Component({
   selector: 'app-thirdpartylist',
@@ -28,7 +29,8 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     private tpservice: ThirdpartyService,
     private router: Router,
     private route: ActivatedRoute,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private spinnerService: SpinnerService
   ) { }
 
 
@@ -37,28 +39,31 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
   }
 
   private fetchData(): void {
-  
-    this.tpSub = this.tpservice.getThirdparties()
-      .pipe(
-        map((data: Thirdparty[]) => {
-          return data.map((tp: Thirdparty) => {
-            return {
-              fiscalId: tp.fiscalId,
-              fiscalName: tp.fiscalName,
-              postalCode: tp.postalCode,
-              city: tp.city,
-              actions: null
-            }
-          })
-        })
+    this.spinnerService.show();
+    this.tpservice.fetchThirdparties()
+      .then(
+        (data: Thirdparty[]) => {
+          this.tpList = data.map((tp: Thirdparty) => {
+                return {
+                  fiscalId: tp.fiscalId,
+                  fiscalName: tp.fiscalName,
+                  postalCode: tp.postalCode,
+                  city: tp.city,
+                  actions: null,
+                  id: tp.id
+                }
+            });
+          this.spinnerService.hide();
+        }
       )
-      .subscribe((data: any[]) => {
-        this.tpList = data;
+      .catch((err: any) => {
+        this.spinnerService.hide();
+        console.error(err);
       });
   }
 
   viewDetails(thirdparty: Thirdparty) {
-    this.router.navigate(['../details', thirdparty.fiscalId], { relativeTo: this.route });
+    this.router.navigate(['../details', thirdparty.id], { relativeTo: this.route });
   }
 
   deleteThirdparty(thirdparty: Thirdparty) {
@@ -70,21 +75,22 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.data = confirmationData;
     modalRef.result 
       .then((res: any) => {
-        console.log(res);
-        this.tpservice.deleteThirdparty(thirdparty.fiscalId)
-          .then((res: any) => {
-            console.log(res);
+        this.spinnerService.show();
+        thirdparty.id ? this.tpservice.deleteThirdparty(thirdparty.id)
+          .then((delRes: any) => {
+            this.spinnerService.hide();
             this.fetchData();
           })
           .catch((err: any) => {
+            this.spinnerService.hide();
             console.error(err);
           })
+          : console.log('No id');
     })
   }
 
   ngOnDestroy(): void {
     this.tpSub.unsubscribe();
-
   }
 
 }

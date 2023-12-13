@@ -1,4 +1,5 @@
 export interface Thirdparty {
+    id?: string;
     tpType: string;
     alias?: string;
     fiscalName: string;
