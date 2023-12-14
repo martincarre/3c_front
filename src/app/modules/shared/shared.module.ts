@@ -21,6 +21,7 @@ import { ObjectTypeComponent } from './formly-helpers/types/object-type.componen
 import { spanishIdValidationMessage, spanishIdValidator } from './validators/spanishId.validator';
 import { FormlyFieldTypeahead } from './formly-helpers/types/typeahead-type.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 @NgModule({
@@ -55,6 +56,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
     }),
     FormlyBootstrapModule,
 
+    NgxDatatableModule.forRoot({
+      messages: {
+        emptyMessage: 'No data to display', // Message to show when array is presented, but contains no values
+        totalMessage: 'total', // Footer total message
+        selectedMessage: 'selected' // Footer selected message
+      }
+    }),
+
     // Bootstrap imports:
     NgbDropdownModule,
     NgbTypeaheadModule,
@@ -65,6 +74,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ReactiveFormsModule,
     FormlyModule,
     FormlyBootstrapModule,
+    NgxDatatableModule,
     // Shared Components:
     NavbarComponent,
     SidenavComponent,

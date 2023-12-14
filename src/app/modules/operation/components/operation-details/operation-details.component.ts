@@ -9,8 +9,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } from '../../models/operation.formly-form';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
-import { Thirdparty } from 'src/app/modules/thirdparty/models/thirdparty.model';
-import { ThirdpartyService } from 'src/app/modules/thirdparty/services/thirdparty.service';
+import { SpinnerService } from 'src/app/core/services/spinner.service';
 
 @Component({
   selector: 'app-operation-details',
@@ -51,11 +50,11 @@ export class OperationDetailsComponent implements OnDestroy {
 
   constructor(
     private operationService: OperationService,
-    private thirdpartyService: ThirdpartyService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
     private modalService: NgbModal,
+    private spinnerService: SpinnerService, 
   ) {
     this.opFields = operationForm;
     this.opDetailFields = operationsDetailsForm;
@@ -84,32 +83,49 @@ export class OperationDetailsComponent implements OnDestroy {
   }
 
   save(op: any): void { 
-    console.log()
+    this.spinnerService.show();
+    this.operationService.createOperation(op)
+    .then((res: any) => {
+      console.log(res)
+      this.toastService.show('bg-success text-light', 'Operación guardada con éxito', 'Éxito!', 7000);
+      this.router.navigate(['../list'], { relativeTo: this.route });
+      this.spinnerService.hide();
+    })
+    .catch((err: any) => {
+      console.error(err);
+      this.spinnerService.hide();
+    });
   }
-
+  
   send(op: any): void { 
     const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
     sendModalRef.componentInstance.data = op;
     sendModalRef.result
-      .then((modalRes: any) => {
-        console.log(modalRes);
-        this.operationService.createOperation(op, modalRes).subscribe(
-          (res: any) => {
-            console.log(res)
-            this.toastService.show('bg-success text-light', res.message, 'Éxito!', 7000);
-            this.router.navigate(['../list'], { relativeTo: this.route });
-          }
+    .then((modalRes: any) => {
+      this.spinnerService.show();
+      this.operationService.createOperation(op, modalRes)
+      .then(
+        (res: any) => {
+          console.log(res)
+          this.toastService.show('bg-success text-light', `Opéración guardada y enviada a ${modalRes.email} con éxito!`, 'Éxito!', 7000);
+          this.router.navigate(['../list'], { relativeTo: this.route });
+          this.spinnerService.hide();
+        }
         )
       })
       .catch((err: any) => {
         console.error(err);
+        this.spinnerService.hide();
       })
   }
 
   onSubmit(submitType: string): void {
+
+    console.log(this.opDetailForm.value.partner);
     const op = {
       ...this.opEcoDetailForm.value,
       partnerId: this.opDetailForm.value.partner.id,
+      partnerFiscalName: this.opDetailForm.value.partner.fiscalName,
       make: this.opDetailForm.value.equipmentMake,
       model: this.opDetailForm.value.equipmentModel,
       [this.opForm.value.quoteSelection === 'rent' ? 'rent' : 'investment' ]: this.calculationResult,

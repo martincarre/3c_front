@@ -26,7 +26,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
   columnMode = ColumnMode
 
   constructor(
-    private tpservice: ThirdpartyService,
+    private tpService: ThirdpartyService,
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
@@ -40,7 +40,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
 
   private fetchData(): void {
     this.spinnerService.show();
-    this.tpservice.fetchThirdparties()
+    this.tpService.fetchThirdparties()
       .then(
         (data: Thirdparty[]) => {
           this.tpList = data.map((tp: Thirdparty) => {
@@ -76,7 +76,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     modalRef.result 
       .then((res: any) => {
         this.spinnerService.show();
-        thirdparty.id ? this.tpservice.deleteThirdparty(thirdparty.id)
+        thirdparty.id ? this.tpService.deleteThirdparty(thirdparty.id)
           .then((delRes: any) => {
             this.spinnerService.hide();
             this.fetchData();

@@ -1,8 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Firestore, addDoc, collection, getDocs, where, query } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
-import { Observable, delay, of } from 'rxjs';
-import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +8,13 @@ import { ToastService } from 'src/app/core/services/toast.service';
 export class OperationService {
   private _rate: number = 0.1;
   private _periodicity: number = 12;
+  private opCollection;
 
   constructor(
-    private http: HttpClient,
-    private toastService: ToastService,
-  ) { }
+    private fs: Firestore,
+  ) {
+    this.opCollection = collection(this.fs,'operations');
+  }
 
   public getQuote(ecoDetails: any): number | Error {
     const rate = ecoDetails.rate? ecoDetails.rate : this._rate;
@@ -29,9 +29,21 @@ export class OperationService {
     }
   }
 
-  public createOperation(op: any, contactDetails: any): Observable<any> {
-    return of({op: op, contactDetails: contactDetails, message: 'Nueva operación creada', status: 200}).pipe(
-      delay(1500)
-    );
+  public async fetchOperations(partnerId?: string, userBased?: boolean): Promise<any> {
+    const constraints: any[] = [];
+    if (partnerId) {
+      constraints.push(where('tpType', '==', partnerId));
+    }
+    if (userBased) {
+      // TODO
+    }
+    const q = query(this.opCollection, ...constraints);
+    return (await getDocs(q)).docs.map(ops => {
+      return { id: ops.id, ...ops.data() }
+    });
+  }
+
+  public async createOperation(op: any, contactDetails?: any): Promise<any> {
+    return await addDoc(this.opCollection, op);
   }
 }
