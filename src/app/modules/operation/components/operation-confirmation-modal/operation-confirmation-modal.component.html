@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">A quien quisieras hacer llegar esta cotización?</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
     <formly-form [form]="sendForm" [fields]="sendFormFields" [model]="model" [options]="sendFormOptions"></formly-form>

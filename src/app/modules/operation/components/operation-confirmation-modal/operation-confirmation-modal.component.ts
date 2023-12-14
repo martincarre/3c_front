@@ -88,9 +88,6 @@ export class OperationConfirmationModalComponent {
     }
   ]
 
-  constructor(
-  ) { }
-
   onSend(): void { 
     this.activeModal.close(this.sendForm.value);
   }

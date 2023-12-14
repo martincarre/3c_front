@@ -7,9 +7,10 @@ import { OperationService } from '../../services/operation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } from '../../models/operation.formly-form';
-import { ExtInfoService } from 'src/app/core/services/extInfo.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
+import { Thirdparty } from 'src/app/modules/thirdparty/models/thirdparty.model';
+import { ThirdpartyService } from 'src/app/modules/thirdparty/services/thirdparty.service';
 
 @Component({
   selector: 'app-operation-details',
@@ -50,6 +51,7 @@ export class OperationDetailsComponent implements OnDestroy {
 
   constructor(
     private operationService: OperationService,
+    private thirdpartyService: ThirdpartyService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
@@ -81,17 +83,11 @@ export class OperationDetailsComponent implements OnDestroy {
     }
   }
 
-  onSubmit(): void {
-    const op = {
-      ...this.opEcoDetailForm.value,
-      partnerId: this.opDetailForm.value.partner.fiscalId,
-      make: this.opDetailForm.value.equipmentMake,
-      model: this.opDetailForm.value.equipmentModel,
-      [this.opForm.value.quoteSelection === 'rent' ? 'rent' : 'investment' ]: this.calculationResult,
-      [this.opForm.value.quoteSelection === 'rent' ? 'investment' : 'rent' ]: this.opForm.value.target,
-      tenor: this.opForm.value.tenor,
-      description: this.opDetailForm.value.description,
-    }
+  save(op: any): void { 
+    console.log()
+  }
+
+  send(op: any): void { 
     const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
     sendModalRef.componentInstance.data = op;
     sendModalRef.result
@@ -108,7 +104,24 @@ export class OperationDetailsComponent implements OnDestroy {
       .catch((err: any) => {
         console.error(err);
       })
-    
+  }
+
+  onSubmit(submitType: string): void {
+    const op = {
+      ...this.opEcoDetailForm.value,
+      partnerId: this.opDetailForm.value.partner.id,
+      make: this.opDetailForm.value.equipmentMake,
+      model: this.opDetailForm.value.equipmentModel,
+      [this.opForm.value.quoteSelection === 'rent' ? 'rent' : 'investment' ]: this.calculationResult,
+      [this.opForm.value.quoteSelection === 'rent' ? 'investment' : 'rent' ]: this.opForm.value.target,
+      tenor: this.opForm.value.tenor,
+      description: this.opDetailForm.value.description,
+    }
+    if (submitType === 'send') { 
+      this.send(op);
+    } else if (submitType === 'save') { 
+      this.save(op);
+    }
   }
 
   ngOnDestroy(): void {

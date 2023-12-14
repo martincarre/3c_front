@@ -86,6 +86,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
     className: 'section-label',
     template: '<hr /><h5 class="card-title">Selección de partner:</h5>',
   },
+  // Partner
   {
     fieldGroupClassName: 'd-flex align-items-center justify-content-center',
     fieldGroup: [

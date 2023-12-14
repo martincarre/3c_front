@@ -1,18 +1,36 @@
 
 import { Injectable } from '@angular/core';
-import { Observable, delay, map, of } from 'rxjs';
+import { BehaviorSubject, Observable, delay, map, of } from 'rxjs';
 import { THIRDPARTIES } from '../../thirdparty/models/thirdparties.mock-data';
 import { Thirdparty } from '../../thirdparty/models/thirdparty.model';
+import { ThirdpartyService } from '../../thirdparty/services/thirdparty.service';
 
 @Injectable({ providedIn: 'root' })
 export class TypeaheadService {
-    
-	search(term: string, typeSearch: string): Observable<any[]> {
-        console.log('TypeaheadService.search()', typeSearch, term);
-        return of(THIRDPARTIES.filter(v => v.fiscalName.toLowerCase().includes(term.toLowerCase())))
+  
+  private thirdparties: BehaviorSubject<Thirdparty[]> = new BehaviorSubject<Thirdparty[]>([]);
+  constructor(
+    private thirdpartyService: ThirdpartyService
+  ) {
+    this.fetchData();
+  }
+  private fetchData(): void {
+    this.thirdpartyService.fetchThirdparties()
+      .then((data: Thirdparty[]) => {
+        this.thirdparties.next(data);
+      })
+      .catch((err: any) => {
+        console.error(err);
+      });
+  }
+
+	search(term: string, typeSearch: string): Observable<Thirdparty[]> {
+    this.fetchData();
+    return this.thirdparties.asObservable()
       .pipe(
-        // map((response: Thirdparty[]) => response.map((tp: Thirdparty) => tp.fiscalName)),
-        delay(600)
-        );
+        map((tps: Thirdparty[]) => {
+           return tps.filter(v => v.fiscalName.toLowerCase().includes(term.toLowerCase()));
+        })
+      )
   }
 }

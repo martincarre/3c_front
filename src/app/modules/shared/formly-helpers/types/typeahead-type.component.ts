@@ -36,10 +36,10 @@ export class FormlyFieldTypeahead extends FieldType<FieldTypeConfig> implements 
 
   formatter = (result: any) => result.fiscalName; // Todo: adapt for other types of results
 
-  search: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(300), // Debounce the user input
+  search: OperatorFunction<string, readonly any[]> = (query$: Observable<string>) =>
+    query$.pipe(
+      debounceTime(200), // Debounce the user input
       distinctUntilChanged(),
-      switchMap(term => term.length < 2 ? of([]) : this.typeaheadService.search(term, this.typeSearched)),
+      switchMap(term => term.length < 0 ? of([]) : this.typeaheadService.search(term, this.typeSearched)),
     );
 }
