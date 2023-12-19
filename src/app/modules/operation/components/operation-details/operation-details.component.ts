@@ -10,6 +10,7 @@ import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } fr
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { UserService } from 'src/app/modules/user/services/user.service';
 
 @Component({
   selector: 'app-operation-details',
@@ -55,6 +56,7 @@ export class OperationDetailsComponent implements OnDestroy {
     private toastService: ToastService,
     private modalService: NgbModal,
     private spinnerService: SpinnerService, 
+    private userService: UserService
   ) {
     this.opFields = operationForm;
     this.opDetailFields = operationsDetailsForm;
@@ -62,6 +64,7 @@ export class OperationDetailsComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
+    
   }
 
   calculateQuote(): void { 
@@ -72,7 +75,7 @@ export class OperationDetailsComponent implements OnDestroy {
       selector: this.opForm.value.quoteSelection === 'rent' ? true : false,
       amount: this.opForm.value.target,
       duration: this.opEcoDetailForm.value.andOneRv? this.opForm.value.tenor + 1 : this.opForm.value.tenor,
-      rv: this.opEcoDetailForm.value.andOneRv? 0 : this.opEcoDetailForm.value.rv / 100,
+      rv: this.opEcoDetailForm.value.andOneRv? 0 : this.opEcoDetailForm.value.rv,
     }
     const res = this.operationService.getQuote(ecoDetails);
     if (!(res instanceof Error)) {
@@ -101,8 +104,12 @@ export class OperationDetailsComponent implements OnDestroy {
     const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
     sendModalRef.componentInstance.data = op;
     sendModalRef.result
-    .then((modalRes: any) => {
+    .then((modalRes: {email: string, message: string, relatedPartner: string, roleSelection: string}) => {
+      console.log(modalRes);
       this.spinnerService.show();
+      this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.relatedPartner)
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.error(err));
       this.operationService.createOperation(op, modalRes)
       .then(
         (res: any) => {
@@ -116,7 +123,7 @@ export class OperationDetailsComponent implements OnDestroy {
       .catch((err: any) => {
         console.error(err);
         this.spinnerService.hide();
-      })
+      });
   }
 
   onSubmit(submitType: string): void {

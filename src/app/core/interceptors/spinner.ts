@@ -17,7 +17,6 @@ export class SpinnerInterceptor implements HttpInterceptor {
   constructor(private spinnerService: SpinnerService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('SpinnerInterceptor');
     let timer: any;
 
     // This function starts a timer that will show the spinner after XXms if not cleared

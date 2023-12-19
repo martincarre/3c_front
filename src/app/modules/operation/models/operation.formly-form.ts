@@ -1,5 +1,4 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
-import { of } from "rxjs";
 
 export const operationForm: any = [
   
@@ -117,6 +116,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
         className: 'col-lg-6 col-12',
         key: 'equipmentMake',
         type: 'input',
+        defaultValue: null,
         props: {
           label: 'Marca',
           placeholder: 'Marca del equipo',
@@ -129,6 +129,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
         className: 'col-lg-6 col-12',
         key: 'equipmentModel',
         type: 'input',
+        defaultValue: null,
         props: {
           label: 'Modelo',
           placeholder: 'Model del equipo',
@@ -147,6 +148,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
       {
         key: 'description',
         type: 'textarea',
+        defaultValue: null,
         props: {
           label: 'Descripción adicional',
           placeholder: '',
@@ -196,9 +198,8 @@ export const operationEconomicDetailsForm: FormlyFieldConfig[] = [
         props: {
             type: 'number',
             min: 0,
-            max: 70,
             addonRight: {
-              text: '%',
+              text: '€',
             },
             label: 'Valor Residual',
             required: true,

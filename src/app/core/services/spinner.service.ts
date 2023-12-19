@@ -9,12 +9,10 @@ export class SpinnerService {
   visibility$ = this.visibility.asObservable();
 
   show() {
-    console.log('SpinnerService.show()')
     this.visibility.next(true);
   }
 
   hide() {
-    console.log('SpinnerService.hide()');
     this.visibility.next(false);
   }
 }

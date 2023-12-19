@@ -24,5 +24,10 @@ export class NavbarComponent {
       id: 'operation',
       url: '/operation'
     },
+    {
+      name: 'Usuarios',
+      id: 'user',
+      url: '/user'
+    },
   ];
 }

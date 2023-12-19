@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
 import { NgbModalModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastsContainer } from './components/toast/toast-container.component';
@@ -27,7 +29,9 @@ import { environment } from 'src/environments/environment';
     NgbToastModule,
     NgbModalModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideFunctions(() => getFunctions()),
+    provideAuth(() => getAuth()),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
@@ -40,3 +44,4 @@ import { environment } from 'src/environments/environment';
   ]
 })
 export class CoreModule { }
+

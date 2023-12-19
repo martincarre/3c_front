@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
@@ -9,7 +9,7 @@ import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
   templateUrl: './operation-confirmation-modal.component.html',
   styleUrl: './operation-confirmation-modal.component.scss'
 })
-export class OperationConfirmationModalComponent {
+export class OperationConfirmationModalComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
   @Input() data: any;
   model: any = {};
@@ -17,7 +17,7 @@ export class OperationConfirmationModalComponent {
   sendForm: FormGroup = new FormGroup({});
   sendFormFields: FormlyFieldConfig[] = [
     {
-      key: 'destSelection',
+      key: 'roleSelection',
       type: 'select',
       defaultValue: 'partner',
       props: {
@@ -40,8 +40,8 @@ export class OperationConfirmationModalComponent {
       },
       expressions: {
         hide: (field: any) => {
-          const destSelection = field.form.controls.destSelection.value;
-          if (destSelection === 'partner') {
+          const roleSelection = field.form.controls.roleSelection.value;
+          if (roleSelection === 'partner') {
             return true;
           } else {
             return false;
@@ -59,8 +59,8 @@ export class OperationConfirmationModalComponent {
       },
       expressions: {
         hide: (field: any) => {
-          const destSelection = field.form.controls.destSelection.value;
-          if (destSelection === 'partner') {
+          const roleSelection = field.form.controls.roleSelection.value;
+          if (roleSelection === 'partner') {
             return true;
           } else {
             return false;
@@ -86,9 +86,20 @@ export class OperationConfirmationModalComponent {
         rows: 5,
       }
     }
-  ]
+  ];
+
+  ngOnInit(): void {
+    if (!this.data) {
+      console.log('No data')
+    } else {
+      console.log(this.data);
+    }
+  }
 
   onSend(): void { 
-    this.activeModal.close(this.sendForm.value);
+    this.activeModal.close({
+      ...this.sendForm.value,
+      relatedPartner: this.data.partnerId,
+    });
   }
 }
