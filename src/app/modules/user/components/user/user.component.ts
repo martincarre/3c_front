@@ -8,12 +8,12 @@ import { Component } from '@angular/core';
 export class UserComponent {
   navButtons = [
     {
-      name: 'Operaciones',
+      name: 'Lista usuarios',
       route: '/user/list',
       icon: 'bi-people-fill'
     },
     {
-      name: 'Crear',
+      name: 'Nuevo usuario',
       route: '/user/create',
       icon: 'bi-person-fill-add'
     },

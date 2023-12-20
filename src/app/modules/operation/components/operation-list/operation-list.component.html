@@ -1,19 +1,27 @@
 <div class="container mt-4">
-    <ngx-datatable 
-    class="material" 
-    [rows]="opList" 
-    [headerHeight]="50" 
-    [footerHeight]="50" 
-    [rowHeight]="'auto'"
-    [columnMode]="columnMode.force"
-    >
-    
-
-      <ngx-datatable-column name="Partner" prop="partnerFiscalName"></ngx-datatable-column>
+  <ngx-datatable 
+  class="material" 
+  [rows]="opList" 
+  [headerHeight]="50" 
+  [footerHeight]="50" 
+  [rowHeight]="'auto'"
+  [columnMode]="columnMode.force"
+  >
   
-      <ngx-datatable-column name="Marca" prop="make"></ngx-datatable-column>
-
-      <ngx-datatable-column name="Modelo" prop="model"></ngx-datatable-column>
+      <!-- Action buttons column -->
+      <ngx-datatable-column name="Acciones" [sortable]="false">
+        <ng-template ngx-datatable-cell-template let-row="row">
+            <div class="d-inline-flex gap-2">
+                <button class="btn btn-success btn-sm" (click)="sendOp(row)"><span class="bi-send-fill"></span></button>    
+                <button class="btn btn-info btn-sm" (click)="viewDetails(row)"><span class="bi-gear-fill"></span></button>
+                <button class="btn btn-danger btn-sm" (click)="deleteOperation(row)"><span class="bi-trash-fill"></span></button>
+            </div>
+        </ng-template>
+      </ngx-datatable-column>
+  
+      <ngx-datatable-column name="Partner" prop="partnerFiscalName"></ngx-datatable-column>
+      
+      <ngx-datatable-column name="Referencia operación" prop="reference"></ngx-datatable-column>
   
       <ngx-datatable-column name="Plazo" prop="tenor"></ngx-datatable-column>
 
@@ -29,16 +37,6 @@
           </ng-template>
       </ngx-datatable-column>
   
-      <!-- Action buttons column -->
-      <ngx-datatable-column name="Acciones" [sortable]="false">
-        <ng-template ngx-datatable-cell-template let-row="row">
-            <div class="d-inline-flex gap-2">
-                <button class="btn btn-success btn-sm" (click)="sendOp(row)"><span class="bi-send-fill"></span></button>    
-                <button class="btn btn-info btn-sm" (click)="viewDetails(row)"><span class="bi-gear-fill"></span></button>
-                <button class="btn btn-danger btn-sm" (click)="deleteOperation(row)"><span class="bi-trash-fill"></span></button>
-            </div>
-        </ng-template>
-      </ngx-datatable-column>
   
     </ngx-datatable>
   </div>

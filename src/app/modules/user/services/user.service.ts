@@ -17,8 +17,8 @@ export class UserService {
        this.userCollection = collection(this.fs, 'users');
     }
 
-    public async addUserByEmail(email: string, role: string, relatedPartner: string): Promise<any> {
-        return await httpsCallable(this.fns, 'createUser')({ email: email, role: role, relatedPartnerId: relatedPartner });
+    public async addUserByEmail(email: string, role: string, partnerId: string, partnerFiscalName: string): Promise<any> {
+        return await httpsCallable(this.fns, 'createUser')({ email: email, role: role, partnerId: partnerId, partnerFiscalName: partnerFiscalName });
     }
 
     public async fetchUsers(partnerId?: string, userBased?: boolean): Promise<any> {

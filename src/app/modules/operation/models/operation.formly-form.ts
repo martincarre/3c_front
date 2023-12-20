@@ -1,11 +1,36 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
 
 export const operationForm: any = [
-  
+  // Title Ref
+  {
+    className: 'section-label',
+    template: '<h5 class="card-title">Referencia de la operación:</h5>',
+  },
+  // Reference
+  {   
+    fieldGroupClassName: 'row',
+    fieldGroup: 
+      [
+        {
+          className: 'col-12',
+          key: 'reference',
+          type: 'input',
+          defaultValue: null,
+          props: {
+            label: 'Referencia',
+            placeholder: 'Operación para Juan Lopez',
+            required: true,
+          },
+          expressions: {
+            'props.disabled': 'formState.disabled'
+          }
+        },
+      ]
+    },
   // Title Econ
   {
     className: 'section-label',
-    template: '<h5 class="card-title">Datos económicos:</h5>',
+    template: '<hr /><h5 class="card-title">Datos económicos:</h5>',
   },
   // Calculator switch
   {

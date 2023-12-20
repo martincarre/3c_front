@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs, where, query } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
 
 @Injectable({
@@ -42,6 +42,16 @@ export class OperationService {
       return { id: ops.id, ...ops.data() }
     });
   }
+
+  public async fetchOperationById(opId: string): Promise<any> {
+    const opRef = doc(this.opCollection, opId);
+    return (await getDoc(opRef)).data();
+  }
+
+  public async deleteOperation(opId: string): Promise<any> {
+    const tpRef = doc(this.opCollection, opId);
+    return await deleteDoc(tpRef);
+  } 
   
   public async createOperation(op: any, contactDetails?: any): Promise<any> {
     console.log(op);

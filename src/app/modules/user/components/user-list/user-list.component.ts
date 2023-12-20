@@ -29,17 +29,16 @@ export class UserListComponent implements OnInit {
       this.userService.fetchUsers()
         .then(
           (users: any[]) => { 
-            console.log(users);
             this.userList = users.map((user: any) => {
               return {
-                partnerId: user.relatedPartnerId,
+                partnerId: user.partnerId,
+                partnerFiscalName: user.partnerFiscalName, 
                 name: user.name,
                 email: user.email,
                 type: user.role,
                 actions: null
               }
             });
-            console.log(this.userList);
             this.spinnerService.hide();
           }
         )

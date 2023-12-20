@@ -71,7 +71,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
       title: 'Eliminar tercero',
       message: `¿Está seguro que desea eliminar el tercero ${thirdparty.fiscalName}?`
     }
-    const modalRef = this.modalService.open(ConfirmationModalContent)
+    const modalRef = this.modalService.open(ConfirmationModalContent);
     modalRef.componentInstance.data = confirmationData;
     modalRef.result 
       .then((res: any) => {

@@ -26,7 +26,7 @@ export class OperationConfirmationModalComponent implements OnInit {
         required: true,
         options: [
           { label: 'Partner', value: 'partner' },
-          { label: 'Cliente', value: 'cliente' },
+          { label: 'Cliente', value: 'client' },
         ]
       }
     },
@@ -36,7 +36,7 @@ export class OperationConfirmationModalComponent implements OnInit {
       props: {
         label: 'Nombre',
         placeholder: 'Introduzca el nombre',
-        required: true,
+        required: false,
       },
       expressions: {
         hide: (field: any) => {
@@ -55,7 +55,7 @@ export class OperationConfirmationModalComponent implements OnInit {
       props: {
         label: 'Apellidos',
         placeholder: 'Introduzca los apellidos',
-        required: true,
+        required: false,
       },
       expressions: {
         hide: (field: any) => {
@@ -99,7 +99,8 @@ export class OperationConfirmationModalComponent implements OnInit {
   onSend(): void { 
     this.activeModal.close({
       ...this.sendForm.value,
-      relatedPartner: this.data.partnerId,
+      partnerId: this.data.partnerId,
+      partnerFiscalName: this.data.partnerFiscalName,
     });
   }
 }
