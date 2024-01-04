@@ -12,8 +12,8 @@
       <ngx-datatable-column name="Acciones" [sortable]="false">
         <ng-template ngx-datatable-cell-template let-row="row">
             <div class="d-inline-flex gap-2">
-                <button class="btn btn-success btn-sm" (click)="sendOp(row)"><span class="bi-send-fill"></span></button>    
-                <button class="btn btn-info btn-sm" (click)="viewDetails(row)"><span class="bi-gear-fill"></span></button>
+                <button class="btn btn-primary btn-sm" (click)="sendOp(row)"><span class="bi-send-fill"></span></button>    
+                <button class="btn btn-secondary btn-sm" (click)="viewDetails(row)"><span class="bi-eye-fill"></span></button>
                 <button class="btn btn-danger btn-sm" (click)="deleteOperation(row)"><span class="bi-trash-fill"></span></button>
             </div>
         </ng-template>

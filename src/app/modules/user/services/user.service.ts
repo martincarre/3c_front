@@ -34,4 +34,11 @@ export class UserService {
         return { id: ops.id, ...ops.data() }
         });
     }
+
+    public async checkFSUserByEmail(email: string): Promise<boolean> {
+        console.log('Firestore:', email);
+        const q = query(this.userCollection, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty;
+    }
 }

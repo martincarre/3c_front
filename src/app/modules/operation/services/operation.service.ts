@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
+import { UserService } from '../../user/services/user.service';
+import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { OperationConfirmationModalComponent } from '../components/operation-confirmation-modal/operation-confirmation-modal.component';
+import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +17,10 @@ export class OperationService {
 
   constructor(
     private fs: Firestore,
+    private userService: UserService,
+    private authService: AuthService,
+    private modalService: NgbModal,
+    private spinnerService: SpinnerService,
   ) {
     this.opCollection = collection(this.fs,'operations');
   }
@@ -51,15 +60,45 @@ export class OperationService {
   public async deleteOperation(opId: string): Promise<any> {
     const tpRef = doc(this.opCollection, opId);
     return await deleteDoc(tpRef);
-  } 
+  }
+
+  public async sendOperation(op: any): Promise<any> {
+    const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
+    sendModalRef.componentInstance.data = op;
+    return sendModalRef.result
+      .then(async (modalRes: any) => {
+        console.log(modalRes);
+        this.spinnerService.show();
+
+        // Checking if user exists
+        const checkEmail = await Promise.all([
+          this.userService.checkFSUserByEmail(modalRes.email),
+          this.authService.checkAuthUserEmail(modalRes.email)
+        ]);
+
+        let addUser = true;
+
+        if(checkEmail[0] && checkEmail[1].data) {
+          addUser = false;
+        }
+
+        // Creating user if necessary
+        await this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName);
+        
+        this.spinnerService.hide();
+        console.log('new user!');
+        
+      })
+      .catch((err: any) => {
+        console.error(err);
+        alert('Error en la respuesta del modal, pongase en contacto con el administrador.');
+        this.spinnerService.hide();
+      });
+  }
   
   public async createOperation(op: any, contactDetails?: any): Promise<any> {
     console.log(op);
     return await addDoc(this.opCollection, op);
   }
 
-  public async createUser(op: any, contactDetails: any): Promise<any> {
-    // TODO
-  
-  }
 }

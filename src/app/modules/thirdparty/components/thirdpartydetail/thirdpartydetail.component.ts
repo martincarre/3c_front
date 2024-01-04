@@ -10,6 +10,7 @@ import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
 import { ExtInfoService } from 'src/app/core/services/extInfo.service';
 import { DocumentSnapshot } from '@angular/fire/firestore';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private thirdpartyService: ThirdpartyService,
     private extInfoService: ExtInfoService,
     private router: Router,
+    private location: Location,
     private route: ActivatedRoute,
     private toastService: ToastService,
     private spinnerService: SpinnerService,
@@ -123,8 +125,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClose(): void {
-    this.router.navigate(['/thirdparty']);
+  close(): void {
+    this.location.back();
   }
 
   ngOnDestroy(): void {

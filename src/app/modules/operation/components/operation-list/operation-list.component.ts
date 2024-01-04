@@ -57,26 +57,35 @@ export class OperationListComponent implements OnInit {
         })
     }
 
-    sendOp(row: any): void {
-      const sendModal = this.modalService.open(OperationConfirmationModalComponent);
-      sendModal.componentInstance.data = row;
-      sendModal.result.then(
-        (modalRes: {email: string, message: string, partnerId: string, partnerFiscalName: string, roleSelection: string}) => {
-          this.spinnerService.show();
-          this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName)
-            .then((data: any) => {
-              console.log(data);
-              this.spinnerService.hide();
-            })
-            .catch((err: any) => { 
-              console.error(err);
-              this.spinnerService.hide();
-            });
-        },
-        (reason: any) => {
-          console.log(reason);
-        }
-      );
+    sendOp(op: any): void {
+      // Operation service function (send)
+      // STEP 1: Show modal to get the email and the message
+      // STEP 2: Send the email and the message to the backend
+      // User service function (check user)
+      // STEP 3: Check if the email and user exist in the database (google auth + firestore)
+      // Back to Operation service function (send)
+      // STEP 4: If the email and user exist, nothing happens
+      // User service funtion ()
+      // STEP 5: If the email and user do not exist, send the email to the user but create a new user in the database (Google auth + firestore)
+      
+      this.operationService.sendOperation(op)
+      // .then(
+      //   (modalRes: {email: string, message: string, partnerId: string, partnerFiscalName: string, roleSelection: string}) => {
+      //     this.spinnerService.show();
+      //     this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName)
+      //       .then((data: any) => {
+      //         console.log(data);
+      //         this.spinnerService.hide();
+      //       })
+      //       .catch((err: any) => { 
+      //         console.error(err);
+      //         this.spinnerService.hide();
+      //       });
+      //   },
+      //   (reason: any) => {
+      //     console.log(reason);
+      //   }
+      // );
     }
     
     deleteOperation(row: any): void {

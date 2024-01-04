@@ -3,7 +3,7 @@
         <h4>
             {{ title }}
         </h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
     </div>
     <div class="card-body">
         <button type="button" class="btn btn-outline-success mb-2" *ngIf="createMode || !createMode && !formEditMode.formState.disabled" (click)="tpLookUp()" [disabled]="!tpForm.get('fiscalId')?.valid || formEditMode.formState.disabled">

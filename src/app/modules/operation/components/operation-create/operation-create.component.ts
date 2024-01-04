@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Operation } from '../../models/operation.model';
-import { Subject, Subscription, map, takeUntil, tap } from 'rxjs';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { OperationService } from '../../services/operation.service';
@@ -51,6 +51,7 @@ export class OperationCreateComponent implements OnDestroy {
     private operationService: OperationService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private toastService: ToastService,
     private modalService: NgbModal,
     private spinnerService: SpinnerService, 
@@ -63,6 +64,10 @@ export class OperationCreateComponent implements OnDestroy {
 
   ngOnInit(): void {
 
+  }
+
+  close(): void {
+    this.location.back();
   }
 
   calculateQuote(): void { 
@@ -99,27 +104,25 @@ export class OperationCreateComponent implements OnDestroy {
   }
   
   send(op: any): void { 
-    const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
-    sendModalRef.componentInstance.data = op;
-    sendModalRef.result
-    .then((modalRes: {email: string, message: string, partnerId: string, roleSelection: string, partnerFiscalName: string}) => {
-      console.log(modalRes);
-      this.spinnerService.show();
-      this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName)
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.error(err));
-      this.operationService.createOperation(op, modalRes)
-      .then(
-        (res: any) => {
-          this.toastService.show('bg-success text-light', `Opéración guardada y enviada a ${modalRes.email} con éxito!`, 'Éxito!', 7000);
-          this.router.navigate(['../list'], { relativeTo: this.route });
+    this.operationService.sendOperation(op)
+      .then((modalRes: {email: string, message: string, partnerId: string, roleSelection: string, partnerFiscalName: string}) => {
+        console.log(modalRes);
+        this.spinnerService.show();
+        this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName)
+        .then((res: any) => console.log(res))
+        .catch((err: any) => console.error(err));
+        this.operationService.createOperation(op, modalRes)
+        .then(
+          (res: any) => {
+            this.toastService.show('bg-success text-light', `Opéración guardada y enviada a ${modalRes.email} con éxito!`, 'Éxito!', 7000);
+            this.router.navigate(['../list'], { relativeTo: this.route });
+            this.spinnerService.hide();
+          });
+        })
+        .catch((err: any) => {
+          console.error(err);
           this.spinnerService.hide();
         });
-      })
-      .catch((err: any) => {
-        console.error(err);
-        this.spinnerService.hide();
-      });
   }
 
   onSubmit(submitType: string): void {
