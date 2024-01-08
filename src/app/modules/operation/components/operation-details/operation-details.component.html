@@ -24,11 +24,25 @@
             <div class="row">
                 <h1 class="col-12">{{ currOp.reference }}</h1>
                 <!-- CONTROLS FOR MODERATORS / ADMINS / VENDORS -->
-                <div class="d-flex justify-content-right gap-2" >
+                <div class="d-flex justify-content-right gap-3" >
                     <button type="button" class="btn btn-primary" (click)="onSend()">
                         Enviar
                         <i class="bi-send-fill ms-1"></i>
                     </button>
+                    @if (currOp.mails?.length > 0) {
+                        <button type="button" class="btn btn-secondary position-relative" (click)="onMessagesView()">
+                            <i class="bi-mailbox2-flag"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ currOp.mails?.length }}
+                                <span class="visually-hidden">mensajes enviados</span>
+                            </span>
+                        </button>
+                    }
+                    @else {
+                        <button type="button" class="btn btn-secondary">
+                            <i class="bi-mailbox2"></i>
+                        </button>
+                    }
                     <button type="button" class="btn btn-secondary" (click)="onDuplicate()">
                         <i class="bi-copy"></i>
                     </button>

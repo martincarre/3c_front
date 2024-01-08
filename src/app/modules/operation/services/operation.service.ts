@@ -14,6 +14,9 @@ export class OperationService {
   private _rate: number = 0.1;
   private _periodicity: number = 12;
   private opCollection;
+  private opEmailCollection;
+  // TODO Change for production
+  private devBaseRoute: string = 'http://localhost:4200/operation/details/';
 
   constructor(
     private fs: Firestore,
@@ -23,6 +26,7 @@ export class OperationService {
     private spinnerService: SpinnerService,
   ) {
     this.opCollection = collection(this.fs,'operations');
+    this.opEmailCollection = collection(this.fs,'operationEmails');
   }
 
   public getQuote(ecoDetails: any): number | Error {
@@ -67,7 +71,6 @@ export class OperationService {
     sendModalRef.componentInstance.data = op;
     return sendModalRef.result
       .then(async (modalRes: any) => {
-        console.log(modalRes);
         this.spinnerService.show();
 
         // Checking if user exists
@@ -75,28 +78,41 @@ export class OperationService {
           this.userService.checkFSUserByEmail(modalRes.email),
           this.authService.checkAuthUserEmail(modalRes.email)
         ]);
-
+        // if not create a new user
         let addUser = true;
 
-        if(checkEmail[0] && checkEmail[1].data) {
+        // if it exists, do nothing
+        if(checkEmail[0] || checkEmail[1].data) {
           addUser = false;
         }
 
         // Creating user if necessary
-        await this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName);
+        if (addUser) {
+          this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName);
+        }
+
+        // Create message object with all the required params
+        delete Object.assign(modalRes, {opId: modalRes.id }).id;
+        const offerLink = this.devBaseRoute + modalRes.opId;
+        console.log('offerLink', offerLink);
+        console.log('Base', this.devBaseRoute);
+        console.log('modalRes opId', modalRes.opId);
+        modalRes = { offerLink: offerLink ,...modalRes };
+        console.log(modalRes);
+        // Add the message to be sent to Firestore
+        await addDoc(this.opEmailCollection, modalRes);
+        // Upon creation, firestore will shoot an email configured as a trigger extension with Google Functions
         
         this.spinnerService.hide();
-        console.log('new user!');
         
       })
       .catch((err: any) => {
         console.error(err);
-        alert('Error en la respuesta del modal, pongase en contacto con el administrador.');
         this.spinnerService.hide();
       });
   }
   
-  public async createOperation(op: any, contactDetails?: any): Promise<any> {
+  public async createOperation(op: any): Promise<any> {
     console.log(op);
     return await addDoc(this.opCollection, op);
   }

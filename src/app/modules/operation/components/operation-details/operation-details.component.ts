@@ -17,7 +17,7 @@ export class OperationDetailsComponent implements OnInit {
     name: 'Juan',
     lastName: 'Lopez',
     role: 'partner'
-  }
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -26,7 +26,8 @@ export class OperationDetailsComponent implements OnInit {
     private operationService: OperationService,
     private spinnerService: SpinnerService,
     private userService: UserService,
-  ) {}
+  ) {
+  }
 
 
   ngOnInit(): void {
@@ -50,7 +51,8 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   onSend(): void { 
-
+    // TODO: need to check what we're sending here in terms of data;
+    this.operationService.sendOperation(this.currOp);
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
 
@@ -62,6 +64,10 @@ export class OperationDetailsComponent implements OnInit {
   onDelete(): void { 
     alert('Eliminar operación');
     this.router.navigate(['../../'], { relativeTo: this.route });
+  }
+   
+  onMessagesView(): void {
+    alert('Ver mensajes');
   }
 
   close(): void {

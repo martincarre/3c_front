@@ -104,17 +104,13 @@ export class OperationCreateComponent implements OnDestroy {
   }
   
   send(op: any): void { 
+    // TODO: need to check what we're sending here in terms of data;
     this.operationService.sendOperation(op)
-      .then((modalRes: {email: string, message: string, partnerId: string, roleSelection: string, partnerFiscalName: string}) => {
-        console.log(modalRes);
-        this.spinnerService.show();
-        this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName)
-        .then((res: any) => console.log(res))
-        .catch((err: any) => console.error(err));
-        this.operationService.createOperation(op, modalRes)
+      .then(() => {
+        this.operationService.createOperation(op)
         .then(
           (res: any) => {
-            this.toastService.show('bg-success text-light', `Opéración guardada y enviada a ${modalRes.email} con éxito!`, 'Éxito!', 7000);
+            console.log(res);
             this.router.navigate(['../list'], { relativeTo: this.route });
             this.spinnerService.hide();
           });

@@ -31,44 +31,6 @@ export class OperationConfirmationModalComponent implements OnInit {
       }
     },
     {
-      key: 'fName',
-      type: 'input',
-      props: {
-        label: 'Nombre',
-        placeholder: 'Introduzca el nombre',
-        required: false,
-      },
-      expressions: {
-        hide: (field: any) => {
-          const roleSelection = field.form.controls.roleSelection.value;
-          if (roleSelection === 'partner') {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      }
-    },
-    {
-      key: 'lName',
-      type: 'input',
-      props: {
-        label: 'Apellidos',
-        placeholder: 'Introduzca los apellidos',
-        required: false,
-      },
-      expressions: {
-        hide: (field: any) => {
-          const roleSelection = field.form.controls.roleSelection.value;
-          if (roleSelection === 'partner') {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      }
-    },
-    {
       key: 'email',
       type: 'input',
       props: {
@@ -99,8 +61,7 @@ export class OperationConfirmationModalComponent implements OnInit {
   onSend(): void { 
     this.activeModal.close({
       ...this.sendForm.value,
-      partnerId: this.data.partnerId,
-      partnerFiscalName: this.data.partnerFiscalName,
+      ...this.data
     });
   }
 }
