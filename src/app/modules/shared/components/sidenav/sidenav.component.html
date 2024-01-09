@@ -1,0 +1,11 @@
+<div class="sidebar d-flex flex-column px-3 pt-2" *ngIf="navButtons">
+
+    <ul class="nav nav-pills mt-3 flex-column" id="menu">
+        <li class="nav-item" *ngFor="let navButton of navButtons">
+            <a class="nav-link" [routerLink]="navButton.route" routerLinkActive="active" #link="routerLinkActive" [class.link-body-emphasis]="!link.isActive">
+                <i class="{{ navButton.icon }}"></i> <span class="ms-1 d-none d-sm-inline">{{ navButton.name }}</span>
+            </a>
+        </li>
+    </ul>
+    
+</div>

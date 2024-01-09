@@ -1,0 +1,186 @@
+
+<!-- TODO: Delete once deved -> Buttons to choose user role -->
+<div class="container pt-3 col-lg-2 col-12 mb-2">
+    <select class="form-select" (change)="userRoleSelect($event.target)">
+        <option value="customer" >customer</option>
+        <option value="moderator">moderator</option>
+        <option value="partner" selected>partner</option>
+        <option value="admin">admin</option>
+    </select>
+</div>
+
+<!-- Operation details -->
+<div class="container bg-light bg-gradient rounded-4 p-4 m-lg-4 m-md-2" *ngIf="currOp">
+
+    <!-- TITLE ADAPTS DEPENDING ON USER -->
+    <div class="p-4 d-flex justify-content-between"> 
+        @if (currentUser.role === 'customer') {
+            <div class="row">
+                <h1 class="col-12">Hola {{ currentUser.name }}!</h1>
+                <h4 class="col-12 fw-light">A continuación encontrarás la cotización de {{ currOp.partnerFiscalName }}</h4>
+            </div>
+        }
+        @else {
+            <div class="row">
+                <h1 class="col-12">{{ currOp.reference }}</h1>
+                <!-- CONTROLS FOR MODERATORS / ADMINS / VENDORS -->
+                <div class="d-flex justify-content-right gap-3" >
+                    <button type="button" class="btn btn-primary" (click)="onSend()">
+                        Enviar
+                        <i class="bi-send-fill ms-1"></i>
+                    </button>
+                    @if (currOp.mails?.length > 0) {
+                        <button type="button" class="btn btn-secondary position-relative" (click)="onMessagesView()">
+                            <i class="bi-mailbox2-flag"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ currOp.mails?.length }}
+                                <span class="visually-hidden">mensajes enviados</span>
+                            </span>
+                        </button>
+                    }
+                    @else {
+                        <button type="button" class="btn btn-secondary">
+                            <i class="bi-mailbox2"></i>
+                        </button>
+                    }
+                    <button type="button" class="btn btn-secondary" (click)="onDuplicate()">
+                        <i class="bi-copy"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="onDelete()">
+                        <i class="bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+        }
+    </div>
+
+    <!-- QUOTE INFO SHARED BY EVERYONE -->
+    <div class="row d-flex justify-content-center gap-lg-5 gap-3 m-3">
+        <div class="row col-lg-10 col-12 rounded bg-body justify-content-center bg-gradient p-5 gap-lg-4 gap-3">
+            <!-- OP INFO -->
+            <div class="col-lg-5 col-12 rounded bg-light shadow p-3">
+                <h4>Detalles de la oferta</h4>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between bg-transparent">
+                        <span>Proveedor:</span>
+                        <span>
+                            {{ currOp.partnerFiscalName }}
+                            <a *ngIf="currentUser.role !== 'customer'" class="ms-1 link-dark" style="cursor: pointer;" (click)="partnerLookup(currOp.partnerId)"><i class="bi-search"></i></a>
+                        </span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between bg-transparent">
+                        <span>Marca:</span>
+                        <span>{{ currOp.make }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between bg-transparent">
+                        <span>Modelo:</span>
+                        <span>{{ currOp.model }}</span>
+                    </div>
+                </div>
+                <div *ngIf="currOp.description" class="bg-transparent">
+                    <hr />
+                    <span class="d-block ps-3">Descripción:</span>
+                    <span class="d-block p-3">{{  currOp.description }}</span>
+                </div>
+            </div>
+            <div class="col-lg-5 col-12 rounded bg-light shadow p-3 d-flex align-items-center justify-content-center">
+                <div class="container">
+                    <div class="fs-5">Cuota para {{ currOp.tenor }} mes:</div>
+                    <div class="fs-2">
+                        <i class="bi-bag-heart-fill"></i>
+                        {{ currOp.rent | currency:'EUR' }} / {{ currOp.periodicity? currOp.periodicity : 'mes'}}
+                    </div>
+                    <p class="text-body-secondary fw-light">cuota expresada en euros sin IVA ni otros impuestos.<span class="align-text-top" style="font-size: 0.55rem;">(1)</span></p>
+                </div>
+            </div>
+            <div *ngIf="currentUser.role === 'customer'" class="d-grid mx-auto col-lg-4 col-12 gap-2 m-4">
+                <button class="btn btn-lg btn-primary rounded-pill">Seguir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSIDER DATA - VENDOR / MODERATOR / ADMIN -->
+    @if (currentUser.role !== 'customer') {
+    <div class="row d-flex justify-content-center gap-lg-5 gap-3 m-3">
+        <div class="row col-lg-10 col-12 rounded bg-body justify-content-center bg-gradient p-5 gap-lg-4 gap-3">
+            <div class="fs-2">Información cotización:</div>
+            
+            <!-- Starting with all except customer (moderator + vendor + admin) -->
+        
+                <div class="col-lg-5 col-12 rounded shadow bg-light p-3">
+                    <h4>Datos económicos</h4>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Importe de la inversión:</span>
+                            <span>{{ currOp.investment | currency:'EUR' }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Cuota: </span>
+                            <span>{{ currOp.rent | currency:'EUR' }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Plazo:</span>
+                            <span>{{ currOp.tenor }} meses</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Valor Residual:</span>
+                            <span>{{ (currOp.andOneRv ? currOp.rent : currOp.rv) | currency:'EUR' }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Comisión proveedor:</span>
+                            <span>{{ currOp.comSwitch ? currOp.commission + '%' : 'No' }}</span>
+                        </div>
+                        <div *ngIf="currOp.comSwitch" class="list-group-item d-flex justify-content-between bg-transparent">
+                            <span>Comisión proveedor:</span>
+                            <span>{{ currOp.commission / 100 * currOp.investment | currency:'EUR' }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Part only for moderators / admins -->
+                @if ((currentUser.role === 'moderator') || (currentUser.role === 'admin')) {
+                    
+                    <div class="col-lg-5 col-12 rounded bg-light shadow p-3">
+                        <h4>Información de rendimientos</h4>
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between bg-transparent">
+                                <span>Tasa personalizada:</span>
+                                <span>{{ currOp.rateSwitch ? currOp.rate + '%' : 'No' }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between bg-transparent">
+                                <span>Margen (%):</span>
+                                <span>{{ currOp.margin + '%' }}</span>
+                            </div> 
+                            <div class="list-group-item d-flex justify-content-between bg-transparent">
+                                <span>Margen (€):</span>
+                                <span>{{ currOp.margin / 100 * currOp.investment | currency:'EUR' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+            </div>
+        </div>
+    }
+
+</div>
+
+<!-- TODO: Ventajas del Renting?  -->
+
+<!-- TODO: Footer with the disclaimers -->
+<div class="bg-light mt-5" style="padding: 1.5rem 20%;">
+    <p>
+        <span class="align-text-top" style="font-size: 0.55rem;">(1)</span>
+        <span class="text-body-secondary" style="font-size: 0.7rem;"> 
+            Esta cotización tiene una validez de 10 días a partir de la fecha de su emisión. 
+            Este periodo de validez transcurrido, la cuota podría ser invalida y el contrato relacionado, potencialmente, cancelado. 
+            Reiteramos que la cuota esta expresada en euros sin IVA ni ningún otro impuestos. Tanto el IVA como cualquier otro impuesto aplicable, puede variar en función de la legislación vigente 
+            en el momento de la firma del contrato.
+            <br>
+            La validación de esta cotización y, por consecuente, del contrato potencial de arrendamiento relacionado esta sujeta a la validación del expediente por el comité de riesgos y compliance.
+        </span>
+    </p>
+
+    <hr />
+</div>
