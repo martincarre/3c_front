@@ -7,6 +7,7 @@ import { OperationCreateComponent } from './components/operation-create/operatio
 import { OperationConfirmationModalComponent } from './components/operation-confirmation-modal/operation-confirmation-modal.component';
 import { OperationListComponent } from './components/operation-list/operation-list.component';
 import { OperationDetailsComponent } from './components/operation-details/operation-details.component';
+import { OperationMailListComponent } from './components/operation-mail-list/operation-mail-list.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { OperationDetailsComponent } from './components/operation-details/operat
     OperationCreateComponent,
     OperationDetailsComponent,
     OperationConfirmationModalComponent,
-    OperationListComponent
+    OperationListComponent,
+    OperationMailListComponent
   ],
   imports: [
     CommonModule,
