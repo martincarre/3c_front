@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OperationService } from '../../services/operation.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
-import { UserService } from 'src/app/modules/user/services/user.service';
 
 @Component({
   selector: 'app-operation-details',
@@ -88,7 +87,11 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   onMessagesView(): void {
-    alert('Ver mensajes');
+    if (this.currentId) {
+      this.operationService.viewMails(this.currentId);
+    } else {
+      console.error('No operation id found');
+    }
   }
 
   close(): void {

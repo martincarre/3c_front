@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
 import { UserService } from '../../user/services/user.service';
-import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../components/operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import { OperationMailListComponent } from '../components/operation-mail-list/operation-mail-list.component';
 
 @Injectable({
   providedIn: 'root'
@@ -132,6 +133,25 @@ export class OperationService {
   public async createOperation(op: any): Promise<any> {
     console.log(op);
     return await addDoc(this.opCollection, op);
+  }
+
+  public async viewMails(opId: string): Promise<any> {
+    const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent);
+    mailModalRef.componentInstance.data = opId;
+    return mailModalRef.result;
+
+  }
+
+  public async fetchOperationMails(opId: string): Promise<any> {
+    const constraints: any[] = [];
+    constraints.push(where('opId', '==', opId));
+    const q = query(this.opEmailCollection, ...constraints);
+
+    return (await getDocs(q)).docs.map(ops => {
+      let mailOps = { id: ops.id, ...ops.data() };
+      // TODO Get the mail status by checking the mail collection
+      return mailOps;
+    });
   }
 
 }

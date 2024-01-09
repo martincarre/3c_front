@@ -1,1 +1,29 @@
-<p>operation-mail-list works!</p>
+<div class="modal-content">
+    <div class="modal-header d-flex justify-content-between">
+        <h5 class="modal-title">Envios de la operación</h5>
+        <button type="button" class="btn-close" (click)="activeModal.dismiss()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <ol class="list-group list-group-numbered">
+            @for (mail of mails; track mail.id) {
+                <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{ mail.email }}</div>
+                        <p class="mb-0">{{ mail.message }}</p>
+                    </div>
+                    <div>
+                        Enviado el: TODO
+                    </div>
+                    <div>
+                        @if (mail.delivery == 'SUCCESS') {
+                            <span class="badge bg-success">Enviado</span>
+                        } 
+                        @else {
+                            <span class="badge bg-danger">Error</span>
+                        }
+                    </div>
+                </li>
+            }
+        </ol>
+    </div>
+</div>
