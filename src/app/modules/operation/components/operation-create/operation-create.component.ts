@@ -7,10 +7,8 @@ import { OperationService } from '../../services/operation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } from '../../models/operation.formly-form';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
-import { UserService } from 'src/app/modules/user/services/user.service';
+
 
 @Component({
   selector: 'app-operation-create',
@@ -19,7 +17,7 @@ import { UserService } from 'src/app/modules/user/services/user.service';
 })
 export class OperationCreateComponent implements OnDestroy {
   private opSub: Subscription = new Subscription();
-  private submitSub: Subscription = new Subscription();
+  private ecoDetailsSub: Subscription = new Subscription();
 
   fiscalId: FormControl = new FormControl('');
   tpInfo: any = null;
@@ -61,7 +59,12 @@ export class OperationCreateComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-
+    this.opSub = this.opForm.valueChanges.subscribe((change: any) => {
+      this.calculationResult = null;
+    });
+    this.ecoDetailsSub = this.opEcoDetailForm.valueChanges.subscribe((change: any) => {
+      this.calculationResult = null;
+    });
   }
 
   close(): void {
@@ -158,6 +161,6 @@ export class OperationCreateComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.opSub.unsubscribe();
-    this.submitSub.unsubscribe();
+    this.ecoDetailsSub.unsubscribe();
   }
 }
