@@ -64,7 +64,7 @@ export class OperationDetailsComponent implements OnInit {
     };
     this.operationService.sendOperation(opToSend)
       .then((data: any) => {
-        this.router.navigate(['../../'], { relativeTo: this.route });
+        console.log(data);
       })
       .catch((err: any) => {
         console.log(err);
