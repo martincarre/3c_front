@@ -139,10 +139,9 @@ export class OperationCreateComponent implements OnDestroy {
   }
 
   onSubmit(submitType: string): void {
-    console.log(this.opDetailForm.value.partner);
     const op = {
       ...this.opEcoDetailForm.value,
-      reference: this.opForm.value.reference,
+      reference: this.opDetailForm.value.reference,
       partnerId: this.opDetailForm.value.partner.id,
       partnerFiscalName: this.opDetailForm.value.partner.fiscalName,
       make: this.opDetailForm.value.equipmentMake,
