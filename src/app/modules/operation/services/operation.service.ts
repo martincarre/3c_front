@@ -6,6 +6,7 @@ import { NgbModal, NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstra
 import { OperationConfirmationModalComponent } from '../components/operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -61,9 +62,25 @@ export class OperationService {
     return (await getDoc(opRef)).data();
   }
 
-  public async deleteOperation(opId: string): Promise<any> {
-    const tpRef = doc(this.opCollection, opId);
-    return await deleteDoc(tpRef);
+  public async deleteOperation(op: any): Promise<any> {
+    console.log(op);
+    const confirmationData = {
+      title: 'Eliminar operación',
+      message: `¿Está seguro que desea eliminar el tercero ${op.reference}?`
+    }
+    const deleteModalRef: NgbModalRef = this.modalService.open(ConfirmationModalContent);
+    deleteModalRef.componentInstance.data = confirmationData;
+    return deleteModalRef.result
+      .then(async () => {
+        this.spinnerService.show();
+        const tpRef = doc(this.opCollection, op.id);
+        await deleteDoc(tpRef);
+        this.spinnerService.hide();
+      })
+      .catch((err: any) => {
+        console.error(err);
+        this.spinnerService.hide();
+      });
   }
 
   public async sendOperation(op: any): Promise<any> {

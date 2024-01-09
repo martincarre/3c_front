@@ -78,10 +78,15 @@ export class OperationDetailsComponent implements OnInit {
   };
 
   onDelete(): void { 
-    alert('Eliminar operación');
-    this.router.navigate(['../../'], { relativeTo: this.route });
+    this.operationService.deleteOperation({ id: this.currentId, ...this.currOp})
+      .then(() => {
+        this.router.navigate(['../../'], { relativeTo: this.route });
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   }
-   
+
   onMessagesView(): void {
     alert('Ver mensajes');
   }

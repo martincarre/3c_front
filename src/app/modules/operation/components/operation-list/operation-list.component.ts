@@ -65,28 +65,12 @@ export class OperationListComponent implements OnInit {
     }
     
     deleteOperation(row: any): void {
-      const confirmationData = {
-        title: 'Eliminar operación',
-        message: `¿Está seguro que desea eliminar el tercero ${row.reference}?`
-      }
-      const modalRef = this.modalService.open(ConfirmationModalContent);
-      modalRef.componentInstance.data = confirmationData;
-      modalRef.result
-        .then((res: any) => {
-          this.spinnerService.show();
-          row.id ? this.operationService.deleteOperation(row.id)
-            .then((delRes: any) => {
-              this.spinnerService.hide();
-              this.fetchData();
-            })
-            .catch((err: any) => {
-              this.spinnerService.hide();
-              console.error(err);
-            })
-            : console.log('No id');
+      this.operationService.deleteOperation(row)
+      .then(() => {
+        this.fetchData();
       })
       .catch((err: any) => {
-        console.error(err);
+        console.log(err);
       });
     }
     

@@ -119,7 +119,7 @@ export class OperationCreateComponent implements OnDestroy {
           reference: op.reference,
           tenor: op.tenor,
         };
-        this.operationService.sendOperation(op)
+        this.operationService.sendOperation(opToSend)
           .then(() => {
             this.router.navigate(['../list'], { relativeTo: this.route });
             this.spinnerService.hide();
