@@ -35,7 +35,7 @@
                     <div class="d-flex flex-column" style="min-height: 100%;">
                         <formly-form [form]="opForm" [fields]="opFields" [model]="opModel" [options]="opOptions"></formly-form>
                         <div class="row d-inline-flex justify-content-between align-items-center">
-                            <button type="button" (click)="calculateQuote()" class="btn btn-secondary col-md-2 col-12 mt-2 mb-sm-2 ms-md-3" [disabled]="opForm.invalid || opEcoDetailForm.invalid">Calcular<i class="bi-calculator-fill ms-2"></i> </button>
+                            <button type="button" (click)="calculateQuote()" class="btn btn-secondary col-md-3 col-12 mt-2 mb-sm-2 ms-md-3" [disabled]="opForm.invalid || opEcoDetailForm.invalid">Calcular<i class="bi-calculator-fill ms-2"></i> </button>
                             <div *ngIf="calculationResult" class="d-inline-flex rounded shadow col-md-4 col-12 bg-secondary me-md-5 justify-content-center align-items-center p-2 text-white">
                                 <h4 class="mb-0 fw-normal"> {{ calculationResult | currency:'EUR' }} </h4>
                             </div>
