@@ -14,6 +14,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'list', pathMatch: 'full'},
       { path: 'create', component: OperationCreateComponent },
       { path: 'details/:id', component: OperationDetailsComponent  },
+      { path: 'copy-quote/:id', component: OperationCreateComponent },
       { path: 'list', component: OperationListComponent },
     ]
   },

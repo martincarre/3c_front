@@ -66,7 +66,6 @@ export class OperationService {
   }
 
   public async deleteOperation(op: any): Promise<any> {
-    console.log(op);
     const confirmationData = {
       title: 'Eliminar operación',
       message: `¿Está seguro que desea eliminar el tercero ${op.reference}?`
@@ -86,8 +85,8 @@ export class OperationService {
       });
   }
 
-  public async sendOperation(op: any): Promise<any> {
-    const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent);
+  public async sendOperation(op: any, triggeredFrom: string): Promise<any> {
+    const sendModalRef: NgbModalRef = this.modalService.open(OperationConfirmationModalComponent, { size: 'lg', centered: true});
     sendModalRef.componentInstance.data = op;
     return sendModalRef.result
       .then(async (modalRes: any) => {
@@ -115,22 +114,25 @@ export class OperationService {
         delete Object.assign(modalRes, {opId: modalRes.id }).id;
         const offerLink = this.devBaseRoute + modalRes.opId;
         modalRes = { offerLink: offerLink, sentDate: serverTimestamp(), ...modalRes };
-        console.log(modalRes);
         // Add the message to be sent to Firestore
         await addDoc(this.opEmailCollection, modalRes);
         // Upon creation, firestore will shoot an email configured as a trigger extension with Google Functions
         
         this.spinnerService.hide();
         
+        // Need to work on redirection depending on whether the modal was "dismissed" or not.
+        if (triggeredFrom === 'details') {
+          return {redirect: true}
+        } else {
+          return {redirect: false}
+        }
       })
       .catch((err: any) => {
-        console.error(err);
         this.spinnerService.hide();
       });
   }
   
   public async createOperation(op: any): Promise<any> {
-    console.log(op);
     op = { creation: serverTimestamp(), ...op };
     return await addDoc(this.opCollection, op);
   }
@@ -155,7 +157,7 @@ export class OperationService {
       // Get the mail status by checking the mail collection
       const sysMail = await this.mailService.fetchMailById(transformedOpMail.mailId);
       const delivery = sysMail.delivery.state;
-      const deliveryDate = sysMail.delivery.endTime;
+      const deliveryDate = sysMail.delivery.startTime;
       return { ...transformedOpMail, delivery, deliveryDate };
     });
     // Wait for all the promises to resolve so that the opMails are complete

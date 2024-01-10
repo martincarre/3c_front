@@ -65,6 +65,8 @@ export class OperationCreateComponent implements OnDestroy {
     this.ecoDetailsSub = this.opEcoDetailForm.valueChanges.subscribe((change: any) => {
       this.calculationResult = null;
     });
+
+    console.log(this.route.snapshot.params['id']);
   }
 
   close(): void {
@@ -122,7 +124,7 @@ export class OperationCreateComponent implements OnDestroy {
           reference: op.reference,
           tenor: op.tenor,
         };
-        this.operationService.sendOperation(opToSend)
+        this.operationService.sendOperation(opToSend, 'create')
           .then(() => {
             this.router.navigate(['../list'], { relativeTo: this.route });
             this.spinnerService.hide();

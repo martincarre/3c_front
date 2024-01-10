@@ -61,7 +61,7 @@ export class OperationListComponent implements OnInit {
     }
 
     sendOp(op: any): void {
-      this.operationService.sendOperation(op)
+      this.operationService.sendOperation(op, 'list')
     }
     
     deleteOperation(row: any): void {

@@ -62,10 +62,16 @@ export class OperationDetailsComponent implements OnInit {
       reference: this.currOp.reference,
       tenor: this.currOp.tenor,
     };
-    this.operationService.sendOperation(opToSend)
-      .then((data: any) => {
-        console.log(data);
-      })
+    this.operationService.sendOperation(opToSend, 'details')
+      .then(
+        (data: any) => {
+          console.log(data);
+          // this.router.navigate(['../../'], { relativeTo: this.route });
+        },
+        (reason) => {
+          console.log(reason);
+        }
+      )
       .catch((err: any) => {
         console.log(err);
       });
@@ -88,7 +94,10 @@ export class OperationDetailsComponent implements OnInit {
 
   onMessagesView(): void {
     if (this.currentId) {
-      this.operationService.viewMails(this.currentId);
+      this.operationService.viewMails(this.currentId)
+      // Putting a then but useless. Just to avoid a console.error for not handling the promise
+        .then(() => {})
+        .catch(() => {});
     } else {
       console.error('No operation id found');
     }

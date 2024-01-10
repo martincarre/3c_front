@@ -53,8 +53,6 @@ export class OperationConfirmationModalComponent implements OnInit {
   ngOnInit(): void {
     if (!this.data) {
       console.log('No data')
-    } else {
-      console.log(this.data);
     }
   }
 
