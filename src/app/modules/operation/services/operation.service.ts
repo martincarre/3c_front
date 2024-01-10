@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
 import { UserService } from '../../user/services/user.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 import { OperationMailListComponent } from '../components/operation-mail-list/operation-mail-list.component';
+import { MailService } from 'src/app/core/services/mail.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class OperationService {
     private authService: AuthService,
     private modalService: NgbModal,
     private spinnerService: SpinnerService,
+    private mailService: MailService,
   ) {
     this.opCollection = collection(this.fs,'operations');
     this.opEmailCollection = collection(this.fs,'operationEmails');
@@ -112,10 +114,7 @@ export class OperationService {
         // Create message object with all the required params
         delete Object.assign(modalRes, {opId: modalRes.id }).id;
         const offerLink = this.devBaseRoute + modalRes.opId;
-        console.log('offerLink', offerLink);
-        console.log('Base', this.devBaseRoute);
-        console.log('modalRes opId', modalRes.opId);
-        modalRes = { offerLink: offerLink ,...modalRes };
+        modalRes = { offerLink: offerLink, sentDate: serverTimestamp(), ...modalRes };
         console.log(modalRes);
         // Add the message to be sent to Firestore
         await addDoc(this.opEmailCollection, modalRes);
@@ -132,26 +131,52 @@ export class OperationService {
   
   public async createOperation(op: any): Promise<any> {
     console.log(op);
+    op = { creation: serverTimestamp(), ...op };
     return await addDoc(this.opCollection, op);
   }
 
   public async viewMails(opId: string): Promise<any> {
-    const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent);
+    const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent, { size: 'lg', centered: true, scrollable: true});
     mailModalRef.componentInstance.data = opId;
     return mailModalRef.result;
-
   }
 
   public async fetchOperationMails(opId: string): Promise<any> {
+    // Creating a query constraints array for more future flexibility
     const constraints: any[] = [];
     constraints.push(where('opId', '==', opId));
+    // Creating the query
     const q = query(this.opEmailCollection, ...constraints);
-
-    return (await getDocs(q)).docs.map(ops => {
-      let mailOps = { id: ops.id, ...ops.data() };
-      // TODO Get the mail status by checking the mail collection
-      return mailOps;
+    // Fetching the opMails
+    const opMailsDocs = (await getDocs(q)).docs;
+    // Transforming the opMails to include the delivery status and date
+    const transformedOpMailsPromises = opMailsDocs.map(async (opMail) => {
+      let transformedOpMail: any = { id: opMail.id, ...opMail.data() };
+      // Get the mail status by checking the mail collection
+      const sysMail = await this.mailService.fetchMailById(transformedOpMail.mailId);
+      const delivery = sysMail.delivery.state;
+      const deliveryDate = sysMail.delivery.endTime;
+      return { ...transformedOpMail, delivery, deliveryDate };
     });
+    // Wait for all the promises to resolve so that the opMails are complete
+    const transformedOpMails = await Promise.all(transformedOpMailsPromises);
+
+    // Sort the transformed opMails by deliveryDate (most recent first)
+    transformedOpMails.sort((a, b) => {
+      const aSeconds = a.deliveryDate.seconds;
+      const bSeconds = b.deliveryDate.seconds;
+      const aNanoseconds = a.deliveryDate.nanoseconds;
+      const bNanoseconds = b.deliveryDate.nanoseconds;
+
+      // Compare seconds first
+      if (aSeconds !== bSeconds) {
+        return bSeconds - aSeconds;
+      }
+      // If seconds are equal, compare nanoseconds
+      return bNanoseconds - aNanoseconds;
+    });
+
+    return transformedOpMails;
   }
 
 }

@@ -11,7 +11,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 // Bootstrap imports:
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Formly imports:
@@ -68,6 +68,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     NgbDropdownModule,
     NgbTypeaheadModule,
     NgSelectModule,
+    NgbAccordionModule,
   ],
   exports: [
     // Modules: 
@@ -82,6 +83,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     NgbDropdownModule,
     NgbTypeaheadModule,
     NgSelectModule,
+    NgbAccordionModule,
   ]
 })
 export class SharedModule { }

@@ -4,26 +4,36 @@
         <button type="button" class="btn-close" (click)="activeModal.dismiss()" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <ol class="list-group list-group-numbered">
+        <div ngbAccordion [closeOthers]="true">
             @for (mail of mails; track mail.id) {
-                <li class="list-group-item d-flex justify-content-between align-items-start gap-3">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">{{ mail.email }}</div>
-                        <p class="mb-0">{{ mail.message }}</p>
+                <div ngbAccordionItem>
+                    <h2 ngbAccordionHeader>
+                     <button ngbAccordionButton>
+                        <div class="d-flex gap-3">
+                            <h6>
+                                {{mail.email}}
+                            </h6>
+                            <div>
+                                @if (mail.delivery == 'SUCCESS') {
+                                    <span class="badge bg-success">Enviado - {{ mail.deliveryDate.toDate() | date:'dd/MM/yy h:mm a' }}</span>
+                                } 
+                                @else if (mail.delivery == 'PENDING') {
+                                    <span class="badge bg-warning">En envio</span>
+                                }
+                                @else {
+                                    <span class="badge bg-danger">Error</span>
+                                }
+                            </div>
+                        </div>
+                    </button>       
+                    </h2>
+                    <div ngbAccordionCollapse>
+                        <div ngbAccordionBody>
+                            <p>{{ mail.message }}</p>
+                        </div>
                     </div>
-                    <div>
-                        Enviado el: TODO
-                    </div>
-                    <div>
-                        @if (mail.delivery == 'SUCCESS') {
-                            <span class="badge bg-success">Enviado</span>
-                        } 
-                        @else {
-                            <span class="badge bg-danger">Error</span>
-                        }
-                    </div>
-                </li>
+                </div>
             }
-        </ol>
+        </div>
     </div>
 </div>

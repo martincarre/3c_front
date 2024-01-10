@@ -15,7 +15,19 @@ export class MailService {
     }
 
     public async fetchMailById(id: string): Promise<any> {
-        const opRef = doc(this.mailCollection, id);
-        return (await getDoc(opRef)).data();
+        const mailRef = doc(this.mailCollection, id);
+        return  (await getDoc(mailRef)).data();
+        // return await getDoc(opRef)
+        // .then((doc) => {
+        //     if (!doc.exists()) {
+        //         return null;
+        //     }
+        //     return doc.data().map((opMail) => {
+        //         return { id: opMail.id, ...opMail.data() };
+        //     });
+        // })
+        // .catch((err) => {
+        //     console.log(err);
+        // });
     }
 }
