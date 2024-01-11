@@ -1,0 +1,42 @@
+<div class="modal-content">
+    <div class="modal-header d-flex justify-content-between">
+        <h5 class="modal-title">Envios de la operación</h5>
+        <button type="button" class="btn-close" (click)="activeModal.dismiss()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div ngbAccordion [closeOthers]="true">
+            @for (mail of mails; track mail.id) {
+                <div ngbAccordionItem>
+                    <h2 ngbAccordionHeader>
+                     <button ngbAccordionButton>
+                        <div class="d-flex gap-3">
+                            <h6>
+                                {{mail.email}}
+                            </h6>
+                            <div>
+                                @if (mail.delivery == 'SUCCESS') {
+                                    <span class="badge bg-success">Enviado - {{ mail.deliveryDate.toDate() | date:'dd/MM/yy h:mm a' }}</span>
+                                } 
+                                @else if (mail.delivery == 'PENDING' || mail.delivery == 'PROCESSING') {
+                                    <span class="badge bg-secondary">En envio</span>
+                                }
+                                @else if (mail.delivery == 'ERROR') {
+                                    <span class="badge bg-danger">Error</span>
+                                }
+                                @else {
+                                    <span class="badge bg-warning">Desconocido</span>
+                                }
+                            </div>
+                        </div>
+                    </button>       
+                    </h2>
+                    <div ngbAccordionCollapse>
+                        <div ngbAccordionBody>
+                            <p>{{ mail.message }}</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
