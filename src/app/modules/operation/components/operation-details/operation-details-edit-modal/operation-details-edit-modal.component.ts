@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { OperationService } from '../../../services/operation.service';
 import { FormGroup } from '@angular/forms';
@@ -12,7 +12,7 @@ import { Subject, take, takeUntil } from 'rxjs';
   templateUrl: './operation-details-edit-modal.component.html',
   styleUrl: './operation-details-edit-modal.component.scss'
 })
-export class OperationDetailsEditModalComponent implements OnInit, OnDestroy {
+export class OperationDetailsEditModalComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
   @Input() data: any;
   private destroy$: Subject<any> = new Subject<any>();
@@ -32,11 +32,9 @@ export class OperationDetailsEditModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('init');
     this.typeaheadService.getThirdparties()
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => {
-        console.log('call');
         const partner = data.find((tp: any) => tp.id === this.data.partnerId);
         if (partner) {
           this.destroy$.next(true);
@@ -108,11 +106,4 @@ export class OperationDetailsEditModalComponent implements OnInit, OnDestroy {
   public isFormUntouched(): boolean {
     return this.opDetailForm.pristine;
   }
-
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-  }
-
-
 }

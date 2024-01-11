@@ -17,7 +17,6 @@ export class TypeaheadService {
     this.thirdpartyService.fetchThirdparties()
       .then((data: Thirdparty[]) => {
         this.thirdparties.next(data);
-        console.log(data);
       })
       .catch((err: any) => {
         console.error(err);
