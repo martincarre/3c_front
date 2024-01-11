@@ -76,13 +76,17 @@ export const operationForm: any = [
       
     ]
   },
+  {
+    className: 'section-label',
+    template: '<hr />',
+  }
 ];
 
 export const operationsDetailsForm: FormlyFieldConfig[] = [
   // Title Ref
   {
     className: 'section-label',
-    template: '<hr /><h5 class="card-title">Referencias de la operación:</h5>',
+    template: '<h5 class="card-title">Referencias de la operación:</h5>',
   },
   // Reference
   {   
@@ -122,7 +126,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
       },
     ]
   },
-  // Title
+  // Title Equipment
   {
     className: 'section-label',
     template: '<hr /><h5 class="card-title">Equipo:</h5>',
@@ -134,7 +138,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
     [
       {
         className: 'col-lg-6 col-12',
-        key: 'equipmentMake',
+        key: 'make',
         type: 'input',
         defaultValue: null,
         props: {
@@ -147,7 +151,7 @@ export const operationsDetailsForm: FormlyFieldConfig[] = [
       },
       {
         className: 'col-lg-6 col-12',
-        key: 'equipmentModel',
+        key: 'model',
         type: 'input',
         defaultValue: null,
         props: {

@@ -137,6 +137,10 @@ export class OperationService {
     return await addDoc(this.opCollection, op);
   }
 
+  public async updateOperation(op: any): Promise<any> {
+    console.log(op);
+  }
+
   public async viewMails(opId: string): Promise<any> {
     const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent, { size: 'lg', centered: true, scrollable: true });
     mailModalRef.componentInstance.data = opId;

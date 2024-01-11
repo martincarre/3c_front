@@ -1,6 +1,6 @@
 
-<!-- TODO: Delete once deved -> Buttons to choose user role -->
 @if (currOp.value) {
+    <!-- TODO: Delete once deved -> Buttons to choose user role -->
     <div class="container pt-3 col-lg-2 col-12 mb-2">
         <select class="form-select" (change)="userRoleSelect($event.target)">
             <option value="customer" >customer</option>
@@ -63,7 +63,7 @@
                 <div class="col-lg-5 col-12 rounded bg-light shadow p-3">
                     <div class="d-flex justify-content-between mb-2">
                         <h4>Detalles de la oferta</h4>
-                        <button class="btn" (click)="onEditDetails()"><i class="bi-pencil-square"></i></button>
+                        <button *ngIf="currentUser.role !== 'customer'" class="btn" (click)="onEditDetails()"><i class="bi-pencil-square"></i></button>
                     </div>
                     <div class="list-group list-group-flush">
                         <div class="list-group-item d-flex justify-content-between bg-transparent">

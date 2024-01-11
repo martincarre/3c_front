@@ -1,7 +1,6 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, delay, map, of } from 'rxjs';
-import { THIRDPARTIES } from '../../thirdparty/models/thirdparties.mock-data';
 import { Thirdparty } from '../../thirdparty/models/thirdparty.model';
 import { ThirdpartyService } from '../../thirdparty/services/thirdparty.service';
 
@@ -18,6 +17,7 @@ export class TypeaheadService {
     this.thirdpartyService.fetchThirdparties()
       .then((data: Thirdparty[]) => {
         this.thirdparties.next(data);
+        console.log(data);
       })
       .catch((err: any) => {
         console.error(err);
@@ -32,5 +32,9 @@ export class TypeaheadService {
            return tps.filter(v => v.fiscalName.toLowerCase().includes(term.toLowerCase()));
         })
       )
+  }
+
+  getThirdparties(): Observable<Thirdparty[]> {
+    return this.thirdparties.asObservable();
   }
 }

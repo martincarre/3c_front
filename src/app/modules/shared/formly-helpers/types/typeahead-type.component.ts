@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FieldType, FieldTypeConfig } from '@ngx-formly/core';
-import { Subject, takeUntil, startWith, filter, debounceTime, distinctUntilChanged, switchMap, map, Observable, of, OperatorFunction } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, map, Observable, of, OperatorFunction } from 'rxjs';
 import { TypeaheadService } from '../../services/typeahead.service';
 
 
@@ -38,7 +38,7 @@ export class FormlyFieldTypeahead extends FieldType<FieldTypeConfig> implements 
 
   search: OperatorFunction<string, readonly any[]> = (query$: Observable<string>) =>
     query$.pipe(
-      debounceTime(200), // Debounce the user input
+      debounceTime(200),
       distinctUntilChanged(),
       switchMap(term => term.length < 0 ? of([]) : this.typeaheadService.search(term, this.typeSearched)),
     );

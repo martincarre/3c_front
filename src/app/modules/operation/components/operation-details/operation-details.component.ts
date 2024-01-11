@@ -4,6 +4,8 @@ import { OperationService } from '../../services/operation.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { OperationDetailsEditModalComponent } from './operation-details-edit-modal/operation-details-edit-modal.component';
 
 @Component({
   selector: 'app-operation-details',
@@ -23,6 +25,7 @@ export class OperationDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
+    private modal: NgbModal,
     private operationService: OperationService,
     private spinnerService: SpinnerService,
   ) {
@@ -99,7 +102,8 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   onEditDetails(): void {
-    
+    const editMdodal = this.modal.open(OperationDetailsEditModalComponent, { size: 'lg', centered: true});
+    editMdodal.componentInstance.data = { id: this.currentId, ...this.currOp.value};
   }
 
   onMessagesView(): void {
