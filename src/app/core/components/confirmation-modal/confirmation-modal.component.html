@@ -12,7 +12,7 @@
     </form>
 </div>
 <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('cancel click')">Cancelar</button>
-      <button type="button" class="btn btn-danger" (click)="activeModal.close('Ok click')" [disabled]="!confirmationForm.valid">Aceptar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss(false)">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="activeModal.close(true)" [disabled]="!confirmationForm.valid">Aceptar</button>
 </div>
 

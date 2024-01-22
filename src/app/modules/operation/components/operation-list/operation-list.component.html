@@ -18,7 +18,21 @@
             </div>
         </ng-template>
       </ngx-datatable-column>
-  
+      
+      <ngx-datatable-column name="Enviada" prop="sent">
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <div class="d-flex">
+            @if (row.sent) {
+              <span class="bi-check-circle-fill text-success"></span><span class="ms-2">Si</span>
+            }
+            @else {
+              <span class="bi-x-circle-fill text-danger"></span><span class="ms-2">No</span>
+            }
+
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
       <ngx-datatable-column name="Partner" prop="partnerFiscalName"></ngx-datatable-column>
       
       <ngx-datatable-column name="Referencia operación" prop="reference"></ngx-datatable-column>

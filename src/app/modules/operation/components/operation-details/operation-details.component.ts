@@ -4,8 +4,9 @@ import { OperationService } from '../../services/operation.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationDetailsEditModalComponent } from './operation-details-edit-modal/operation-details-edit-modal.component';
+import { OperationMailListComponent } from '../operation-mail-list/operation-mail-list.component';
 
 @Component({
   selector: 'app-operation-details',
@@ -25,7 +26,7 @@ export class OperationDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private modal: NgbModal,
+    private modalService: NgbModal,
     private operationService: OperationService,
     private spinnerService: SpinnerService,
   ) {
@@ -92,8 +93,9 @@ export class OperationDetailsComponent implements OnInit {
   };
 
   onDelete(): void { 
-    this.operationService.deleteOperation({ id: this.currentId, ...this.currOp})
-      .then(() => {
+    this.operationService.deleteOperationModal({ id: this.currentId, ...this.currOp})
+      .then((res) => {
+        this.operationService.deleteOperationById(this.currentId!);
         this.router.navigate(['../../'], { relativeTo: this.route });
       })
       .catch((err: any) => {
@@ -102,16 +104,21 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   onEditDetails(): void {
-    const editMdodal = this.modal.open(OperationDetailsEditModalComponent, { size: 'lg', centered: true});
+    const editMdodal = this.modalService.open(OperationDetailsEditModalComponent, { size: 'lg', centered: true});
     editMdodal.componentInstance.data = { id: this.currentId, ...this.currOp.value};
+    editMdodal.result
+      .then((data: any) => {
+        this.fetchOperation(this.currentId!);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   }
 
   onMessagesView(): void {
     if (this.currentId) {
-      this.operationService.viewMails(this.currentId)
-      // Putting a then but useless. Just to avoid a console.error for not handling the promise
-        .then(() => {})
-        .catch(() => {});
+      const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent, { size: 'lg', centered: true, scrollable: true });
+      mailModalRef.componentInstance.data = this.currentId;
     } else {
       console.error('No operation id found');
     }

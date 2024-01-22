@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { OperationService } from '../../../services/operation.service';
 import { FormGroup } from '@angular/forms';
@@ -17,6 +17,7 @@ export class OperationDetailsEditModalComponent implements OnInit {
   @Input() data: any;
   private destroy$: Subject<any> = new Subject<any>();
   private initialModel: any;
+  @Output() updateOperation: EventEmitter<any> = new EventEmitter<any>();
   
   opDetailForm: FormGroup = new FormGroup({});
   opDetailModel: any;
@@ -49,8 +50,6 @@ export class OperationDetailsEditModalComponent implements OnInit {
         this.initialModel = { ...this.opDetailModel};
       });
   }
-
-
 
   private getFormChanges(initialModel: any, currentModel: any): any {
     const changes: any = {};
@@ -95,12 +94,12 @@ export class OperationDetailsEditModalComponent implements OnInit {
     });
     this.operationService.updateOperation(this.data)
       .then((data: any) => {
-        
+        this.updateOperation.emit();
         this.activeModal.close();
       })
       .catch((err: any) => {
+        console.error(err);
       });
-    
   }
 
   public isFormUntouched(): boolean {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp, updateDoc } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
 import { UserService } from '../../user/services/user.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -7,8 +7,8 @@ import { OperationConfirmationModalComponent } from '../components/operation-con
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
-import { OperationMailListComponent } from '../components/operation-mail-list/operation-mail-list.component';
 import { MailService } from 'src/app/core/services/mail.service';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -65,24 +65,28 @@ export class OperationService {
     return (await getDoc(opRef)).data();
   }
 
-  public async deleteOperation(op: any): Promise<any> {
+  public async deleteOperationModal(op: any): Promise<any> {
     const confirmationData = {
       title: 'Eliminar operación',
       message: `¿Está seguro que desea eliminar el tercero ${op.reference}?`
     }
     const deleteModalRef: NgbModalRef = this.modalService.open(ConfirmationModalContent);
     deleteModalRef.componentInstance.data = confirmationData;
-    return deleteModalRef.result
-      .then(async () => {
-        this.spinnerService.show();
-        const tpRef = doc(this.opCollection, op.id);
-        await deleteDoc(tpRef);
-        this.spinnerService.hide();
-      })
-      .catch((err: any) => {
-        console.error(err);
-        this.spinnerService.hide();
-      });
+    return deleteModalRef.result;
+  }
+
+  public async deleteOperationById(opId: string): Promise<any> {
+    try {
+      this.spinnerService.show();
+      const opRef = doc(this.opCollection, opId);
+      await deleteDoc(opRef);
+      this.spinnerService.hide();
+    }
+    catch (err) {
+      console.error('Error deleting operation');
+      this.spinnerService.hide();
+      return throwError(() => new Error(`Error deleting operation: ${err}`));
+    }
   }
 
   public async sendOperation(op: any, triggeredFrom: string): Promise<any> {
@@ -138,13 +142,12 @@ export class OperationService {
   }
 
   public async updateOperation(op: any): Promise<any> {
-    console.log(op);
+    const opRef = doc(this.opCollection, op.id);
+    return await updateDoc(opRef, { ...op, latestUpdate: serverTimestamp()});
   }
 
   public async viewMails(opId: string): Promise<any> {
-    const mailModalRef: NgbModalRef = this.modalService.open(OperationMailListComponent, { size: 'lg', centered: true, scrollable: true });
-    mailModalRef.componentInstance.data = opId;
-    return mailModalRef.result;
+    
   }
 
   public async fetchOperationMails(opId: string): Promise<any> {

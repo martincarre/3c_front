@@ -20,8 +20,6 @@ export class OperationListComponent implements OnInit {
   constructor(
     private operationService: OperationService,
     private spinnerService: SpinnerService,
-    private modalService: NgbModal,
-    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -45,6 +43,7 @@ export class OperationListComponent implements OnInit {
                   tenor: op.tenor,
                   quote: op.rent,
                   actions: null,
+                  sent: op.mails ? true : false,
                   id: op.id,
                   model: op.model,
                   make: op.make,
@@ -65,8 +64,9 @@ export class OperationListComponent implements OnInit {
     }
     
     deleteOperation(row: any): void {
-      this.operationService.deleteOperation(row)
+      this.operationService.deleteOperationModal(row)
       .then(() => {
+        this.operationService.deleteOperationById(row.id);
         this.fetchData();
       })
       .catch((err: any) => {

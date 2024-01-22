@@ -69,7 +69,7 @@
                         <div class="list-group-item d-flex justify-content-between bg-transparent">
                             <span>Proveedor:</span>
                             <span>
-                                {{ currOp.value.partnerFiscalName }}
+                                {{ currOp.value.partnerFiscalName | slice:0:18 }}
                                 <a *ngIf="currentUser.role !== 'customer'" class="ms-1 link-dark" style="cursor: pointer;" (click)="partnerLookup(currOp.value.partnerId)"><i class="bi-search"></i></a>
                             </span>
                         </div>
