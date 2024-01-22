@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { OperationService } from '../../services/operation.service';
@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { operationEconomicDetailsForm, operationForm, operationsDetailsForm } from '../../models/operation.formly-form';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { TypeaheadService } from 'src/app/modules/shared/services/typeahead.service';
 
 
 @Component({
@@ -18,9 +19,12 @@ import { SpinnerService } from 'src/app/core/services/spinner.service';
 export class OperationCreateComponent implements OnDestroy {
   private opSub: Subscription = new Subscription();
   private ecoDetailsSub: Subscription = new Subscription();
+  private destroy$: Subject<any> = new Subject<any>();
 
   fiscalId: FormControl = new FormControl('');
   tpInfo: any = null;
+  currId: string | null = null;
+  private currOp: any = null;
 
   opForm: FormGroup = new FormGroup({});
   opModel: any;
@@ -50,6 +54,7 @@ export class OperationCreateComponent implements OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
+    private typeaheadService: TypeaheadService,
     private toastService: ToastService,
     private spinnerService: SpinnerService, 
   ) {
@@ -66,7 +71,25 @@ export class OperationCreateComponent implements OnDestroy {
       this.calculationResult = null;
     });
 
-    console.log(this.route.snapshot.params['id']);
+    this.currId = this.route.snapshot.params['id'];
+    if (this.currId) { 
+      this.operationService.fetchOperationById(this.currId)
+        .then((res: any) => {
+          this.typeaheadService.getThirdparties()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((data: any) => {
+              const partner = data.find((tp: any) => tp.id === res.partnerId);
+              if (partner) {
+                this.destroy$.next(true);
+                this.currOp = {partner: partner, ...res};
+                this.copyQuote(this.currOp);
+              }
+            });
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    }
   }
 
   close(): void {
@@ -91,13 +114,36 @@ export class OperationCreateComponent implements OnDestroy {
     }
   }
 
+  private copyQuote(op: any): void {
+    this.opDetailModel = {
+      reference: this.currOp.reference,
+      partner: this.currOp.partner,
+      make: this.currOp.make,
+      model: this.currOp.model,
+      description: this.currOp.description,
+    };
+    this.opEcoDetailModel = {
+      rateSwitch: this.currOp.rateSwitch,
+      comSwitch: this.currOp.comSwitch,
+      rate: this.currOp.rate,
+      commission: this.currOp.commission,
+      margin: this.currOp.margin,
+      andOneRv: this.currOp.andOneRv,
+      rv: this.currOp.rv,
+    };
+    this.opModel = {
+      target: Math.round(this.currOp.rent * 100) / 100,
+      tenor: this.currOp.tenor,
+    };
+  }
+
   save(op: any): void { 
     this.spinnerService.show();
     this.operationService.createOperation(op)
     .then((res: any) => {
       console.log(res)
       this.toastService.show('bg-success text-light', 'Operación guardada con éxito', 'Éxito!', 7000);
-      this.router.navigate(['../list'], { relativeTo: this.route });
+      this.router.navigate(['operation/list']);
       this.spinnerService.hide();
     })
     .catch((err: any) => {
@@ -126,7 +172,7 @@ export class OperationCreateComponent implements OnDestroy {
         };
         this.operationService.sendOperation(opToSend, 'create')
           .then(() => {
-            this.router.navigate(['../list'], { relativeTo: this.route });
+            this.router.navigate(['operation/list']);
             this.spinnerService.hide();
           })
           .catch((err: any) => {
@@ -152,6 +198,7 @@ export class OperationCreateComponent implements OnDestroy {
       [this.opForm.value.quoteSelection === 'rent' ? 'investment' : 'rent' ]: this.opForm.value.target,
       tenor: this.opForm.value.tenor,
       description: this.opDetailForm.value.description,
+      fromCopy: this.currId ? this.currId : null,
     }
     if (submitType === 'send') { 
       this.send(op);

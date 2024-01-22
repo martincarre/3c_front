@@ -19,7 +19,7 @@ export class OperationConfirmationModalComponent implements OnInit {
     {
       key: 'roleSelection',
       type: 'select',
-      defaultValue: 'partner',
+      defaultValue: 'client',
       props: {
         label: 'Destinatario',
         placeholder: 'Seleccione el destinatario',

@@ -75,7 +75,7 @@ export class OperationListComponent implements OnInit {
     }
     
     viewDetails(row: any): void {
-      this.router.navigate(['../details', row.id], { relativeTo: this.route });
+      this.router.navigate(['operation/details', row.id]);
     }
 
 }

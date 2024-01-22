@@ -1,7 +1,7 @@
 <div class="container bg-light bg-gradient rounded-4 p-4 m-lg-4 m-md-2">
     <!-- Title -->
     <div class="p-4 d-flex justify-content-between"> 
-        <h1 class="mb-1">Nueva operación</h1>
+        <h1 class="mb-1">{{ currId ? 'Duplicar operación' : 'Nueva operación' }}</h1>
         <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
     </div>
     <!-- Buttons -->

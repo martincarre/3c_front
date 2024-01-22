@@ -35,7 +35,7 @@ export class OperationDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentId = this.route.snapshot.params['id'];
-    if (this.currentId) { 
+    if (this.currentId) {
       this.fetchOperation(this.currentId);
     }
   }
@@ -54,7 +54,7 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   partnerLookup(id: string): void {
-    this.router.navigate(['../../../thirdparty/details', id], { relativeTo: this.route });
+    this.router.navigate(['thirdparty/details', id]);
   }
 
   onSend(): void { 
@@ -76,7 +76,6 @@ export class OperationDetailsComponent implements OnInit {
         (data: any) => {
           console.log(data);
           this.fetchOperation(this.currentId!);
-          // this.router.navigate(['../../'], { relativeTo: this.route });
         },
         (reason) => {
           console.log(reason);
@@ -88,15 +87,14 @@ export class OperationDetailsComponent implements OnInit {
   }
 
   onDuplicate(): void {
-    this.operationService
-    this.router.navigate(['../../'], { relativeTo: this.route });
+    this.router.navigate(['operation/copy-quote', this.currentId]);
   };
 
   onDelete(): void { 
     this.operationService.deleteOperationModal({ id: this.currentId, ...this.currOp})
       .then((res) => {
         this.operationService.deleteOperationById(this.currentId!);
-        this.router.navigate(['../../'], { relativeTo: this.route });
+        this.router.navigate(['operation/list']);
       })
       .catch((err: any) => {
         console.log(err);
