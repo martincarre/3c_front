@@ -1,0 +1,19 @@
+
+<div class="modal-header p-5 pb-4 border-bottom-0">
+    <h1 class="fw-bold mb-0 fs-2">Conectarme</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="close()"></button>
+</div>
+
+<div class="modal-body p-5 pt-0">
+    <form [formGroup]="signInForm">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com" formControlName="email">
+            <label for="floatingInput">Email</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Contraseña" formControlName="password">
+            <label for="floatingPassword">Contraseña</label>
+        </div>
+        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" [disabled]="!signInForm.valid" (click)="signIn()">Conectar</button>
+    </form>
+</div>

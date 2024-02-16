@@ -1,0 +1,52 @@
+<div class="container bg-light bg-gradient rounded-4 p-4 m-lg-4 m-md-2">
+    <!-- Title -->
+    <div class="p-4 d-flex justify-content-between"> 
+        <h1 class="mb-1">{{ currId ? 'Duplicar operación' : 'Nueva operación' }}</h1>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+    </div>
+    <!-- Buttons -->
+    <div class="row mb-4">
+        <div class="d-flex justify-content-center mt-3 gap-4">
+            <button 
+            type="submit" 
+            (click)="onSubmit('save')" 
+            [disabled]="opForm.invalid || opDetailForm.invalid || opEcoDetailForm.invalid || !calculationResult" 
+            class="d-inline-flex align-items-center btn btn-secondary px-4"
+            >
+                Guardar
+                <i class="bi-floppy2-fill ms-2"></i>
+            </button>
+            <button 
+            type="submit" 
+            (click)="onSubmit('send')" 
+            [disabled]="opForm.invalid || opDetailForm.invalid || opEcoDetailForm.invalid || !calculationResult" 
+            class="d-inline-flex align-items-center btn btn-primary px-4"
+            >
+                Enviar
+                <i class="bi-send-fill ms-2"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Forms -->
+    <div class="row d-flex justify-content-center gap-4 m-3">
+        <div class="col-lg-7 col-12 bg-body mb-sm-2 p-4 shadow rounded">
+            <form [formGroup]="opForm">
+                <div class="p-2">
+                    <div class="d-flex flex-column" style="min-height: 100%;">
+                        <formly-form [form]="opForm" [fields]="opFields" [model]="opModel" [options]="opOptions"></formly-form>
+                        <div class="row d-inline-flex justify-content-between align-items-center">
+                            <button type="button" (click)="calculateQuote()" class="btn btn-secondary col-md-3 col-12 mt-2 mb-sm-2 ms-md-3" [disabled]="opForm.invalid || opEcoDetailForm.invalid">Calcular<i class="bi-calculator-fill ms-2"></i> </button>
+                            <div *ngIf="calculationResult" class="d-inline-flex rounded shadow col-md-4 col-12 bg-secondary me-md-5 justify-content-center align-items-center p-2 text-white">
+                                <h4 class="mb-0 fw-normal"> {{ calculationResult | currency:'EUR' }} </h4>
+                            </div>
+                        </div>
+                        <formly-form [form]="opDetailForm" [fields]="opDetailFields" [model]="opDetailModel" [options]="opDetailOptions"></formly-form>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-3 col-12 bg-body p-4 mb-sm-2 shadow rounded">
+            <formly-form [form]="opEcoDetailForm" [fields]="opEcoDetailFields" [model]="opEcoDetailModel" [options]="opEcoDetailOptions"></formly-form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="container mt-4">
+  <ngx-datatable 
+  class="material" 
+  [rows]="opList" 
+  [headerHeight]="50" 
+  [footerHeight]="50" 
+  [rowHeight]="'auto'"
+  [columnMode]="columnMode.force"
+  >
+  
+      <!-- Action buttons column -->
+      <ngx-datatable-column name="Acciones" [sortable]="false">
+        <ng-template ngx-datatable-cell-template let-row="row">
+            <div class="d-inline-flex gap-2">
+                <button class="btn btn-primary btn-sm" (click)="sendOp(row)"><span class="bi-send-fill"></span></button>    
+                <button class="btn btn-secondary btn-sm" (click)="viewDetails(row)"><span class="bi-eye-fill"></span></button>
+                <button class="btn btn-danger btn-sm" (click)="deleteOperation(row)"><span class="bi-trash-fill"></span></button>
+            </div>
+        </ng-template>
+      </ngx-datatable-column>
+      
+      <ngx-datatable-column name="Enviada" prop="sent">
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <div class="d-flex">
+            @if (row.sent) {
+              <span class="bi-check-circle-fill text-success"></span><span class="ms-2">Si</span>
+            }
+            @else {
+              <span class="bi-x-circle-fill text-danger"></span><span class="ms-2">No</span>
+            }
+
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column name="Partner" prop="partnerFiscalName"></ngx-datatable-column>
+      
+      <ngx-datatable-column name="Referencia operación" prop="reference"></ngx-datatable-column>
+  
+      <ngx-datatable-column name="Plazo" prop="tenor"></ngx-datatable-column>
+
+      <ngx-datatable-column name="Inversión" prop="investment">
+        <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | currency:'EUR' }}
+        </ng-template>
+        </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Cuota" prop="quote">
+          <ng-template let-value="value" ngx-datatable-cell-template>
+              {{ value | currency:'EUR' }}
+          </ng-template>
+      </ngx-datatable-column>
+  
+  
+    </ngx-datatable>
+  </div>
