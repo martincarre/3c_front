@@ -9,6 +9,14 @@
                     <a role="button" class="nav-link" id="{{ item.id }}" [routerLink]="item.url"><i class="{{ item.ico }}"></i> {{ item.name }}</a>
                 </li>
             </ul>
+            <div class="text-end">
+                @if (!isAuthed) {
+                    <button type="button" class="btn btn-outline-light me-2" *ngIf="!isAuthed" (click)="signIn()">Conectarme</button>
+                }
+                @else {
+                    <button type="button" class="btn btn-outline-light" (click)="logout()">Salir</button>
+                }
+            </div>
         </div>
     </div>
 </nav>

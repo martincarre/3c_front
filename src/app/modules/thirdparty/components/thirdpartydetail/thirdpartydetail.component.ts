@@ -50,8 +50,10 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
+    const fromCreate = this.route.snapshot.url[0].path === 'create' ? true : false;
     this.currentId = this.route.snapshot.params['id'];
-    if (this.currentId) {
+    console.log(this.currentId );
+    if (this.currentId && !fromCreate) {
       this.createMode = false;
       this.formEditMode.formState.disabled = true;
       this.fetchThirdParty(this.currentId);

@@ -22,12 +22,18 @@ import { spanishIdValidationMessage, spanishIdValidator } from './validators/spa
 import { FormlyFieldTypeahead } from './formly-helpers/types/typeahead-type.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { CustomerGdprModalComponent } from './components/customer-gdpr-modal/customer-gdpr-modal.component';
+import { fieldMatchValidator } from './validators/fieldMatch.validator';
+import { minLengthValidationMessages } from './validators/minLength.validator';
+import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.component';
 
 
 @NgModule({
   declarations: [
     NavbarComponent,
     SidenavComponent,
+    CustomerGdprModalComponent,
+    SignInModalComponent,
     FormlyFieldFile,
     ObjectTypeComponent,
     FormlyFieldButton,
@@ -42,10 +48,12 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     FormlyModule.forRoot({
       validators: [
         { name: 'id', validation: spanishIdValidator },
+        { name: 'fieldMatch', validation: fieldMatchValidator},
       ],
       validationMessages: [
         { name: 'required', message: 'Este campo es obligatorio' },
         { name: 'id', message:  spanishIdValidationMessage },
+        { name: 'minLength', message: minLengthValidationMessages },
       ],
       types: [
         { name: 'typeahead', component: FormlyFieldTypeahead, wrappers: ['form-field'] },
@@ -79,6 +87,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     // Shared Components:
     NavbarComponent,
     SidenavComponent,
+    CustomerGdprModalComponent,
+    SignInModalComponent,
     // Bootstrap exports:
     NgbDropdownModule,
     NgbTypeaheadModule,

@@ -8,6 +8,7 @@ import { NgbActiveModal  } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './confirmation-modal.component.scss'
 })
 export class ConfirmationModalContent {
+  
   confirmationForm: FormGroup = new FormGroup({
     confirmationInput: new FormControl('', [
       Validators.required,

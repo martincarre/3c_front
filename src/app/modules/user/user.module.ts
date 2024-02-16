@@ -5,6 +5,7 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { UserComponent } from './components/user/user.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { UserSignupComponent } from './components/user-signup/user-signup.component';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { UserDetailsComponent } from './components/user-details/user-details.com
     UserListComponent,
     UserComponent,
     UserDetailsComponent,
+    UserSignupComponent,
   ],
   imports: [
     CommonModule,

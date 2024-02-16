@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { SignInModalComponent } from '../sign-in-modal/sign-in-modal.component';
 
 interface NavItem {
   name: string;
@@ -12,7 +16,9 @@ interface NavItem {
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  private authStateSub: Subscription = new Subscription();
+  isAuthed: boolean = false;
   navItems: NavItem[] = [
     {
       name: 'Terceros',
@@ -30,4 +36,27 @@ export class NavbarComponent {
       url: '/user'
     },
   ];
+
+  constructor(
+    private authService: AuthService,
+    private modalService: NgbModal,
+  ) {}
+
+  ngOnInit(): void {
+    this.authStateSub = this.authService.getAuthState().subscribe((authState) => {
+      if (authState) {
+        this.isAuthed = true;
+      } else {
+        this.isAuthed = false;
+      }
+    });
+  };
+
+  signIn() {
+    this.modalService.open(SignInModalComponent);
+  }
+
+  logout() {
+    this.authService.signOut();
+  }
 }

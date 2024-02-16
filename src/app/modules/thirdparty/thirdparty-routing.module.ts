@@ -12,6 +12,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full'},
       { path: 'create', component: ThirdpartydetailComponent },
+      { path: 'create/:id', component: ThirdpartydetailComponent },
       { path: 'details/:id', component: ThirdpartydetailComponent },
       { path: 'list', component: ThirdpartylistComponent },
     ]
