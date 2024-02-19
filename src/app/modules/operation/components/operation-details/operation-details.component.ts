@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OperationService } from '../../services/operation.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
@@ -16,7 +16,7 @@ import { SignInModalComponent } from 'src/app/modules/shared/components/sign-in-
   templateUrl: './operation-details.component.html',
   styleUrl: './operation-details.component.scss'
 })
-export class OperationDetailsComponent implements OnInit {
+export class OperationDetailsComponent implements OnInit, OnDestroy {
   private isAuthed: boolean = false;  
   private isAuthedSub: Subscription = new Subscription();  
   currentId: string | null = null;
@@ -47,20 +47,20 @@ export class OperationDetailsComponent implements OnInit {
       this.isAuthedSub = this.authService.getAuthState().subscribe((authState) => {
         this.isAuthed = authState ? true : false;
       });
+      this.currOp = this.operationService.getCurrOperation();
     }
   }
 
   fetchOperation(id: string): void { 
     this.spinnerService.show();
-      this.operationService.fetchOperationById(id)
-        .then((data: any) => {
-          this.currOp.next(data);
-          this.spinnerService.hide();
-        })
-        .catch((err: any) => { 
-          console.log(err);
-          this.spinnerService.hide();
-        });
+    this.operationService.fetchOperationById(id)
+      .then(() => {
+        this.spinnerService.hide();
+      })
+      .catch((err: any) => {
+        console.log(err);
+        this.spinnerService.hide();
+      });
   }
 
   partnerLookup(id: string): void {
@@ -190,5 +190,6 @@ export class OperationDetailsComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.isAuthedSub.unsubscribe();
+    this.operationService.unsubscribeCurrOperation();
   }
 }

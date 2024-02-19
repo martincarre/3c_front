@@ -21,10 +21,6 @@ export class UserService {
        this.userCollection = collection(this.fs, 'users');
     };
 
-    public async addUserByEmail(email: string, role: string, partnerId: string, partnerFiscalName: string): Promise<any> {
-        return await httpsCallable(this.fns, 'createContact')({ email: email, role: role, partnerId: partnerId, partnerFiscalName: partnerFiscalName });
-    };
-
     public async customerSignup(customerInfo: any): Promise<any> {
         this.spinnerService.show();
         return await this.authService.signUp(customerInfo.email, customerInfo.password)
@@ -54,15 +50,8 @@ export class UserService {
             // TODO
         }
         const q = query(this.userCollection, ...constraints);
-        return (await getDocs(q)).docs.map(ops => {
-        return { id: ops.id, ...ops.data() }
+        return (await getDocs(q)).docs.map(users => {
+        return { id: users.id, ...users.data() }
         });
-    };
-
-    public async checkFSUserByEmail(email: string): Promise<boolean> {
-        console.log('Firestore:', email);
-        const q = query(this.userCollection, where('email', '==', email));
-        const querySnapshot = await getDocs(q);
-        return !querySnapshot.empty;
     };
 };

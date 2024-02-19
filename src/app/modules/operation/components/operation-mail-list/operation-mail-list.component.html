@@ -14,13 +14,13 @@
                                 {{mail.email}}
                             </h6>
                             <div>
-                                @if (mail.delivery == 'SUCCESS') {
+                                @if (mail.delivery == 'accepted') {
                                     <span class="badge bg-success">Enviado - {{ mail.deliveryDate.toDate() | date:'dd/MM/yy h:mm a' }}</span>
                                 } 
-                                @else if (mail.delivery == 'PENDING' || mail.delivery == 'PROCESSING') {
+                                @else if (mail.delivery == 'pending') {
                                     <span class="badge bg-secondary">En envio</span>
                                 }
-                                @else if (mail.delivery == 'ERROR') {
+                                @else if (mail.delivery == 'rejected') {
                                     <span class="badge bg-danger">Error</span>
                                 }
                                 @else {

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp, updateDoc } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp, updateDoc, onSnapshot } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
-import { UserService } from '../../user/services/user.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../components/operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
-import { AuthService } from 'src/app/core/services/auth.service';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
-import { MailService } from 'src/app/core/services/mail.service';
-import { throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
+import { MailService } from '../../shared/services/mail.service';
+import { UserService } from '../../user/services/user.service';
+import { ContactService } from '../../user/services/contact.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +18,18 @@ export class OperationService {
   private _periodicity: number = 12;
   private opCollection;
   private opEmailCollection;
+
+  private currOperation: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private currOperationSub$: any;
   // TODO Change for production
   private devBaseRoute: string = 'http://localhost:4200/operation/details/';
 
   constructor(
     private fs: Firestore,
-    private userService: UserService,
-    private authService: AuthService,
     private modalService: NgbModal,
-    private spinnerService: SpinnerService,
     private mailService: MailService,
+    private spinnerService: SpinnerService,
+    private contactService: ContactService,
   ) {
     this.opCollection = collection(this.fs,'operations');
     this.opEmailCollection = collection(this.fs,'operationEmails');
@@ -60,10 +62,28 @@ export class OperationService {
     });
   }
 
-  public async fetchOperationById(opId: string): Promise<any> {
+  public async fetchOperationById(opId: string) {
     const opRef = doc(this.opCollection, opId);
-    return (await getDoc(opRef)).data();
+    this.currOperationSub$ = onSnapshot(opRef, (doc) => {
+      if (doc.exists()) {
+        this.currOperation.next(doc.data());
+        return;
+      } else {
+        // doc.data() will be undefined in this case
+        console.log('No such document!');
+        this.currOperation.next(null);
+        return null;
+      }
+    });
   }
+
+  public getCurrOperation(): BehaviorSubject<any> {
+    return this.currOperation;
+  };
+
+  public async unsubscribeCurrOperation(): Promise<any> {
+    return await this.currOperationSub$();
+  };
 
   public async deleteOperationModal(op: any): Promise<any> {
     const confirmationData = {
@@ -96,33 +116,51 @@ export class OperationService {
       .then(async (modalRes: any) => {
         this.spinnerService.show();
 
-        // Checking if user exists
-        const checkEmail = await Promise.all([
-          this.userService.checkFSUserByEmail(modalRes.email),
-          this.authService.checkAuthUserEmail(modalRes.email)
-        ]);
-        // if not create a new user
-        let addUser = true;
+        
+        // if not create a new Contact
+        let addContact = true;
 
-        // if it exists, do nothing
-        if(checkEmail[0] || checkEmail[1].data) {
-          addUser = false;
-        }
+        // Checking if Contact exists and adapting whether to create a new contact or not
+        await this.contactService.checkContactByEmail(modalRes.email)
+        .then((res: any) => {
+          console.log('Contact exists?', res);
+          addContact = res.success? false : true;
+        })
+        
 
         // Creating user if necessary
-        if (addUser) {
-          this.userService.addUserByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName);
+        if (addContact) {
+          this.contactService.addContactByEmail(modalRes.email, modalRes.roleSelection, modalRes.partnerId, modalRes.partnerFiscalName);
         }
 
         // Create message object with all the required params
-        delete Object.assign(modalRes, {opId: modalRes.id }).id;
         const offerLink = this.devBaseRoute + modalRes.opId;
         modalRes = { offerLink: offerLink, sentDate: serverTimestamp(), ...modalRes };
+        if (!modalRes.message) {
+          modalRes.message = null;
+        }
         // Add the message to be sent to Firestore
-        await addDoc(this.opEmailCollection, modalRes);
-        // Upon creation, firestore will shoot an email configured as a trigger extension with Google Functions
-        
-        this.spinnerService.hide();
+        await addDoc(this.opEmailCollection, modalRes)
+        // Upon creation, shoot the email
+        .then(async (docRef) => {
+          const mailId = docRef.id;
+          await this.mailService.sendOperationEmail(mailId)
+          .then((res: any) => {
+            console.log('Email sent!', res);
+            if (res.success) {
+              this.fetchOperationMails(modalRes.opId);
+            }
+            this.spinnerService.hide();
+          })
+          .catch((err: any) => {
+            console.error('Error sending email', err);
+            this.spinnerService.hide();
+          });
+        })
+        .catch((err: any) => {
+          console.error('Error adding opEmail to Firestore');
+          this.spinnerService.hide();
+        });
         
         // Need to work on redirection depending on whether the modal was "dismissed" or not.
         if (triggeredFrom === 'details') {
@@ -132,6 +170,7 @@ export class OperationService {
         }
       })
       .catch((err: any) => {
+        console.log('Modal dismissed', err);
         this.spinnerService.hide();
       });
   }
@@ -144,10 +183,6 @@ export class OperationService {
   public async updateOperation(op: any): Promise<any> {
     const opRef = doc(this.opCollection, op.id);
     return await updateDoc(opRef, { ...op, latestUpdate: serverTimestamp()});
-  }
-
-  public async viewMails(opId: string): Promise<any> {
-    
   }
 
   public async fetchOperationMails(opId: string): Promise<any> {
@@ -163,9 +198,8 @@ export class OperationService {
       let transformedOpMail: any = { id: opMail.id, ...opMail.data() };
       // Get the mail status by checking the mail collection
       if (transformedOpMail.mailId) {
-        const sysMail = await this.mailService.fetchMailById(transformedOpMail.mailId);
-        const delivery = sysMail.delivery.state;
-        const deliveryDate = sysMail.delivery.startTime;
+        const delivery = transformedOpMail.deliveryStatus;
+        const deliveryDate = transformedOpMail.deliveryDate;
         return { ...transformedOpMail, delivery, deliveryDate };
       } else { 
         // If the mail in the mail collection hasn't been created yet, return a pending status with current server time. Just for presentation purposes.

@@ -57,9 +57,19 @@ export class OperationConfirmationModalComponent implements OnInit {
   }
 
   onSend(): void { 
-    this.activeModal.close({
-      ...this.sendForm.value,
-      ...this.data
-    });
+    const newMail = { 
+        partnerFiscalName: this.data.partnerFiscalName,
+        reference: this.data.reference,
+        partnerId: this.data.partnerId,
+        investment: this.data.investment,
+        tenor: this.data.tenor,
+        quote: this.data.quote,
+        opId: this.data.id,
+        model: this.data.model,
+        make: this.data.make,
+        description: this.data.description,
+        ...this.sendForm.value
+    }
+    this.activeModal.close(newMail);
   }
 }
