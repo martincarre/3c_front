@@ -42,6 +42,26 @@ export class UserService {
         });
     };
 
+    public addOperationIdToUser(operationId: string, userId: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            return httpsCallable(this.fns, 'addOperationIdToUser')({operationId: operationId, userId: userId})
+            .then((res: any) => {
+                if (res) {
+                    if (res.data.success) {
+                        resolve(res.data);
+                    } else {
+                        reject(res.data);
+                    }
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    reject(err);
+                }
+            });
+        }) 
+    }
+
     public fetchUsers(partnerId?: string, userBased?: boolean): Observable<any[]> {
         const constraints: any[] = [];
         if (partnerId) {

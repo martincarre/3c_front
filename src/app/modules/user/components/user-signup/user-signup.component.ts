@@ -34,6 +34,10 @@ export class UserSignupComponent {
 
   ngOnInit(): void { 
     this.operationId = this.route.snapshot.params['id'];
+    if (!this.operationId) {
+      alert('Operación no encontrada');
+      this.router.navigate(['/']);
+    };
     this.authService.getAuthState().subscribe((authState) => {
       if (authState) {
         this.authed = true;
