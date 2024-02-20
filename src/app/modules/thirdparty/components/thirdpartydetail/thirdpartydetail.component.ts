@@ -8,7 +8,6 @@ import { Thirdparty } from '../../models/thirdparty.model';
 import { Subscription } from 'rxjs';
 import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
 import { ExtInfoService } from 'src/app/core/services/extInfo.service';
-import { DocumentSnapshot } from '@angular/fire/firestore';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
 
@@ -22,7 +21,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   createMode: boolean = true;
   currentId: string | undefined | null;
   editMode: boolean = false;
-  private currentTP: Thirdparty | undefined;
+  currentTP: Thirdparty | undefined;
   private tpSub: Subscription = new Subscription();
   private submitSub: Subscription = new Subscription();
 
@@ -52,11 +51,20 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const fromCreate = this.route.snapshot.url[0].path === 'create' ? true : false;
     this.currentId = this.route.snapshot.params['id'];
-    console.log(this.currentId );
     if (this.currentId && !fromCreate) {
+      this.spinnerService.show();
       this.createMode = false;
       this.formEditMode.formState.disabled = true;
-      this.fetchThirdParty(this.currentId);
+      this.thirdpartyService.fetchThirdPartyById(this.currentId);
+      this.tpSub = this.thirdpartyService.getCurrentThirdparty()
+        .subscribe((tp: Thirdparty) => {
+          if (tp) {
+            this.currentTP = tp;
+            this.model = tp;
+            this.title = tp.fiscalName;
+            this.spinnerService.hide();
+          }
+        });
     }
   }
 
@@ -73,18 +81,6 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
         this.spinnerService.hide();
       });
     }
-  }
-
-  private fetchThirdParty(id: string): void {
-    this.spinnerService.show();
-    this.thirdpartyService.fetchThirdPartyById(id)
-      .then((tpRef: DocumentSnapshot) => {
-        const thirdparty = { id: tpRef.id, ...tpRef.data() } as Thirdparty;
-        this.currentTP = thirdparty;
-        this.model = thirdparty;
-        this.title = thirdparty.fiscalName;
-        this.spinnerService.hide();
-      });
   }
 
   onEdit(): void {
@@ -109,8 +105,10 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
       });
     }
     else {
-      if (this.currentTP && this.currentTP.id) { 
-        this.thirdpartyService.updateThirdparty(this.currentTP.id, tp)
+      console.log('currentTP', this.currentTP);
+      console.log('tp', tp);
+      if (this.currentTP && this.currentId) { 
+        this.thirdpartyService.updateThirdparty(this.currentId, tp)
         .then(res => {
           this.spinnerService.hide();
           this.toastService.show('bg-success text-light', `${this.currentTP?.fiscalName} se ha actualizado con éxito!`, 'Éxito!', 7000);
@@ -135,6 +133,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     this.tpSub.unsubscribe();
     this.submitSub.unsubscribe();
   }
+
 }
 
 

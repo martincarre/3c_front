@@ -1,26 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OperationService } from '../../services/operation.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { ColumnMode } from '@swimlane/ngx-datatable';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { OperationConfirmationModalComponent } from '../operation-confirmation-modal/operation-confirmation-modal.component';
-import { UserService } from 'src/app/modules/user/services/user.service';
-import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-operation-list',
   templateUrl: './operation-list.component.html',
   styleUrl: './operation-list.component.scss'
 })
-export class OperationListComponent implements OnInit {
+export class OperationListComponent implements OnInit, OnDestroy {
   opList: any[] = [];
   columnMode = ColumnMode
+  private operationListSub: Subscription = new Subscription();
 
   constructor(
     private operationService: OperationService,
     private spinnerService: SpinnerService,
-    private route: ActivatedRoute,
     private router: Router
   ) {}
     
@@ -30,8 +27,8 @@ export class OperationListComponent implements OnInit {
 
     private fetchData(): void {
       this.spinnerService.show();
-      this.operationService.fetchOperations()
-        .then(
+      this.operationListSub = this.operationService.fetchOperations()
+        .subscribe(
           (data: any[]) => {
             // console.log(data);
             this.opList = data.map((op: any) => {
@@ -52,11 +49,7 @@ export class OperationListComponent implements OnInit {
               });
             this.spinnerService.hide();
           }
-        )
-        .catch((err: any) => {
-          console.log(err);
-          this.spinnerService.hide();
-        })
+        );
     }
 
     sendOp(op: any): void {
@@ -77,5 +70,9 @@ export class OperationListComponent implements OnInit {
     viewDetails(row: any): void {
       this.router.navigate(['operation/details', row.id]);
     }
+
+    ngOnDestroy(): void {
+      this.operationListSub.unsubscribe();
+    };
 
 }

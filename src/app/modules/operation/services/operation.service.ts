@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp, updateDoc, onSnapshot } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, getDocs, where, query, deleteDoc, doc, getDoc, serverTimestamp, updateDoc, onSnapshot, collectionData } from '@angular/fire/firestore';
 import { PV, PMT, RATE } from '@formulajs/formulajs'
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OperationConfirmationModalComponent } from '../components/operation-confirmation-modal/operation-confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
-import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { MailService } from '../../shared/services/mail.service';
-import { UserService } from '../../user/services/user.service';
 import { ContactService } from '../../user/services/contact.service';
 
 @Injectable({
@@ -19,8 +18,10 @@ export class OperationService {
   private opCollection;
   private opEmailCollection;
 
-  private currOperation: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  // Current Operation variables
+  private currOperation$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private currOperationSub$: any;
+
   // TODO Change for production
   private devBaseRoute: string = 'http://localhost:4200/operation/details/';
 
@@ -48,7 +49,9 @@ export class OperationService {
     }
   }
 
-  public async fetchOperations(partnerId?: string, userBased?: boolean): Promise<any> {
+  // Operation List methods
+
+  public fetchOperations(partnerId?: string, userBased?: boolean): Observable<any> {
     const constraints: any[] = [];
     if (partnerId) {
       constraints.push(where('tpType', '==', partnerId));
@@ -57,33 +60,35 @@ export class OperationService {
       // TODO
     }
     const q = query(this.opCollection, ...constraints);
-    return (await getDocs(q)).docs.map(ops => {
-      return { id: ops.id, ...ops.data() }
-    });
+    return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
 
-  public async fetchOperationById(opId: string) {
+  // Current Operation methods
+
+  public async fetchOperationById(opId: string): Promise<any> {
     const opRef = doc(this.opCollection, opId);
-    this.currOperationSub$ = onSnapshot(opRef, (doc) => {
+    return this.currOperationSub$ = onSnapshot(opRef, (doc) => {
       if (doc.exists()) {
-        this.currOperation.next(doc.data());
-        return;
+        this.currOperation$.next(doc.data());
+        return true;
       } else {
         // doc.data() will be undefined in this case
         console.log('No such document!');
-        this.currOperation.next(null);
-        return null;
+        this.currOperation$.next(null);
+        return false;
       }
     });
   }
 
   public getCurrOperation(): BehaviorSubject<any> {
-    return this.currOperation;
+    return this.currOperation$;
   };
 
   public async unsubscribeCurrOperation(): Promise<any> {
     return await this.currOperationSub$();
   };
+
+  // Operation CrUD & Send methods
 
   public async deleteOperationModal(op: any): Promise<any> {
     const confirmationData = {

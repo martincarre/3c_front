@@ -23,7 +23,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     { prop: 'city', name: 'Ciudad' }
   ];
   tpList: any[] = [];
-  columnMode = ColumnMode
+  columnMode = ColumnMode;
 
   constructor(
     private tpService: ThirdpartyService,
@@ -40,8 +40,8 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
 
   private fetchData(): void {
     this.spinnerService.show();
-    this.tpService.fetchThirdparties()
-      .then(
+    this.tpSub = this.tpService.fetchThirdparties()
+      .subscribe(
         (data: Thirdparty[]) => {
           this.tpList = data.map((tp: Thirdparty) => {
                 return {
@@ -54,12 +54,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
                 }
             });
           this.spinnerService.hide();
-        }
-      )
-      .catch((err: any) => {
-        this.spinnerService.hide();
-        console.error(err);
-      });
+        });
   }
 
   viewDetails(thirdparty: Thirdparty) {

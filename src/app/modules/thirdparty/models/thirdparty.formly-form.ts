@@ -66,7 +66,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             type: 'select',
             defaultValue: 'sa',
             props: {
-                label: 'Tipo de persona jurídica',
+                label: 'Forma jurídica',
                 options: [
                     { label: 'Sociedad Anonima', value: 'sa' },
                     { label: 'Sociedad Limitada', value: 'sl' },

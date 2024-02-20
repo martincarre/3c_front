@@ -1,25 +1,24 @@
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, map, of } from 'rxjs';
+import { BehaviorSubject, Observable, map, Subscription } from 'rxjs';
 import { Thirdparty } from '../../thirdparty/models/thirdparty.model';
 import { ThirdpartyService } from '../../thirdparty/services/thirdparty.service';
 
 @Injectable({ providedIn: 'root' })
 export class TypeaheadService {
-  
+
+  private tpSub: Subscription = new Subscription();
   private thirdparties: BehaviorSubject<Thirdparty[]> = new BehaviorSubject<Thirdparty[]>([]);
+
   constructor(
     private thirdpartyService: ThirdpartyService
   ) {
     this.fetchData();
   }
   private fetchData(): void {
-    this.thirdpartyService.fetchThirdparties()
-      .then((data: Thirdparty[]) => {
+    this.tpSub = this.thirdpartyService.fetchThirdparties()
+      .subscribe((data: Thirdparty[]) => {
         this.thirdparties.next(data);
-      })
-      .catch((err: any) => {
-        console.error(err);
       });
   }
 
@@ -36,4 +35,5 @@ export class TypeaheadService {
   getThirdparties(): Observable<Thirdparty[]> {
     return this.thirdparties.asObservable();
   }
+
 }
