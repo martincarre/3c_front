@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, getDocs, query, where } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 
@@ -41,7 +42,7 @@ export class UserService {
         });
     };
 
-    public async fetchUsers(partnerId?: string, userBased?: boolean): Promise<any> {
+    public fetchUsers(partnerId?: string, userBased?: boolean): Observable<any[]> {
         const constraints: any[] = [];
         if (partnerId) {
             constraints.push(where('partnerId', '==', partnerId));
@@ -50,8 +51,6 @@ export class UserService {
             // TODO
         }
         const q = query(this.userCollection, ...constraints);
-        return (await getDocs(q)).docs.map(users => {
-        return { id: users.id, ...users.data() }
-        });
+       return collectionData(q, {idField: 'id'}) as Observable<any[]>;
     };
 };

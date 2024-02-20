@@ -1,23 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ColumnMode } from '@swimlane/ngx-datatable';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   userList: any[] = [];
   columnMode = ColumnMode
-
+  private userSub: Subscription = new Subscription();
   
   constructor(
     private userService: UserService,
     private spinnerService: SpinnerService,
-    private modalService: NgbModal,
   ) {}
 
     ngOnInit(): void {
@@ -26,8 +26,8 @@ export class UserListComponent implements OnInit {
 
     private fetchUsers(): void {
       this.spinnerService.show();
-      this.userService.fetchUsers()
-        .then(
+     this.userSub = this.userService.fetchUsers()
+        .subscribe(
           (users: any[]) => { 
             this.userList = users.map((user: any) => {
               return {
@@ -40,11 +40,6 @@ export class UserListComponent implements OnInit {
               }
             });
             this.spinnerService.hide();
-          }
-        )
-        .catch((err: any) => {
-          this.spinnerService.hide();
-          console.log(err);
         });
     }
 
@@ -56,4 +51,7 @@ export class UserListComponent implements OnInit {
       console.log(row);
     }
 
+    ngOnDestroy(): void {
+      this.userSub.unsubscribe();
+    }
 }
