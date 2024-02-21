@@ -20,7 +20,8 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
                     required: true,
                 },
                 expressions: {
-                'props.disabled': 'formState.disabled'
+                    hide: 'formState.currUserCustomer',
+                    'props.disabled': 'formState.disabled',
                 }
             },
             {
@@ -83,7 +84,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
     // Address street number, floor, door
     {
         className: 'section-label',
-        template: '<hr /><h5 class="card-title">Dirección:</h5>',
+        template: '<hr /><h5 class="card-title">Dirección fiscal:</h5><p>Que usarémos tanto para la emisión del contrato como de las facturas</p>',
     },
     {
         fieldGroup: [
@@ -91,9 +92,9 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             key: 'address',
             type: 'input',
             props: {
-            label: 'Calle',
-            placeholder: 'Calle & número ',
-            required: true,
+                label: 'Calle',
+                placeholder: 'Calle & número ',
+                required: true,
             },
             expressions: {
             'props.disabled': 'formState.disabled'
@@ -104,8 +105,8 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
             type: 'input',
             defaultValue: '',
             props: {
-            label: 'Complemento',
-            placeholder: 'Piso, puerta, etc.',
+                label: 'Complemento',
+                placeholder: 'Piso, puerta, etc.',
             },
             expressions: {
             'props.disabled': 'formState.disabled'
@@ -118,77 +119,80 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         fieldGroupClassName: 'row',
         fieldGroup: 
         [
-        {
-            className: 'col-lg-4 col-12',
-            key: 'postalCode',
-            type: 'input',
-            props: {
-            label: 'Código postal',
-            placeholder: '28000',
-            required: true,
+            {
+                className: 'col-lg-4 col-12',
+                key: 'postalCode',
+                type: 'input',
+                props: {
+                    label: 'Código postal',
+                    placeholder: '28000',
+                    required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
             },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
-        {
-            className: 'col-lg-4 col-12',
-            key: 'city',
-            type: 'select',
-            props: {
-            label: 'Ciudad',
-            options: [
-                { label: 'Madrid', value: 'MAD'},
-                { label: 'Barcelona', value: 'BCN'},
-            ],
-            required: true,
+            {
+                className: 'col-lg-4 col-12',
+                key: 'city',
+                type: 'select',
+                props: {
+                    label: 'Ciudad',
+                    options: [
+                        { label: 'Madrid', value: 'MAD'},
+                        { label: 'Barcelona', value: 'BCN'},
+                    ],
+                    required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
             },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
-        {
-            className: 'col-lg-4 col-12',
-            key: 'state',
-            type: 'select',
-            props: {
-            label: 'Provincia',
-            options: [
-                { label: 'Madrid', value: 'MAD'},
-                { label: 'Barcelona', value: 'BCN'},
-            ],
+            {
+                className: 'col-lg-4 col-12',
+                key: 'state',
+                type: 'select',
+                props: {
+                    label: 'Provincia',
+                    options: [
+                        { label: 'Madrid', value: 'MAD'},
+                        { label: 'Barcelona', value: 'BCN'},
+                    ],
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
             },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
-        ]
+        ],
     }, 
-    // Additionnal info - Contact
-    // {
-    //     className: 'section-label',
-    //     template: '<hr /><h5 class="card-title">Datos de contacto generales:</h5>',
-    // },
+    // IBAN
+    {
+        className: 'section-label',
+        template: '<hr /><h5 class="card-title">Datos bancarios:</h5><p>A partir de esta cuenta, domiciliaremos las cuotas de renting</p>',
+    },
     // Tel and email
-    // {
-    //     fieldGroupClassName: 'row',
-    //     fieldGroup: 
-    //     [
-    //     {
-    //         className: 'col-lg-6 col-12',
-    //         key: 'phone',
-    //         type: 'input',
-    //         props: {
-    //             label: 'Teléfono',
-    //             placeholder: '912-345-678',
-    //             addonRight: {
-    //                 class:'bi-telephone-fill'
-    //             }
-    //         },
-    //         expressions: {
-    //         'props.disabled': 'formState.disabled'
-    //         }
-    //     },
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+            {
+                className: 'col-lg-4 col-12',
+                key: 'phone',
+                type: 'input',
+                props: {
+                    label: 'IBAN',
+                    placeholder: 'ESXX XXXX XXXX XXXX XXXX XXXX',
+                    addonLeft: {
+                        class:'bi-bank2'
+                    },
+                    required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
+            },
+        ]
+    }
     //     {
     //         className: 'col-lg-6 col-12',
     //         key: 'email',

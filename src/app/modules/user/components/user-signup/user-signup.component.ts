@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService } from '../../services/user.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-signup',
@@ -15,6 +16,7 @@ import { SpinnerService } from 'src/app/core/services/spinner.service';
   styleUrl: './user-signup.component.scss'
 })
 export class UserSignupComponent {
+  private aUserSub: Subscription = new Subscription();
   authed: boolean = false;
   signUpForm: FormGroup = new FormGroup({});
   signUpModel: any;
@@ -38,13 +40,13 @@ export class UserSignupComponent {
       alert('Operación no encontrada');
       this.router.navigate(['/']);
     };
-    this.authService.getAuthState().subscribe((authState) => {
-      if (authState) {
+
+    this.aUserSub = this.authService.getAuthedUser().subscribe((aUser) => {
+      if (aUser) {
         this.authed = true;
-        alert('Ya estás autenticado. No deberías estar aquí.');
-        this.router.navigate(['/']);
       };
     });
+
   }
 
   onSignUp() {
@@ -52,7 +54,10 @@ export class UserSignupComponent {
     gdprModal.result.then(async (result) => {
       await this.userService.customerSignup({...result, ...this.signUpForm.value, operations: [this.operationId]})
         .then((res) => {
-          
+          if (this.authed) {
+            alert('Usuario creado');
+            this.router.navigate(['/thirdparty/create']);
+          }
         })
         .catch((err) => {
           console.error(err);

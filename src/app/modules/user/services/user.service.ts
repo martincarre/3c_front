@@ -27,8 +27,7 @@ export class UserService {
         return await this.authService.signUp(customerInfo.email, customerInfo.password)
         .then(async (authRes) => {
             const authUid = authRes.user.uid;
-            console.log(authRes);
-            return await httpsCallable(this.fns, 'createCustomer')({...customerInfo, authUid: authUid})
+            return await httpsCallable(this.fns, 'createCustomer')({...customerInfo, authUid: authUid, role: 'customer'})
             .then((userRes) => {
                 console.log(userRes);
                 this.spinnerService.hide();
@@ -61,6 +60,26 @@ export class UserService {
             });
         }) 
     }
+
+    public addTpToUser(tpId: string, userId: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            return httpsCallable(this.fns, 'addTpToUser')({tpId: tpId, userId: userId})
+            .then((res: any) => {
+                if (res) {
+                    if (res.data.success) {
+                        resolve(res.data);
+                    } else {
+                        reject(res.data);
+                    }
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    reject(err);
+                }
+            });
+        })
+    };
 
     public fetchUsers(partnerId?: string, userBased?: boolean): Observable<any[]> {
         const constraints: any[] = [];

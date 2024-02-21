@@ -4,6 +4,7 @@ import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-operation-list',
@@ -18,7 +19,8 @@ export class OperationListComponent implements OnInit, OnDestroy {
   constructor(
     private operationService: OperationService,
     private spinnerService: SpinnerService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
   ) {}
     
     ngOnInit(): void {

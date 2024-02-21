@@ -10,6 +10,8 @@ import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
 import { ExtInfoService } from 'src/app/core/services/extInfo.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { UserService } from 'src/app/modules/user/services/user.service';
 
 
 @Component({
@@ -22,6 +24,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   currentId: string | undefined | null;
   editMode: boolean = false;
   currentTP: Thirdparty | undefined;
+  currentUser: any;
+  private auserSub: Subscription = new Subscription();
   private tpSub: Subscription = new Subscription();
   private submitSub: Subscription = new Subscription();
 
@@ -30,9 +34,10 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   title: string = 'Nuevo tercero';
   fields: FormlyFieldConfig[];
 
-  formEditMode: FormlyFormOptions = {
+  formOptions: FormlyFormOptions = {
     formState: {
       disabled: false,
+      currUserCustomer: false
     },
   };
 
@@ -44,6 +49,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private toastService: ToastService,
     private spinnerService: SpinnerService,
+    private authService: AuthService,
+    private userService: UserService,
   ) {
     this.fields = thirdpartyFormlyForm;
    }
@@ -51,10 +58,18 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const fromCreate = this.route.snapshot.url[0].path === 'create' ? true : false;
     this.currentId = this.route.snapshot.params['id'];
+
+    this.auserSub = this.authService.getAuthedUser().subscribe((user) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUser.role === 'customer' ? this.formOptions.formState.currUserCustomer = true : this.formOptions.formState.currUserCustomer = false;
+      }
+    });
+
     if (this.currentId && !fromCreate) {
       this.spinnerService.show();
       this.createMode = false;
-      this.formEditMode.formState.disabled = true;
+      this.formOptions.formState.disabled = true;
       this.thirdpartyService.fetchThirdPartyById(this.currentId);
       this.tpSub = this.thirdpartyService.getCurrentThirdparty()
         .subscribe((tp: Thirdparty) => {
@@ -66,6 +81,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
           }
         });
     }
+    
   }
 
   tpLookUp(): void {
@@ -84,19 +100,27 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   }
 
   onEdit(): void {
-    this.formEditMode.formState.disabled = !this.formEditMode.formState.disabled;
+    this.formOptions.formState.disabled = !this.formOptions.formState.disabled;
     this.editMode = !this.editMode;
   }
 
   onSubmit(): void {
     this.spinnerService.show();
-    const tp = this.tpForm.value as Thirdparty;
+    // Create Mode
     if (this.createMode) {
+      const tp = { createdBy: this.currentUser.uid, ...this.tpForm.value}  as Thirdparty;
       this.thirdpartyService.addThirdparty(tp)
       .then(res => {
-        this.spinnerService.hide();
-        this.toastService.show('bg-success text-light', `${tp.fiscalName} creado exitosamente!`, 'Éxito!', 7000);
-        this.router.navigate(['/thirdparty/list']);
+        console.log(res);
+        this.userService.addTpToUser(res.id, this.currentUser.uid);
+        if (this.currentUser && this.currentUser.role === 'customer') {
+          // TODO Get to the contract printing step.
+          
+        } else {
+          this.router.navigate(['/thirdparty/list']);
+          this.toastService.show('bg-success text-light', `${tp.fiscalName} creado exitosamente!`, 'Éxito!', 7000);
+          this.spinnerService.hide();
+        }
       })
       .catch(err => {
         this.spinnerService.hide();
@@ -104,15 +128,16 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
         this.toastService.show('bg-danger text-light', err, 'Error!', 7000);
       });
     }
+    // Edit Mode
     else {
-      console.log('currentTP', this.currentTP);
-      console.log('tp', tp);
+      const tp = { updatedBy: this.currentUser.uid, ...this.tpForm.value}  as Thirdparty;
       if (this.currentTP && this.currentId) { 
         this.thirdpartyService.updateThirdparty(this.currentId, tp)
         .then(res => {
-          this.spinnerService.hide();
+          // TODO add the redirect if user is customer
           this.toastService.show('bg-success text-light', `${this.currentTP?.fiscalName} se ha actualizado con éxito!`, 'Éxito!', 7000);
           this.router.navigate(['/thirdparty/list']);
+          this.spinnerService.hide();
         })
         .catch(err => {
           this.spinnerService.hide();

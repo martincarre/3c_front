@@ -22,4 +22,7 @@ export interface Thirdparty {
     employees?: number;
     constitutionDate?: string;
     companyStatus?: string;
+    createdBy?: string;
+    updatedBy?: string;
+    Iban?: Array<string>;
 };

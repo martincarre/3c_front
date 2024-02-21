@@ -1,23 +1,64 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, AuthError, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
+import { Auth, User, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
 import { ToastService } from './toast.service';
+import { UserService } from 'src/app/modules/user/services/user.service';
+import { Firestore, collection, doc, onSnapshot } from '@angular/fire/firestore';
+import { SpinnerService } from './spinner.service';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private auth: Auth = inject(Auth);
     private user$ = user(this.auth);
     private authState$ = authState(this.auth);
+    private aUser$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+    private userSub$: Subscription = new Subscription();
+    private userCollection = collection(this.fs, 'users');
+    private fsUserSub$: any;
     
     constructor(
         private fns: Functions,
-        private toastService: ToastService
-    ) {
-    };
+        private fs: Firestore,
+        private toastService: ToastService,
+        private spinner: SpinnerService,
+        private router: Router
+    ) 
+        {   
+            this.spinner.show();
+            this.userSub$ = this.authState$
+            .subscribe((user: any) => {
+                if (user) {
+                    const userRef = doc(this.userCollection, user.uid);
+                    this.fsUserSub$ = onSnapshot(userRef, (userDoc) => {
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            const currUser =  { 
+                                uid: user.uid,
+                                email: user.email,
+                                name: userData['name'],
+                                surname: userData['surname'],
+                                role: userData['role'],
+                                mobile: userData['mobile'],
+                            };
+                            this.aUser$.next(currUser);
+                            this.spinner.hide();
+                        } else {
+                            this.aUser$.next(null);
+                            this.spinner.hide();
+                        }
+                    });
+                }
+                else { 
+                    this.aUser$.next(null);
+                    this.spinner.hide();
+                }
+            });
+        };
 
     public getAuthedUser(): Observable<any>{ 
-        return this.user$;
+        return this.aUser$ as Observable<any>;
     };
 
     public getAuthState(): Observable<any> {
@@ -33,10 +74,18 @@ export class AuthService {
             const errorMessage = this.getErrorMessage(error.code);
             this.toastService.show('bg-danger text-light', errorMessage, 'Error!', 3000);
         });
-    }
+    };
 
     public signOut(): Promise<any> {
-        return this.auth.signOut();
+        this.spinner.show();
+        return this.auth.signOut()
+        .then(() => {
+            console.log('User signed out');
+            this.aUser$.next(null);
+            this.router.navigate(['/']);
+            this.userSub$.unsubscribe();
+            this.spinner.hide();
+        });
     };
 
     public async signIn(email: string, password: string): Promise<any> {
