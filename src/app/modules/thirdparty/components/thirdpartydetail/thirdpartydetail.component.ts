@@ -12,6 +12,7 @@ import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/modules/user/services/user.service';
+import { DocumentService } from 'src/app/core/services/document.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private spinnerService: SpinnerService,
     private authService: AuthService,
     private userService: UserService,
+    private documentService: DocumentService,
   ) {
     this.fields = thirdpartyFormlyForm;
    }
@@ -108,14 +110,21 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     this.spinnerService.show();
     // Create Mode
     if (this.createMode) {
-      const tp = { createdBy: this.currentUser.uid, ...this.tpForm.value}  as Thirdparty;
+      let tp = { createdBy: this.currentUser.uid, ...this.tpForm.value}  as Thirdparty;
       this.thirdpartyService.addThirdparty(tp)
-      .then(res => {
-        console.log(res);
-        this.userService.addTpToUser(res.id, this.currentUser.uid);
+      .then(async res => {
+        console.log(typeof res);
+        await this.userService.addTpToUser(res.id, this.currentUser.uid);
+        tp = { id: res.id, ...tp };
         if (this.currentUser && this.currentUser.role === 'customer') {
           // TODO Get to the contract printing step.
+          // console.log(this.currentUser);
+          // this.spinnerService.hide();
           
+          const contractGenerationRes = await this.documentService.createContract({ user: this.currentUser, tp });
+          console.log('contractId', contractGenerationRes);
+          this.router.navigate(['/contract/contract-sign', contractGenerationRes.contractId]);
+          this.spinnerService.hide();          
         } else {
           this.router.navigate(['/thirdparty/list']);
           this.toastService.show('bg-success text-light', `${tp.fiscalName} creado exitosamente!`, 'Éxito!', 7000);

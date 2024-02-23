@@ -63,7 +63,7 @@ export class UserService {
 
     public addTpToUser(tpId: string, userId: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            return httpsCallable(this.fns, 'addTpToUser')({tpId: tpId, userId: userId})
+            return httpsCallable(this.fns, 'addTpIdToUser')({tpId: tpId, userId: userId})
             .then((res: any) => {
                 if (res) {
                     if (res.data.success) {

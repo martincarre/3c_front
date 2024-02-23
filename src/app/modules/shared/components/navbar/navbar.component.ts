@@ -35,6 +35,11 @@ export class NavbarComponent implements OnInit {
       id: 'user',
       url: '/user'
     },
+    {
+      name: 'Contratos',
+      id: 'contract',
+      url: '/contract'
+    },
   ];
 
   constructor(
