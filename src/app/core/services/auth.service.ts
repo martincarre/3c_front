@@ -34,6 +34,9 @@ export class AuthService {
                     this.fsUserSub$ = onSnapshot(userRef, (userDoc) => {
                         if (userDoc.exists()) {
                             const userData = userDoc.data();
+
+                            // TODO: add TP type and TP ID to the current user
+                            console.log(userData);
                             const currUser =  { 
                                 uid: user.uid,
                                 email: user.email,

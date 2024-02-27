@@ -67,6 +67,7 @@ export class OperationService {
 
   public async fetchOperationById(opId: string): Promise<any> {
     const opRef = doc(this.opCollection, opId);
+    // Using onSnapshot to get the operation in real time (observable-like behavior);
     return this.currOperationSub$ = onSnapshot(opRef, (doc) => {
       if (doc.exists()) {
         this.currOperation$.next(doc.data());
@@ -77,6 +78,7 @@ export class OperationService {
         this.currOperation$.next(null);
         return false;
       }
+
     });
   }
 
