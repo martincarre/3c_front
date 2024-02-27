@@ -10,9 +10,9 @@ import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
+    ContractListComponent,
     ContractComponent,
     ContractSignComponent,
-    ContractListComponent
   ],
   imports: [
     CommonModule,

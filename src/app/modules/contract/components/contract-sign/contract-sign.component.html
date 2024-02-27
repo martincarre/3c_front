@@ -1,5 +1,8 @@
-<script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-<h1>Hello world! Contract sign here...</h1>
-@if ( SIGN_URL ) {
-    <script type="text/javascript">$('body').append('<iframe src="' + SIGN_URL + '" style="position: absolute; top: 0; left: 0; height: 320px; width: 240px" />')</script>
-}
+<div class="container p-3">
+    <div #signContainer></div>
+    <div class="row" *ngIf="currContract">
+        <h3 class="col-12" *ngIf="currContract.signCreated && currContract.signStatus === 'completed'">
+            El contrato ha sido firmado correctamente. Redirigiendo...{{ counter }}
+        </h3>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+/* General styling for the iframe */
+.responsive-iframe {
+    width: 80%; /* Default width */
+    height: 90%; /* Default height */
+    max-width: 100%; /* Ensure it doesn't overflow the screen width */
+    border: none; /* Remove border */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the iframe */
+  }
+  
+  /* Adjustments for smaller screens */
+  @media (max-width: 768px) {
+    .responsive-iframe {
+      width: 95%; /* Increase width for smaller screens */
+      height: 90%; /* Adjust height as needed */
+    }
+  }
+  
+  /* Further adjustments for very small screens like smartphones */
+  @media (max-width: 480px) {
+    .responsive-iframe {
+      height: 90%; /* Adjust height for very small screens */
+    }
+  }
+  
