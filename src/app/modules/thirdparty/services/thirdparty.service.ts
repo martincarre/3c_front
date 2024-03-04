@@ -3,12 +3,14 @@ import { Firestore, collection, addDoc, where, query, getDocs, and, deleteDoc, d
 import { Thirdparty } from '../models/thirdparty.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThirdpartyService {
   private fs: Firestore = inject(Firestore);
+  private fns: Functions = inject(Functions);
   private tpCollection;
 
   // Current Thirdparty variables
@@ -41,7 +43,7 @@ export class ThirdpartyService {
   };
   
   public async addThirdparty(thirdparty: Thirdparty): Promise<any>{
-    return await addDoc(this.tpCollection, thirdparty);
+    return await httpsCallable(this.fns, 'createTp')(thirdparty);
   }
 
   public async updateThirdparty(tpId: string, thirdparty: Thirdparty): Promise<any>{

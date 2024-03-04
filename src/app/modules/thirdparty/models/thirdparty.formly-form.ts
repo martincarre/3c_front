@@ -177,7 +177,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         [
             {
                 className: 'col-lg-4 col-12',
-                key: 'phone',
+                key: 'Iban',
                 type: 'input',
                 props: {
                     label: 'IBAN',

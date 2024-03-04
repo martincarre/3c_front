@@ -24,5 +24,5 @@ export interface Thirdparty {
     companyStatus?: string;
     createdBy?: string;
     updatedBy?: string;
-    Iban?: Array<string>;
+    Iban: string;
 };

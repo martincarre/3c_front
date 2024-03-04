@@ -63,6 +63,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
 
     this.auserSub = this.authService.getAuthedUser().subscribe((user) => {
       if (user) {
+        console.log('user', user);
         this.currentUser = user;
         this.currentUser.role === 'customer' ? this.formOptions.formState.currUserCustomer = true : this.formOptions.formState.currUserCustomer = false;
       }
@@ -164,6 +165,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.auserSub.unsubscribe();
     this.tpSub.unsubscribe();
     this.submitSub.unsubscribe();
   }
