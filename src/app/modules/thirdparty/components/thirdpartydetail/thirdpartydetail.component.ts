@@ -62,8 +62,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     this.currentId = this.route.snapshot.params['id'];
 
     this.auserSub = this.authService.getAuthedUser().subscribe((user) => {
+      console.log('user', user);
       if (user) {
-        console.log('user', user);
         this.currentUser = user;
         this.currentUser.role === 'customer' ? this.formOptions.formState.currUserCustomer = true : this.formOptions.formState.currUserCustomer = false;
       }
