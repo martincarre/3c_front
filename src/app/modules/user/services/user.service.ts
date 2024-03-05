@@ -4,6 +4,7 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { BackUser } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,14 @@ export class UserService {
             this.spinnerService.hide();
             return;
         });
+    };
+
+    public async createBackUser(backUserInfo: BackUser): Promise<any> {
+        return await httpsCallable(this.fns, 'createBackUser')(backUserInfo);
+    }
+
+    public async fetchUserById(userId: string): Promise<any> {
+        return await httpsCallable(this.fns, 'fetchUserById')({userId: userId});
     };
 
     public addOperationIdToUser(operationId: string, userId: string): Promise<any> {
