@@ -1,5 +1,4 @@
 import { FormlyFieldConfig } from "@ngx-formly/core";
-import { spanishIdValidator } from "../../shared/validators/spanishId.validator";
 
 export const thirdpartyFormlyForm: FormlyFieldConfig[] = [   
     // Fiscal ID and tp type (client or supplier) 
@@ -15,7 +14,7 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
                     label: 'Tipo de tercero',
                     options: [
                         { label: 'Cliente', value: 'client' },
-                        { label: 'Proveedor', value: 'supplier' },
+                        { label: 'Partner', value: 'partner' },
                     ],
                     required: true,
                 },
@@ -47,38 +46,38 @@ export const thirdpartyFormlyForm: FormlyFieldConfig[] = [
         fieldGroupClassName: 'row',
         fieldGroup: 
         [
-        {
-            className: 'col-lg-6 col-12',
-            key: 'fiscalName',
-            type: 'input',
-            props: {
-            label: 'Denominación social',
-            placeholder: 'Empresa',
-            required: true,
+            {
+                className: 'col-lg-6 col-12',
+                key: 'fiscalName',
+                type: 'input',
+                props: {
+                label: 'Denominación social',
+                placeholder: 'Empresa',
+                required: true,
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
             },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
-        
-        {
-            className: 'col-lg-4 col-12',
-            key: 'companyType',
-            type: 'select',
-            defaultValue: 'sa',
-            props: {
-                label: 'Forma jurídica',
-                options: [
-                    { label: 'Sociedad Anonima', value: 'sa' },
-                    { label: 'Sociedad Limitada', value: 'sl' },
-                    { label: 'Autónomo', value: 'au' },
-                    { label: 'Otro', value: 'ot' },
-                ],
+            
+            {
+                className: 'col-lg-4 col-12',
+                key: 'companyType',
+                type: 'select',
+                defaultValue: 'sociedad_anonima',
+                props: {
+                    label: 'Forma jurídica',
+                    options: [
+                        { label: 'Sociedad Anonima', value: 'sociedad_anonima' },
+                        { label: 'Sociedad Limitada', value: 'sociedad_limitada' },
+                        { label: 'Autónomo', value: 'autonomo' },
+                        { label: 'Otro', value: 'desc_otro' },
+                    ],
+                },
+                expressions: {
+                'props.disabled': 'formState.disabled'
+                }
             },
-            expressions: {
-            'props.disabled': 'formState.disabled'
-            }
-        },
         ]
     },
     // Address street number, floor, door
