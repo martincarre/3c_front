@@ -1,0 +1,18 @@
+<div class="container bg-light bg-gradient rounded-4 p-4 m-lg-4 m-md-2">
+    <div class="row d-flex justify-content-center gap-lg-5 gap-3 m-3"> 
+
+        <div class="row">
+            <h1 class="col-12">Creación de tu cuenta</h1>
+            <p class="text-muted">Encontrarás, a continuación, la información necesaria para poder darte de alta. Ten cuidado al rellenar los campos ya que usaremos esta información para que aparezcas como firmante autorizado del contrato de Renting.</p>
+        </div>
+    </div>
+    
+    <div class="row d-flex justify-content-center gap-lg-5 gap-3 m-3">
+        <div class="row col-lg-10 col-12 rounded bg-body justify-content-center bg-gradient p-5 gap-lg-4 gap-3">
+            <formly-form [form]="signUpForm" [fields]="signUpFields" [model]="signUpModel" [options]="signUpOptions"></formly-form>
+            <div class="d-grid mx-auto col-lg-4 col-12 gap-2 m-4">
+                <button type="button" class="btn btn-primary btn-lg rounded-pill" (click)="onSignUp()">Registrarme</button>
+            </div>
+        </div>
+    </div>
+</div>
