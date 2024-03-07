@@ -5,6 +5,8 @@ import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { Location } from '@angular/common';
+import { SpinnerService } from 'src/app/core/services/spinner.service';
 
 @Component({
   selector: 'app-user-details',
@@ -18,7 +20,7 @@ export class UserDetailsComponent implements OnInit {
 
   createMode: boolean = true;
 
-  backUserFormField: FormlyFieldConfig[];
+  backUserFormField: FormlyFieldConfig[] = [];
   backUserForm: FormGroup = new FormGroup({});
   backUserModel: any;
   backUserOptions: FormlyFormOptions = {
@@ -31,11 +33,13 @@ export class UserDetailsComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
+    private spinnerService: SpinnerService,
   ) {
-    this.backUserFormField = backUserFormFields;
   }
-
+  
   ngOnInit(): void {
+    this.backUserFormField = backUserFormFields;
     this.currUserId = this.route.snapshot.params['id'];
     if (this.currUserId) {
       this.createMode = false;
@@ -46,22 +50,34 @@ export class UserDetailsComponent implements OnInit {
   }
 
   onCreateBackUser(): void {
-    console.log('onCreateBackUser', this.backUserForm.value);
+    this.spinnerService.show();
+    const formData = this.backUserForm.value;
+    formData.relatedTpId = formData.partner.id;
+    const { partner, ...newBackUser } = formData;
+    this.userService.createBackUser(newBackUser)
+    .then((res) => {
+      if (res.data.success) {
+        console.log('createBackUser', res);
+        this.router.navigate(['user']);
+        this.spinnerService.hide();
+      }
+      else {
+        alert('Error creating user');
+        console.error('createBackUser', res.data);
+        
+        this.spinnerService.hide();
+      }
+    })
+    .catch((err) => {
+      alert('Error creating user');
+      console.error('createBackUser', err.data);
+      
+      this.spinnerService.hide();
+    });
+  }
+
+  close(): void {
+    this.location.back();
   }
 
 }
-
-
-// const newUser = {
-//   email: data.email,
-//   name: data.name,
-//   surname: data.surname,
-//   mobile: data.mobile,
-//   createdBy: authData.uid,
-//   createdAt: Timestamp.now(),
-//   updatedBy: null,
-//   updatedAt: null,
-//   managedTpIds: data.managedTpIds ? data.managedTpIds : [],
-//   relatedTpId: data.relatedTpId,
-//   role: data.role,
-// };
