@@ -6,6 +6,7 @@ import { UserComponent } from './components/user/user.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
+import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { UserSignupComponent } from './components/user-signup/user-signup.compon
     UserComponent,
     UserDetailsComponent,
     UserSignupComponent,
+    BackUserConfirmComponent,
   ],
   imports: [
     CommonModule,

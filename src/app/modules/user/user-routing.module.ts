@@ -4,7 +4,7 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { UserComponent } from './components/user/user.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
-
+import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
 
 const routes: Routes = [
   {
@@ -15,6 +15,7 @@ const routes: Routes = [
       { path: 'list', component: UserListComponent },
       { path: 'create', component: UserDetailsComponent },
       { path: 'signup/:id', component: UserSignupComponent },
+      { path: 'password-setup', component: BackUserConfirmComponent },
     ]
   },
 ];

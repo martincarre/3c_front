@@ -1,0 +1,23 @@
+<div class="container bg-light bg-gradient rounded-4 p-4 m-2">
+    <div class="row d-flex justify-content-center gap-lg-5 gap-3 m-3"> 
+
+        <div class="row">
+            <h1 class="col-12">Bienvenido a la subscripción 3c!</h1>
+            <p class="text-muted">Para poder validar tu cuenta y empezar a cotizar y enviar operaciones, necesitas crear tu contraseña, confirmar tu correo electronico y validar las condiciones de uso. Ten en cuenta este acceso es personal y, por tanto, cuida mucho de no compartir tu contraseña con nadie (nisiquiera agentes de 3c).</p>
+            <formly-form [form]="confirmationForm" [fields]="confirmationFields" [model]="confirmationModel" [options]="confirmationOptions"></formly-form>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="d-flex justify-content-center mt-3 gap-4">
+            <button 
+            type="submit" 
+            (click)="onSubmit()" 
+            [disabled]="confirmationForm.invalid" 
+            class="d-inline-flex align-items-center btn btn-primary px-4"
+            >
+                Enviar
+                <i class="bi-floppy2-fill ms-2"></i>
+            </button>
+        </div>
+    </div>
+</div>

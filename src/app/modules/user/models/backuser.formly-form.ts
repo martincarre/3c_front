@@ -95,3 +95,82 @@ export const backUserFormFields: any = [
    ]   
   },
 ];
+
+export const backUserConfirmationFields: any = [
+    {
+        className: 'section-label',
+        template: '<hr /><h5 class="card-title">Confirmación de email:</h5>',
+    },
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+            {
+                className: 'col-lg-6 col-12',
+                key: 'email',
+                type: 'input',
+                props: {
+                    label: 'Dirección de email',
+                    placeholder: 'juan@example.com',
+                    required: true,
+                }
+            }
+        ]
+    },
+    {
+        className: 'section-label',
+        template: '<h5 class="card-title">Contraseña:</h5>',
+    },
+    {
+        fieldGroupClassName: 'row',
+        validators: {
+            validation: [{ name: 'fieldMatch', options: { errorPath: 'passwordConfirm' } }],
+        },    
+        fieldGroup: 
+        [
+            {
+                className: 'col-lg-6 col-12',
+                key: 'password',
+                type: 'input',
+                props: {
+                    label: 'Contraseña',
+                    placeholder: 'La contraseña tiene que tener al menos 8 caracteres',
+                    required: true,
+                    minLength: 8,
+                    type: 'password',
+                },
+            },
+            {
+                className: 'col-lg-6 col-12',
+                key: 'passwordConfirm',
+                type: 'input',
+                props: {
+                    label: 'Confirmar contraseña',
+                    placeholder: 'Confirmar contraseña',
+                    required: true,
+                    type: 'password',
+                },
+            }
+        ]
+    },
+    {
+        className: 'section-label',
+        template: '<hr/><h5 class="card-title">Condiciones de uso:</h5>',
+    },
+    {
+        fieldGroupClassName: 'row',
+        fieldGroup: 
+        [
+            {
+                className: 'col-lg-6 col-12',
+                key: 'terms',
+                type: 'checkbox',
+                defaultValue: true,
+                templateOptions: {
+                    label: 'Acepto los términos y condiciones',
+                    required: true,
+                }
+            }
+        ]
+    }
+];

@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { Location } from '@angular/common';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-user-details',
@@ -35,6 +36,7 @@ export class UserDetailsComponent implements OnInit {
     private router: Router,
     private location: Location,
     private spinnerService: SpinnerService,
+    private toastService: ToastService,
   ) {
   }
   
@@ -58,20 +60,21 @@ export class UserDetailsComponent implements OnInit {
     .then((res) => {
       if (res.data.success) {
         console.log('createBackUser', res);
+        this.toastService.show('bg-success text-light', `Nuevo usuario creado con éxito`, 'Éxito!', 7000);
         this.router.navigate(['user']);
         this.spinnerService.hide();
       }
       else {
         alert('Error creating user');
         console.error('createBackUser', res.data);
-        
+        this.toastService.show('bg-danger text-light', res.data.message, 'Error!', 7000);
         this.spinnerService.hide();
       }
     })
     .catch((err) => {
       alert('Error creating user');
       console.error('createBackUser', err.data);
-      
+      this.toastService.show('bg-danger text-light', err.data.message, 'Error!', 7000);
       this.spinnerService.hide();
     });
   }

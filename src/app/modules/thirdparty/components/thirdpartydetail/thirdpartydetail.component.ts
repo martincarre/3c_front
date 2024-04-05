@@ -114,9 +114,15 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
       let tp = { createdBy: this.currentUser.uid, ...this.tpForm.value}  as Thirdparty;
       this.thirdpartyService.addThirdparty(tp)
       .then(async res => {
-        console.log(typeof res);
+        if (!res.data.success) { 
+          console.error(res.data);
+          this.spinnerService.hide();
+          this.toastService.show('bg-danger text-light', res.data.message, 'Error!', 7000);
+          return;
+        }
         // await this.userService.addTpToUser(res.id, this.currentUser.uid);
-        tp = { id: res.id, ...tp };
+        tp = { id: res.data.tpId, ...tp };
+        console.log('tp', tp);
         if (this.currentUser && this.currentUser.role === 'customer') {
           // TODO Get to the contract printing step.
           // console.log(this.currentUser);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { signupFormFields } from '../../models/signup.formly-form';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './user-signup.component.html',
   styleUrl: './user-signup.component.scss'
 })
-export class UserSignupComponent {
+export class UserSignupComponent implements OnInit, OnDestroy{
   private aUserSub: Subscription = new Subscription();
   authed: boolean = false;
   signUpForm: FormGroup = new FormGroup({});
@@ -30,6 +30,7 @@ export class UserSignupComponent {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private spinnerService: SpinnerService,
   ) {
     this.signUpFields = signupFormFields;
   }
@@ -41,7 +42,7 @@ export class UserSignupComponent {
       this.router.navigate(['/']);
     };
 
-    this.aUserSub = this.authService.getAuthedUser().subscribe((aUser) => {
+    this.aUserSub = this.authService.getAuthedUser().subscribe((aUser: any) => {
       if (aUser) {
         this.authed = true;
       };
@@ -50,6 +51,7 @@ export class UserSignupComponent {
   }
 
   onSignUp() {
+    this.spinnerService.show(); 
     const gdprModal = this.modalService.open(CustomerGdprModalComponent, { fullscreen: true });
     gdprModal.result.then(async (result) => {
       await this.userService.customerSignup({...result, ...this.signUpForm.value, operations: [this.operationId]})
@@ -57,19 +59,23 @@ export class UserSignupComponent {
           if (this.authed) {
             alert('Usuario creado');
             this.router.navigate(['/thirdparty/create']);
+            this.spinnerService.hide();
           }
         })
         .catch((err) => {
           console.error(err);
           alert('Error ver consola');
+          this.spinnerService.hide();
           return;
         })
-
-      console.log({...result, ...this.signUpForm.value, operations: [this.operationId]});
     })
     .catch((err) => {
       console.log(err);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.aUserSub.unsubscribe();
   }
 
 }

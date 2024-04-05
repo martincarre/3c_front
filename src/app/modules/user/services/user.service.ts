@@ -16,35 +16,25 @@ export class UserService {
     constructor(
         private fs: Firestore,
         private fns: Functions,
-        private authService: AuthService,
-        private spinnerService: SpinnerService,
     ) 
     {
        this.userCollection = collection(this.fs, 'users');
     };
 
     public async customerSignup(customerInfo: any): Promise<any> {
-        this.spinnerService.show();
-        return await this.authService.signUp(customerInfo.email, customerInfo.password)
-        .then(async (authRes) => {
-            const authUid = authRes.user.uid;
-            return await httpsCallable(this.fns, 'createCustomer')({...customerInfo, authUid: authUid, role: 'customer'})
-            .then((userRes) => {
-                console.log(userRes);
-                this.spinnerService.hide();
-                
-            });
-        })
-        .catch((err) => {
-            console.error(err);
-            this.spinnerService.hide();
-            return;
+        return await httpsCallable(this.fns, 'createCustomer')({...customerInfo, role: 'customer'})
+        .then((userRes) => {
+            console.log(userRes);
         });
     };
 
     public async createBackUser(backUserInfo: BackUser): Promise<any> {
         return await httpsCallable(this.fns, 'createBackUser')(backUserInfo);
-    }
+    };
+
+    public async verifyBackUser(token: string, formValue: { email: string, password: string, passwordConfirm: string }): Promise<any> {
+        return await httpsCallable(this.fns, 'verifyBackUser')({token: token, password: formValue.password, email: formValue.email});
+    };
 
     public async fetchUserById(userId: string): Promise<any> {
         return await httpsCallable(this.fns, 'fetchUserById')({userId: userId});
