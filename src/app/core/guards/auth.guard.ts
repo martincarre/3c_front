@@ -8,6 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
 
   return authService.getAuthedUser().pipe(map(user => {
+    console.log('test');
     const expectedRole = route.data['expectedRole'];
     return !!user && expectedRole.includes(user.role) ? true : router.createUrlTree(['/forbidden']);
   }));

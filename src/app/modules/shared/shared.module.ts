@@ -27,6 +27,7 @@ import { fieldMatchValidator } from './validators/fieldMatch.validator';
 import { minLengthValidationMessages } from './validators/minLength.validator';
 import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.component';
 import { RoleDirective } from 'src/app/core/directives/role.directive';
+import { FooterComponent } from './components/footer/footer.component';
 
 
 @NgModule({
@@ -35,10 +36,12 @@ import { RoleDirective } from 'src/app/core/directives/role.directive';
     SidenavComponent,
     CustomerGdprModalComponent,
     SignInModalComponent,
+    FooterComponent,
     FormlyFieldFile,
     ObjectTypeComponent,
     FormlyFieldButton,
     FormlyFieldTypeahead,
+
   ],
   imports: [
     // Module imports:
@@ -98,6 +101,7 @@ import { RoleDirective } from 'src/app/core/directives/role.directive';
 
     // Shared Components:
     NavbarComponent,
+    FooterComponent,
     SidenavComponent,
     CustomerGdprModalComponent,
     SignInModalComponent,
