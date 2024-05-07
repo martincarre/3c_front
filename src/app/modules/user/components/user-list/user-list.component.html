@@ -14,6 +14,12 @@
     <ngx-datatable-column name="Apellidos" prop="surname"></ngx-datatable-column>
     <ngx-datatable-column name="Tipo" prop="type"></ngx-datatable-column>
 
+    <ngx-datatable-column name="Estatus" prop="validationSetup">
+        <ng-template ngx-datatable-cell-template let-value="value">
+            <span *ngIf="value === false"><i class="bi-person-fill-exclamation" style="color: yellow; font-size: 1.4rem;"></i></span>
+            <span *ngIf="value === true"><i class="bi-person-fill-check" style="color: green; font-size: 1.4rem;"></i></span>
+        </ng-template>
+    </ngx-datatable-column>
         <!-- Action buttons column -->
     <ngx-datatable-column name="Acciones" [sortable]="false">
         <ng-template ngx-datatable-cell-template let-row="row">

@@ -28,13 +28,16 @@ export class UserListComponent implements OnInit, OnDestroy {
      this.userSub = this.userService.fetchUsers()
         .subscribe(
           (users: any[]) => { 
+            console.log(users);
             this.userList = users.map((user: any) => {
               return {
-                partnerId: user.partnerId,
-                partnerFiscalName: user.partnerFiscalName, 
+                partnerId: user.relatedTpFiscalId ? user.relatedTpFiscalId : user.relatedTpId,
+                partnerFiscalName: user.relatedTpName, 
                 name: user.name,
+                surname: user.surname,
                 email: user.email,
                 type: user.role,
+                validationSetup: user.validationSetup,
                 actions: null
               }
             });

@@ -96,10 +96,10 @@ export class BackUserDetailsComponent implements OnInit {
     // If the backuser being created is a partner, we need to set the relatedTpId and delete the unnecessary partner field
     if (formData.role === 'partner') {
       formData.relatedTpId = formData.partner.id;
+      formData.relatedTpName = formData.partner.fiscalName;
+      formData.relatedTpFiscalId = formData.partner.fiscalId;
       delete formData.partner;
     }
-
-    console.log('createBackUser', formData);
 
     this.userService.createBackUser(formData)
     .then((res) => {
