@@ -29,6 +29,7 @@ export class UserService {
     };
 
     public async createBackUser(backUserInfo: BackUser): Promise<any> {
+        console.log(backUserInfo);
         return await httpsCallable(this.fns, 'createBackUser')(backUserInfo);
     };
 

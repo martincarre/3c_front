@@ -1,0 +1,28 @@
+@if (currUserId) {
+    <div class="container bg-light bg-gradient rounded-4 p-4 m-2">
+        <!-- Title -->
+        <div class="p-4 d-flex justify-content-between"> 
+            <h1 class="mb-1">{{ currBackUserId ? 'TODO ADD USER INFO' : 'Nuevo usuario' }}</h1>
+            <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+        </div>
+    
+        <div class="row d-flex justify-content-center gap-2 m-2">
+            <div class="col-lg-10 col-12 bg-body mb-sm-2 p-4 shadow rounded">
+                <formly-form [form]="backUserForm" [fields]="backUserFormField" [model]="backUserModel" [options]="backUserOptions"></formly-form>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="d-flex justify-content-center mt-3 gap-4">
+                <button 
+                type="submit" 
+                (click)="onCreateBackUser()" 
+                [disabled]="backUserForm.invalid" 
+                class="d-inline-flex align-items-center btn btn-primary px-4"
+                >
+                    Guardar
+                    <i class="bi-floppy2-fill ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+}

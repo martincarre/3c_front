@@ -20,6 +20,10 @@ export const backUserFormFields: any = [
                     ],
                     required: true, 
                 },
+                expressions: 
+                {
+                    'props.disabled': '!formState.admin'
+                }
             },
             {
                 className: 'col-lg-6 col-12',

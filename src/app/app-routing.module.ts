@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ForbiddenComponent } from './modules/shared/components/forbidden/forbidden.component';
+import { authGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -12,7 +14,9 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule)
+    loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule),
+    canActivate: [authGuard],
+    data: { expectedRole: ['admin', 'moderator'] }
   },
   {
     path: 'contract',
@@ -21,6 +25,10 @@ const routes: Routes = [
   {
     path: 'file',
     loadChildren: () => import('./modules/file/file.module').then(m => m.FileModule)
+  },
+  {
+    path: 'forbidden',
+    component: ForbiddenComponent,
   }
 ];
 

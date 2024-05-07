@@ -21,7 +21,7 @@ import { environment } from 'src/environments/environment';
     ToastsContainer,
     SpinnerComponent,
     ToastGlobalComponent,
-    ConfirmationModalContent
+    ConfirmationModalContent,
   ],
   imports: [
     CommonModule,

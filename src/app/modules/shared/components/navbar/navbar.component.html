@@ -5,16 +5,24 @@
         </a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                <li class="nav-item" *ngFor="let item of navItems">
-                    <a role="button" class="nav-link" id="{{ item.id }}" [routerLink]="item.url"><i class="{{ item.ico }}"></i> {{ item.name }}</a>
-                </li>
+                <ng-container *ngFor="let item of navItems">
+                    <li class="nav-item" *appRole="item.roles">
+                        <a role="button" class="nav-link" id="{{ item.id }}" [routerLink]="item.url"><i class="{{ item.ico }}"></i> {{ item.name }}</a>
+                    </li>
+                </ng-container>
             </ul>
             <div class="text-end">
                 @if (!isAuthed) {
                     <button type="button" class="btn btn-outline-light me-2" *ngIf="!isAuthed" (click)="signIn()">Conectarme</button>
                 }
                 @else {
-                    <button type="button" class="btn btn-outline-light" (click)="logout()">Salir</button>
+                    @if (currAuthUserDisplay) {
+                        <span class="navbar-text me-3">{{ currAuthUserDisplay.displayName }} | {{ currAuthUserDisplay.roleDisplay.name }} <i class="{{ currAuthUserDisplay.roleDisplay.ico}} ms-1"></i></span>              
+                        <button type="button" class="btn btn-outline-light" (click)="logout()">Salir</button>
+                    }
+                    @else {
+                        <button type="button" class="btn btn-outline-light" (click)="logout()">Salir</button>
+                    }
                 }
             </div>
         </div>

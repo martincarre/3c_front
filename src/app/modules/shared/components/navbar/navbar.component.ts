@@ -9,6 +9,15 @@ interface NavItem {
   ico?: string;
   id: string;
   url: string;
+  roles: string[] | null;
+}
+
+interface AUserDisplay { 
+  roleDisplay: {
+    name: string;
+    ico: string;
+  };
+  displayName: string;
 }
 
 @Component({
@@ -19,26 +28,32 @@ interface NavItem {
 export class NavbarComponent implements OnInit {
   private authStateSub: Subscription = new Subscription();
   isAuthed: boolean = false;
+  
+  currAuthUserDisplay: AUserDisplay | null = null;
   navItems: NavItem[] = [
     {
       name: 'Terceros',
       id: 'thirdparty',
-      url: '/thirdparty'
+      url: '/thirdparty',
+      roles: ['admin']
     },
     {
       name: 'Operaciones',
       id: 'operation',
-      url: '/operation'
+      url: '/operation',
+      roles: ['admin', 'partner', 'moderator']
     },
     {
       name: 'Usuarios',
       id: 'user',
-      url: '/user'
+      url: '/user',
+      roles: ['admin', 'moderator']
     },
     {
       name: 'Contratos',
       id: 'contract',
-      url: '/contract'
+      url: '/contract',
+      roles: null
     },
   ];
 
@@ -50,12 +65,51 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.authStateSub = this.authService.getAuthState().subscribe((authState) => {
       if (authState) {
+        this.currAuthUserDisplay = this.aUserDisplay(authState.displayName, Object.keys(JSON.parse(authState.reloadUserInfo.customAttributes))[0]);
         this.isAuthed = true;
       } else {
         this.isAuthed = false;
       }
     });
+    
   };
+
+  aUserDisplay(displayName: string, aUserRole: string): AUserDisplay {
+    return {
+      displayName: displayName,
+      roleDisplay: this.roleDisplay(aUserRole)
+    };
+  };
+
+  roleDisplay(role: string): {name: string; ico: string;} {
+    switch (role) {
+      case 'admin':
+        return {
+          name: 'Administrador',
+          ico: 'bi-shield-lock-fill'
+        };
+      case 'partner':
+        return {
+          name: 'Socio',
+          ico: 'bi-shop'
+        };
+      case 'customer':
+        return {
+          name: 'Cliente',
+          ico: 'bi-person-fill'
+        };
+        case 'moderator':
+          return {
+            name: 'Backoffice',
+            ico: 'bi-person-badge-fill'
+          };
+      default:
+        return {
+          name: 'Usuario',
+          ico: 'bi-person-fill'
+        };
+    }
+  }
 
   signIn() {
     this.modalService.open(SignInModalComponent);

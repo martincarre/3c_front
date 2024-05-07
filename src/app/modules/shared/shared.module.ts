@@ -26,6 +26,7 @@ import { CustomerGdprModalComponent } from './components/customer-gdpr-modal/cus
 import { fieldMatchValidator } from './validators/fieldMatch.validator';
 import { minLengthValidationMessages } from './validators/minLength.validator';
 import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.component';
+import { RoleDirective } from 'src/app/core/directives/role.directive';
 
 
 @NgModule({
@@ -44,6 +45,11 @@ import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.c
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+
+    // Directives:
+    RoleDirective,
+
+    // Formly imports:
     
     FormlyModule.forRoot({
       validators: [
@@ -64,6 +70,7 @@ import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.c
     }),
     FormlyBootstrapModule,
 
+    // Ngx imports:
     NgxDatatableModule.forRoot({
       messages: {
         emptyMessage: 'No data to display', // Message to show when array is presented, but contains no values
@@ -77,6 +84,7 @@ import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.c
     NgbTypeaheadModule,
     NgSelectModule,
     NgbAccordionModule,
+
   ],
   exports: [
     // Modules: 
@@ -84,6 +92,10 @@ import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.c
     FormlyModule,
     FormlyBootstrapModule,
     NgxDatatableModule,
+
+    // Directives:
+    RoleDirective,
+
     // Shared Components:
     NavbarComponent,
     SidenavComponent,

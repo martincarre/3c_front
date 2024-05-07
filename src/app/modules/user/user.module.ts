@@ -4,7 +4,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { UserComponent } from './components/user/user.component';
 import { SharedModule } from '../shared/shared.module';
-import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { BackUserDetailsComponent } from './components/back-user-details/back-user-details.component';
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
 import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
 
@@ -13,7 +13,7 @@ import { BackUserConfirmComponent } from './components/back-user-confirm/back-us
   declarations: [
     UserListComponent,
     UserComponent,
-    UserDetailsComponent,
+    BackUserDetailsComponent,
     UserSignupComponent,
     BackUserConfirmComponent,
   ],
