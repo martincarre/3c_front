@@ -5,6 +5,7 @@ import { UserComponent } from './components/user/user.component';
 import { BackUserDetailsComponent } from './components/back-user-details/back-user-details.component';
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
 import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
+import { authGuard } from 'src/app/core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -12,8 +13,8 @@ const routes: Routes = [
     component: UserComponent,
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full'},
-      { path: 'list', component: UserListComponent },
-      { path: 'create', component: BackUserDetailsComponent },
+      { path: 'list', component: UserListComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
+      { path: 'create', component: BackUserDetailsComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
       { path: 'signup/:id', component: UserSignupComponent },
       { path: 'password-setup', component: BackUserConfirmComponent },
     ]
