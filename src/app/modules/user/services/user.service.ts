@@ -37,6 +37,10 @@ export class UserService {
         return await httpsCallable(this.fns, 'verifyBackUser')({token: token, password: formValue.password, email: formValue.email});
     };
 
+    public async deleteBackUser(userId: string): Promise<any> {
+        return await httpsCallable(this.fns, 'deleteBackUser')({userId: userId});
+    };
+
     public async fetchUserById(userId: string): Promise<any> {
         return await httpsCallable(this.fns, 'fetchUserById')({userId: userId});
     };
