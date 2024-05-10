@@ -14,7 +14,7 @@ export class UserComponent {
     },
     {
       name: 'Nuevo usuario',
-      route: '/user/create',
+      route: '/user/details/create',
       icon: 'bi-person-fill-add'
     },
   ];

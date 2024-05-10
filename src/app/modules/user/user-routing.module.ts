@@ -14,7 +14,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full'},
       { path: 'list', component: UserListComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
-      { path: 'create', component: BackUserDetailsComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
+      { path: 'details/create', component: BackUserDetailsComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
+      { path: 'details/:id', component: BackUserDetailsComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
       { path: 'signup/:id', component: UserSignupComponent },
       { path: 'password-setup', component: BackUserConfirmComponent },
     ]

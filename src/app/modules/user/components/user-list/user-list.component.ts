@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
@@ -21,7 +22,9 @@ export class UserListComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private spinnerService: SpinnerService,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
     ngOnInit(): void {
@@ -52,7 +55,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     viewDetails(row: any): void {
-      console.log(row);
+      this.router.navigate(['../details', row.id], { relativeTo: this.route });
     }
 
     deleteUser(row: any): void {
