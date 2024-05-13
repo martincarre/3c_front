@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDocs, onSnapshot, query, where } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { BackUser } from '../models/user.model';
 
 @Injectable({
@@ -12,6 +10,8 @@ import { BackUser } from '../models/user.model';
 export class UserService {
     
     private userCollection;
+    private currUserSub$: any;
+    private currUser$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
     constructor(
         private fs: Firestore,
@@ -42,7 +42,26 @@ export class UserService {
     };
 
     public async fetchUserById(userId: string): Promise<any> {
-        return await httpsCallable(this.fns, 'fetchUserById')({userId: userId});
+        const userRef = doc(this.userCollection, userId);
+        return this.currUserSub$ = onSnapshot(userRef, (doc) => {
+        if (doc.exists()) {
+            const userData = doc.data();
+            if (userData['createdAt'] && userData['createdAt'].seconds) {
+                userData['createdAt'] = new Date(userData['createdAt'].seconds * 1000);
+            }
+            this.currUser$.next(userData);
+            return true;
+        } else {
+            // doc.data() will be undefined in this case
+            console.log('No such document!');
+            this.currUser$.next(null);
+            return false;
+        }
+        });
+    };
+
+    public getCurrentUser(): Observable<any> {
+        return this.currUser$.asObservable();
     };
 
     public addOperationIdToUser(operationId: string, userId: string): Promise<any> {
@@ -63,7 +82,7 @@ export class UserService {
                 }
             });
         }) 
-    }
+    };
 
     public addTpToUser(tpId: string, userId: string): Promise<any> {
         return new Promise((resolve, reject) => {

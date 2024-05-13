@@ -22,7 +22,7 @@ export const backUserFormFields: any = [
                 },
                 expressions: 
                 {
-                    'props.disabled': '!formState.admin'
+                    'props.disabled': '!formState.admin || formState.disabled',
                 }
             },
             {
@@ -36,10 +36,11 @@ export const backUserFormFields: any = [
                   required: true,
                 },
                 expressions: 
-                {
-                    hide: 'model.role !== "partner"'
+                {   
+                    hide: 'model.role !== "partner"',
+                    'props.disabled': 'formState.disabled',
                 }
-              },
+            },
         ]
     },
     {
@@ -56,6 +57,9 @@ export const backUserFormFields: any = [
                     placeholder: 'Nombre(s)',
                     required: true, 
                 },
+                expressions: {
+                    'props.disabled': 'formState.disabled',
+                }
         },
         {
             className: 'col-lg-6 col-12',
@@ -67,6 +71,9 @@ export const backUserFormFields: any = [
                 placeholder: 'Apellido(s)',
                 required: true,
             },
+            expressions: {
+                'props.disabled': 'formState.disabled',
+            }
         }
     ]
   },
@@ -84,6 +91,9 @@ export const backUserFormFields: any = [
             placeholder: 'juanperez@ejemplo.com',
             required: true,
         },
+        expressions: {
+            'props.disabled': 'formState.disabled',
+        }
     },
     {
         className: 'col-lg-6 col-12',
@@ -95,6 +105,9 @@ export const backUserFormFields: any = [
             placeholder: '654 321 098',
             required: true,
         },
+        expressions: {
+            'props.disabled': 'formState.disabled',
+        }
     }
    ]   
   },
@@ -119,6 +132,7 @@ export const backUserConfirmationFields: any = [
                     required: true,
                 }
             }
+            
         ]
     },
     {

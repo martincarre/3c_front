@@ -9,7 +9,7 @@ import { Location } from '@angular/common';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Subscription } from 'rxjs';
+import { Subscription, map } from 'rxjs';
 
 @Component({
   selector: 'back-app-user-details',
@@ -19,13 +19,15 @@ import { Subscription } from 'rxjs';
 export class BackUserDetailsComponent implements OnInit {
   aUserSub: Subscription = new Subscription();
   // TODO: add CustomerUser model?
-  currBackUser: BackUser | null = null; 
+  currBackUser: BackUser | null = null;
+  currBackUserSub: Subscription = new Subscription(); 
   currBackUserId: string | null = null;
 
   currUserRole: string | null = null;
   currUserId: string | null = null;
 
   createMode: boolean = true;
+  editMode: boolean = false; 
 
   backUserFormField: FormlyFieldConfig[] = [];
   backUserForm: FormGroup = new FormGroup({});
@@ -67,11 +69,37 @@ export class BackUserDetailsComponent implements OnInit {
     this.currBackUserId = this.route.snapshot.params['id'];
     if (this.currBackUserId) {
       this.createMode = false;
+      this.editMode = false;
+      this.backUserOptions.formState.disabled = true;
+      this.userService.fetchUserById(this.currBackUserId);
       // TODO: fetch user by id
-    }
-
-
+      this.currBackUserSub = this.userService.getCurrentUser()
+        .subscribe((user: BackUser) => {
+          console.log(user);
+          if (user) {
+            this.currBackUser = user;
+            this.backUserModel = user;
+          }
+        });
+    };
   }
+
+  onEdit(): void {
+    this.backUserOptions.formState.disabled = !this.backUserOptions.formState.disabled;
+    this.editMode = !this.editMode;
+  }
+
+  onSubmitBackUser(): void {
+    if (this.createMode) {
+      this.onCreateBackUser();
+    } else if (this.editMode) {
+      this.onUpdateBackUser();
+    }
+  };
+
+  onUpdateBackUser(): void {
+    console.log('onUpdateBackUser', this.backUserForm.value);
+  };
 
   onCreateBackUser(): void {
     // If there's no user role, don't do anything

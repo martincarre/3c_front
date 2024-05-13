@@ -22,6 +22,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     CoreModule,
   ],
   providers: [
+    { provide: 'LOCALE_ID', useValue: 'es-ES' }
   ],
   bootstrap: [AppComponent]
 })

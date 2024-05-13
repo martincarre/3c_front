@@ -2,7 +2,11 @@
     <div class="container bg-light bg-gradient rounded-4 p-4 m-2">
         <!-- Title -->
         <div class="p-4 d-flex justify-content-between"> 
-            <h1 class="mb-1">{{ currBackUserId ? 'TODO ADD USER INFO' : 'Nuevo usuario' }}</h1>
+            @if (currBackUser) {
+                <h1 class="mb-1">{{ currBackUser.name + ' ' + currBackUser.surname }}</h1>
+            } @else {
+                <h1 class="mb-1">Nuevo usuario</h1>
+            }
             <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
         </div>
     
@@ -13,16 +17,66 @@
         </div>
         <div class="row mb-4">
             <div class="d-flex justify-content-center mt-3 gap-4">
-                <button 
-                type="submit" 
-                (click)="onCreateBackUser()" 
-                [disabled]="backUserForm.invalid" 
-                class="d-inline-flex align-items-center btn btn-primary px-4"
-                >
-                    Guardar
-                    <i class="bi-floppy2-fill ms-2"></i>
-                </button>
+            @if(createMode) {
+                    <button 
+                    type="submit" 
+                    (click)="onSubmitBackUser()" 
+                    [disabled]="backUserForm.invalid" 
+                    class="d-inline-flex align-items-center btn btn-primary px-4"
+                    >
+                        Guardar
+                        <i class="bi-floppy2-fill ms-2"></i>
+                    </button>
+                }
+                @else if(!createMode) {
+                    @if (!editMode) {
+                        <button 
+                        type="button" 
+                        (click)="onEdit()" 
+                        [disabled]="backUserForm.invalid" 
+                        class="d-inline-flex align-items-center btn btn-warning px-4"
+                        >
+                            Modificar
+                            <i class="bi-pencil-square ms-2"></i>
+                        </button>
+                    }
+                    @else {
+                        <button 
+                        type="submit" 
+                        (click)="onSubmitBackUser()" 
+                        [disabled]="backUserForm.invalid" 
+                        class="d-inline-flex align-items-center btn btn-primary px-4"
+                        >
+                            Guardar
+                            <i class="bi-floppy2-fill ms-2"></i>
+                        </button>
+                        <button 
+                        type="button" 
+                        (click)="onEdit()" 
+                        [disabled]="backUserForm.invalid" 
+                        class="d-inline-flex align-items-center btn btn-info px-4"
+                        >
+                            Cancelar
+                            <i class="bi-x-lg ms-2"></i>
+                        </button>
+                    }
+                }
+                @else {
+                    <h1>ERROR!</h1>
+                    <p>Por favor hable con un administrador...<span class="text-body-secondary">REFERENCE: No BackUser CreateMode</span></p>
+                }
             </div>
         </div>
     </div>
+
+    @if(currBackUser) {
+        @if( currBackUser.createdBy ) {
+            <div class="container bg-light bg-gradient rounded-4 p-4 m-2">
+                <h5 class="mb-1">Información de cuenta</h5>
+                <div class="p-4 d-flex justify-content-between"> 
+                    <p>Usuario creado por {{ currBackUser.createdBy.name }} en fecha/hora: {{ currBackUser.createdAt | date:'long':undefined:'es-ES' }} </p>
+                </div>
+            </div>
+        }
+    }
 }
