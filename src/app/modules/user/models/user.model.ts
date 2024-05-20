@@ -11,16 +11,13 @@ export interface BackUser {
         relatedTpFiscalId?: string;
         managedUserIds?: [string];
         createdBy?: {
-                uid: string;
+                id: string;
                 name: string;
         };
         createdAt?: Date;
-        updatedAt?: {
-                seconds: number;
-                nanoseconds: number;
-        };
+        updatedAt?: Date;
         updatedBy?: {
-                uid: string;
+                id: string;
                 name: string;
         };
         validationSetup?: boolean;

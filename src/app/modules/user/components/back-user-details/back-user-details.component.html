@@ -76,12 +76,17 @@
     </div>
 
     @if(currBackUser) {
-        @if( currBackUser.createdBy ) {
+        @if(currBackUser.createdBy ) {
             <div class="container bg-light bg-gradient rounded-4 p-4 m-2">
-                <h5 class="mb-1">Información de cuenta</h5>
-                <div class="p-4 d-flex justify-content-between"> 
+                <h5 class="mb-2">Información de cuenta</h5>
+                <div class="d-flex justify-content-between"> 
                     <p>Usuario creado por {{ currBackUser.createdBy.name }} en fecha/hora: {{ currBackUser.createdAt | date:'long':undefined:'es-ES' }} </p>
                 </div>
+                @if(currBackUser.updatedBy && currBackUser.updatedAt) {
+                    <div class="d-flex justify-content-between"> 
+                        <p>Usuario modificado por {{ currBackUser.updatedBy.name }} en fecha/hora: {{ currBackUser.updatedAt | date:'long':undefined:'es-ES' }} </p>
+                    </div>
+                }
             </div>
         }
     }

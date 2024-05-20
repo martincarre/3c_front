@@ -61,6 +61,10 @@ export class UserService {
             if (userData['createdAt'] && userData['createdAt'].seconds) {
                 userData['createdAt'] = new Date(userData['createdAt'].seconds * 1000);
             }
+            // Adapting the updatedAt field to a Date object
+            if (userData['updatedAt'] && userData['updatedAt'].seconds) {
+                userData['updatedAt'] = new Date(userData['updatedAt'].seconds * 1000);
+            }
             // Adapting the mobile number for the user avoiding the country code
             if (userData['mobile']) {
                 userData['mobile'] = userData['mobile'].replace('+34', '');
