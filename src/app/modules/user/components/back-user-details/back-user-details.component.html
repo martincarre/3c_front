@@ -30,14 +30,22 @@
                 }
                 @else if(!createMode) {
                     @if (!editMode) {
-                        <button 
-                        type="button" 
-                        (click)="onEdit()" 
-                        class="d-inline-flex align-items-center btn btn-warning px-4"
-                        >
-                            Modificar
-                            <i class="bi-pencil-square ms-2"></i>
-                        </button>
+                        @if (currBackUser) {
+                            <button 
+                            *ngIf="!(currBackUser.role === 'moderator' && currUserRole === 'moderator')"
+                            type="button" 
+                            (click)="onEdit()" 
+                            class="d-inline-flex align-items-center btn btn-warning px-4"
+                            >
+                                Modificar
+                                <i class="bi-pencil-square ms-2"></i>
+                            </button>
+                            <div class="container" *ngIf="(currBackUser.role === 'moderator' && currUserRole === 'moderator')">
+                                <div class="alert alert-info" role="alert">
+                                    No puedes modificar a otro moderador. Solo consultar los detalles. Para pedir un modificación, por favor, habla con un administrador.
+                                </div> 
+                            </div>
+                        }
                     }
                     @else {
                         <button 
@@ -49,7 +57,7 @@
                             Guardar
                             <i class="bi-floppy2-fill ms-2"></i>
                         </button>
-                        <button 
+                        <button     
                         type="button" 
                         (click)="onEdit()" 
                         class="d-inline-flex align-items-center btn btn-info px-4"

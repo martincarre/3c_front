@@ -116,6 +116,12 @@ export class BackUserDetailsComponent implements OnInit {
       return;
     };
 
+    // If a moderator is trying to update another moderator, don't allow it
+    if (this.currUserRole === 'moderator' && this.initialBackUserModel.role === 'moderator') {
+      alert('No tiene permisos para modificar a otro moderador');
+      return;
+    };
+
     // if it's a moderator modyfying the role then she/he can't change the role
     if (!this.backUserForm.value.role) {
       this.backUserForm.value.role = this.initialBackUserModel.role;
