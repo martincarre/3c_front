@@ -6,6 +6,7 @@ export interface BackUser {
         role: string;
         managedTpIds?: [string];
         relatedTpId?: string;
+        partner?: any;
         relatedTpName?: string;
         relatedTpFiscalId?: string;
         managedUserIds?: [string];

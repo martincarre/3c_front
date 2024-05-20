@@ -29,5 +29,5 @@ export class ContactService {
 
     public async checkContactByEmail(email: string): Promise<any> {
         return await httpsCallable(this.fns, 'checkContactByEmail')({ email: email });
-    }
+    };
 }

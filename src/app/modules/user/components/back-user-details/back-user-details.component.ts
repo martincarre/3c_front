@@ -9,7 +9,8 @@ import { Location } from '@angular/common';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Subscription, map } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { FormHelper } from 'src/app/modules/shared/utilities/formHelpers';
 
 @Component({
   selector: 'back-app-user-details',
@@ -22,6 +23,8 @@ export class BackUserDetailsComponent implements OnInit {
   currBackUser: BackUser | null = null;
   currBackUserSub: Subscription = new Subscription(); 
   currBackUserId: string | null = null;
+  initialBackUserModel: any;
+  
 
   currUserRole: string | null = null;
   currUserId: string | null = null;
@@ -78,7 +81,15 @@ export class BackUserDetailsComponent implements OnInit {
           console.log(user);
           if (user) {
             this.currBackUser = user;
-            this.backUserModel = user;
+            this.backUserModel = {
+              email: user.email,
+              name: user.name,
+              surname: user.surname,
+              mobile: user.mobile,
+              role: user.role,
+              partner: user.partner,
+            };
+            this.initialBackUserModel = { ...this.backUserModel };
           }
         });
     };
@@ -98,7 +109,60 @@ export class BackUserDetailsComponent implements OnInit {
   };
 
   onUpdateBackUser(): void {
-    console.log('onUpdateBackUser', this.backUserForm.value);
+    // If there's no user id, don't do anything
+    if (!this.currBackUserId) {
+      console.error('No user id found');
+      alert('No se ha encontrado el id del usuario, esto no deberia de haber pasado... Por favor contacte con soporte técnico.');
+      return;
+    };
+
+    // if it's a moderator modyfying the role then she/he can't change the role
+    if (!this.backUserForm.value.role) {
+      this.backUserForm.value.role = this.initialBackUserModel.role;
+    };
+
+    // Chack if there are changes to the backuser
+    const changes = FormHelper.getFormChanges(this.initialBackUserModel, this.backUserForm.value);
+    if (FormHelper.isEmptyObject(changes)) {
+      console.log('No changes were detected');
+      alert('No has hecho ningún cambio...');
+      return;
+    };
+
+    // If the backuser's change is related to its tp, we need to adapt the changes to what's expected in the backend;
+    if (changes.partner) {
+      changes.relatedTpId = changes.partner.id;
+      changes.relatedTpName = changes.partner.fiscalName;
+      changes.relatedTpFiscalId = changes.partner.fiscalId;
+      delete changes.partner;
+    };
+
+    // Everything is ready to update the backuser
+    this.spinnerService.show();
+    this.userService.updateBackUser(this.currBackUserId!, changes)
+      .then((res) => {
+        // Success
+        if (res.data.success) {
+          console.log('updateBackUser', res);
+          this.toastService.show('bg-success text-light', `Usuario actualizado con éxito`, 'Éxito!', 7000);
+          this.router.navigate(['user']);
+          this.spinnerService.hide();
+        }
+        // Backend "expected" potential errors
+        else {
+          alert('Error updating user');
+          console.error('updateBackUser', res.data);
+          this.toastService.show('bg-danger text-light', res.data.message, 'Error!', 7000);
+          this.spinnerService.hide();
+        }
+      })
+      // Unexpected errors
+      .catch((err) => {
+        alert('Error updating user');
+        console.error('updateBackUser', err.data);
+        this.toastService.show('bg-danger text-light', err.data.message, 'Error!', 7000);
+        this.spinnerService.hide();
+      });
   };
 
   onCreateBackUser(): void {

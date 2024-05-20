@@ -6,6 +6,7 @@ import { BackUserDetailsComponent } from './components/back-user-details/back-us
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
 import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
 import { authGuard } from 'src/app/core/guards/auth.guard';
+import { BackuserEmailConfirmationComponent } from './components/backuser-mail-confirmation/backuser-email-confirmation.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,7 @@ const routes: Routes = [
       { path: 'details/:id', component: BackUserDetailsComponent, canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }},
       { path: 'signup/:id', component: UserSignupComponent },
       { path: 'password-setup', component: BackUserConfirmComponent },
+      { path: 'email-verification', component: BackuserEmailConfirmationComponent },
     ]
   },
 ];

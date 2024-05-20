@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, doc, getDocs, onSnapshot, query, where } from '@angular/fire/firestore';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, map, takeUntil } from 'rxjs';
 import { BackUser } from '../models/user.model';
+import { TypeaheadService } from '../../shared/services/typeahead.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,12 @@ export class UserService {
     private currUserSub$: any;
     private currUser$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
+    private destroy$: Subject<any> = new Subject<any>();
+
     constructor(
         private fs: Firestore,
         private fns: Functions,
+        private typeaheadService: TypeaheadService,
     ) 
     {
        this.userCollection = collection(this.fs, 'users');
@@ -29,13 +33,20 @@ export class UserService {
     };
 
     public async createBackUser(backUserInfo: BackUser): Promise<any> {
-        console.log(backUserInfo);
         return await httpsCallable(this.fns, 'createBackUser')(backUserInfo);
     };
 
     public async verifyBackUser(token: string, formValue: { email: string, password: string, passwordConfirm: string }): Promise<any> {
         return await httpsCallable(this.fns, 'verifyBackUser')({token: token, password: formValue.password, email: formValue.email});
     };
+
+    public async confirmBackUserMail (email: string): Promise<any> {
+        return await httpsCallable(this.fns, 'confirmBackUserMail')({email: email});
+    };
+
+    public async updateBackUser(userId: string, changes: any): Promise<any> {
+        return await httpsCallable(this.fns, 'updateBackUser')({userId: userId, changes: changes});
+    }
 
     public async deleteBackUser(userId: string): Promise<any> {
         return await httpsCallable(this.fns, 'deleteBackUser')({userId: userId});
@@ -46,9 +57,27 @@ export class UserService {
         return this.currUserSub$ = onSnapshot(userRef, (doc) => {
         if (doc.exists()) {
             const userData = doc.data();
+            // Adapting the createdAt field to a Date object
             if (userData['createdAt'] && userData['createdAt'].seconds) {
                 userData['createdAt'] = new Date(userData['createdAt'].seconds * 1000);
             }
+            // Adapting the mobile number for the user avoiding the country code
+            if (userData['mobile']) {
+                userData['mobile'] = userData['mobile'].replace('+34', '');
+            }
+            // Adding the partner to the user data if required: hence if it's not an moderator
+            if (userData['relatedTpId'] && userData['relatedTpId'] !== 'admin') {
+                this.typeaheadService.getThirdparties()
+                .pipe(takeUntil(this.destroy$))
+                .subscribe((data: any) => {
+                    const partner = data.find((tp: any) => tp.id === userData['relatedTpId']);
+                    if (partner) {
+                        this.destroy$.next(true);
+                        userData['partner'] = partner;
+                    }
+                });
+            }
+            // providing the user data to the observable
             this.currUser$.next(userData);
             return true;
         } else {

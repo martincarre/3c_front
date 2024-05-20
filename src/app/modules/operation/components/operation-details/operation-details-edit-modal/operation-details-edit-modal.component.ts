@@ -5,7 +5,8 @@ import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { operationsDetailsForm } from '../../../models/operation.formly-form';
 import { TypeaheadService } from 'src/app/modules/shared/services/typeahead.service';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { FormHelper } from 'src/app/modules/shared/utilities/formHelpers';
 
 @Component({
   selector: 'app-operation-details-edit-modal',
@@ -16,7 +17,7 @@ export class OperationDetailsEditModalComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
   @Input() data: any;
   private destroy$: Subject<any> = new Subject<any>();
-  private initialModel: any;
+  private initialOpDetailModel: any;
   @Output() updateOperation: EventEmitter<any> = new EventEmitter<any>();
   
   opDetailForm: FormGroup = new FormGroup({});
@@ -47,39 +48,16 @@ export class OperationDetailsEditModalComponent implements OnInit {
             description: this.data.description,
           };
         }
-        this.initialModel = { ...this.opDetailModel};
+        this.initialOpDetailModel = { ...this.opDetailModel};
       });
   }
 
-  private getFormChanges(initialModel: any, currentModel: any): any {
-    const changes: any = {};
-    Object.keys(initialModel).forEach(key => {
-      if (this.isObject(initialModel[key]) && this.isObject(currentModel[key])) {
-        const deepChanges = this.getFormChanges(initialModel[key], currentModel[key]);
-        if (Object.keys(deepChanges).length > 0) {
-          changes[key] = deepChanges;
-        }
-      } else if (initialModel[key] !== currentModel[key]) {
-        changes[key] = currentModel[key];
-      }
-    });
-    return changes;
-  }
-  
-  private isObject(item: any): boolean {
-    return (item && typeof item === 'object' && !Array.isArray(item));
-  }
-
-  private isEmptyObject(obj: any): boolean {
-    return Object.keys(obj).length === 0 && obj.constructor === Object;
-  }
-  
   onSubmit(): void {
     // console.log(this.data);
 
     // Checking for changes
-    const changes = this.getFormChanges(this.initialModel, this.opDetailModel);
-    if (this.isEmptyObject(changes)) {
+    const changes = FormHelper.getFormChanges(this.initialOpDetailModel, this.opDetailModel);
+    if (FormHelper.isEmptyObject(changes)) {
       // If no changes, stay on the modal but alert and return
       console.log('No changes detected');
       alert('No has hecho ningún cambio...');

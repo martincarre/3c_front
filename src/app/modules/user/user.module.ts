@@ -7,6 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { BackUserDetailsComponent } from './components/back-user-details/back-user-details.component';
 import { UserSignupComponent } from './components/user-signup/user-signup.component';
 import { BackUserConfirmComponent } from './components/back-user-confirm/back-user-confirm.component';
+import { BackuserEmailConfirmationComponent } from './components/backuser-mail-confirmation/backuser-email-confirmation.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { BackUserConfirmComponent } from './components/back-user-confirm/back-us
     BackUserDetailsComponent,
     UserSignupComponent,
     BackUserConfirmComponent,
+    BackuserEmailConfirmationComponent,
   ],
   imports: [
     CommonModule,
