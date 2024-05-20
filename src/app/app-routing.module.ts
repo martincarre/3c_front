@@ -6,7 +6,9 @@ import { authGuard } from './core/guards/auth.guard';
 const routes: Routes = [
   {
     path: 'thirdparty',
-    loadChildren: () => import('./modules/thirdparty/thirdparty.module').then(m => m.ThirdpartyModule)
+    loadChildren: () => import('./modules/thirdparty/thirdparty.module').then(m => m.ThirdpartyModule),
+    canActivate: [authGuard],
+    data: { expectedRole: ['admin', 'moderator', 'customer'] }
   },
   {
     path: 'operation',

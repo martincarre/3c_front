@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ThirdpartydetailComponent } from './components/thirdpartydetail/thirdpartydetail.component';
 import { ThirdpartyhomeComponent } from './components/thirdpartyhome/thirdpartyhome.component';
 import { ThirdpartylistComponent } from './components/thirdpartylist/thirdpartylist.component';
+import { authGuard } from 'src/app/core/guards/auth.guard';
 
 
 const routes: Routes = [
@@ -11,10 +12,14 @@ const routes: Routes = [
     component: ThirdpartyhomeComponent,
     children: [
       { path: '', redirectTo: 'list', pathMatch: 'full'},
-      { path: 'create', component: ThirdpartydetailComponent },
+      { path: 'create', component: ThirdpartydetailComponent,
+        canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }
+       },
       { path: 'create/:id', component: ThirdpartydetailComponent },
       { path: 'details/:id', component: ThirdpartydetailComponent },
-      { path: 'list', component: ThirdpartylistComponent },
+      { path: 'list', component: ThirdpartylistComponent,
+        canActivate: [authGuard], data: { expectedRole: ['admin', 'moderator'] }
+       },
     ]
   },
 ];
