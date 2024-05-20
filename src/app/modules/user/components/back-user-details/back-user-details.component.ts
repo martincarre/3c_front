@@ -109,6 +109,15 @@ export class BackUserDetailsComponent implements OnInit {
   };
 
   onUpdateBackUser(): void {
+    // TODO: Need to handle expired confirmation -email links. Right now it's providing in the browser the following JSON: 
+    // {
+    //     "authEmulator": {
+    //       "error": "Your request to verify your email has expired or the link has already been used.",
+    //       "instructions": "Try verifying your email again."
+    //     }
+    // }
+
+
     // If there's no user id, don't do anything
     if (!this.currBackUserId) {
       console.error('No user id found');

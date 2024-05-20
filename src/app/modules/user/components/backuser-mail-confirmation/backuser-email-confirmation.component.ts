@@ -23,6 +23,14 @@ export class BackuserEmailConfirmationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // TODO: Need to handle expired links. Right now it's providing in the browser the following JSON: 
+    // {
+    //     "authEmulator": {
+    //       "error": "Your request to verify your email has expired or the link has already been used.",
+    //       "instructions": "Try verifying your email again."
+    //     }
+    // }
+
     this.email = this.route.snapshot.queryParamMap.get('email');
     if (!this.email) {
       alert('Error: No email provided');
