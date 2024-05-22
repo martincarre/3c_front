@@ -9,16 +9,16 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
   providedIn: 'root'
 })
 export class ThirdpartyService {
-  private fs: Firestore = inject(Firestore);
-  private fns: Functions = inject(Functions);
-  private tpCollection;
 
   // Current Thirdparty variables
+  private tpCollection;
   private currTp$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private currTpSub$: any;
 
   constructor(
-    private http: HttpClient
+    private fs: Firestore,
+    private fns: Functions,
+    private http: HttpClient,
   ) {
     this.tpCollection = collection(this.fs, 'thirdparties');
   }
@@ -27,7 +27,7 @@ export class ThirdpartyService {
     const tpRef = doc(this.tpCollection, id);
     return this.currTpSub$ = onSnapshot(tpRef, (doc) => {
       if (doc.exists()) {
-        this.currTp$.next(doc.data());
+        this.currTp$.next({...doc.data(), id: doc.id });
         return true;
       } else {
         // doc.data() will be undefined in this case
@@ -46,9 +46,8 @@ export class ThirdpartyService {
     return await httpsCallable(this.fns, 'createTp')(thirdparty);
   }
 
-  public async updateThirdparty(tpId: string, thirdparty: Thirdparty): Promise<any>{
-    const tpRef = doc(this.tpCollection, tpId);
-    return await updateDoc(tpRef, thirdparty as Partial<Thirdparty>);
+  public async updateThirdparty(tpId: string, changes: any): Promise<any>{
+    return await httpsCallable(this.fns, 'updateTp')({ tpId, changes});
   }
 
   public async deleteThirdparty(tpId: string): Promise<any>{
