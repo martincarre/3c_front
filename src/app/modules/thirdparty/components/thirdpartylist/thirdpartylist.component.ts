@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalContent } from 'src/app/core/components/confirmation-modal/confirmation-modal.component';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-thirdpartylist',
@@ -30,7 +31,8 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private modalService: NgbModal,
-    private spinnerService: SpinnerService
+    private spinnerService: SpinnerService,
+    private toastService: ToastService,
   ) { }
 
 
@@ -73,6 +75,11 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
         this.spinnerService.show();
         thirdparty.id ? this.tpService.deleteThirdparty(thirdparty.id)
           .then((delRes: any) => {
+            if (delRes.data.success) {
+              this.toastService.show('bg-success text-light', delRes.data.message, 'Éxito!', 7000);
+            } else {
+              this.toastService.show('bg-danger text-light', delRes.data.message, 'Error!', 7000);
+            }
             this.spinnerService.hide();
             this.fetchData();
           })
