@@ -63,9 +63,10 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authStateSub = this.authService.getAuthState().subscribe((authState) => {
-      if (authState) {
-        this.currAuthUserDisplay = this.aUserDisplay(authState.displayName, Object.keys(JSON.parse(authState.reloadUserInfo.customAttributes))[0]);
+    this.authStateSub = this.authService.getAuthedUser().subscribe((authedUser) => {
+      console.log('navbar:', authedUser);
+      if (authedUser) {
+        this.currAuthUserDisplay = this.aUserDisplay(authedUser.name? authedUser.name : 'admin', authedUser.role);
         this.isAuthed = true;
       } else {
         this.isAuthed = false;
