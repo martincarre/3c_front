@@ -51,8 +51,7 @@ export class ThirdpartyService {
   }
 
   public async deleteThirdparty(tpId: string): Promise<any>{
-    const tpRef = doc(this.tpCollection, tpId);
-    return await deleteDoc(tpRef);
+    return await httpsCallable(this.fns, 'deleteTp')({ tpId});
   }
 
   public fetchThirdparties(tpType?: string, userBased?: boolean): Observable<any[]> {
