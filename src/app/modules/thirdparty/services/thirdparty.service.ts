@@ -27,7 +27,20 @@ export class ThirdpartyService {
     const tpRef = doc(this.tpCollection, id);
     return this.currTpSub$ = onSnapshot(tpRef, (doc) => {
       if (doc.exists()) {
-        this.currTp$.next({...doc.data(), id: doc.id });
+        const tpData: any = {...doc.data(), id: doc.id };
+        // Adapting the createdAt field to a Date object
+        if (tpData['createdAt'] && tpData['createdAt'].seconds) {
+            tpData['createdAt'] = new Date(tpData['createdAt'].seconds * 1000);
+        }
+        // Adapting the updatedAt field to a Date object
+        if (tpData['updatedAt'] && tpData['updatedAt'].seconds) {
+            tpData['updatedAt'] = new Date(tpData['updatedAt'].seconds * 1000);
+        }
+        // Adapting the mobile number for the user avoiding the country code
+        if (tpData['phone']) {
+            tpData['phone'] = tpData['mobile'].replace('+34', '');
+        }
+        this.currTp$.next(tpData);
         return true;
       } else {
         // doc.data() will be undefined in this case

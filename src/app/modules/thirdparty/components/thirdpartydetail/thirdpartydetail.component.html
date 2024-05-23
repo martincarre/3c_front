@@ -25,4 +25,20 @@
             <button *ngIf="!createMode && editMode" type="button" class="btn btn-info" (click)="onEdit()">Cancelar</button>
         </div>
     </div>
+    <!-- TODO Create an audit trail component in the shared module and reuse. -->
+    @if(currentTP) {
+        @if(currentTP.createdBy ) {
+            <div class="container bg-light bg-gradient rounded-4 p-4 ms-2 mt-5">
+                <h5 class="mb-2">Información de cuenta</h5>
+                <div class="d-flex justify-content-between"> 
+                    <p>Tercero creado por {{ currentTP.createdBy.name }} en fecha/hora: {{ currentTP.createdAt | date:'long':undefined:'es-ES' }} </p>
+                </div>
+                @if(currentTP.updatedBy && currentTP.updatedAt) {
+                    <div class="d-flex justify-content-between"> 
+                        <p>Tercero modificado por {{ currentTP.updatedBy.name }} en fecha/hora: {{ currentTP.updatedAt | date:'long':undefined:'es-ES' }} </p>
+                    </div>
+                }
+            </div>
+        }
+    }
 }

@@ -74,11 +74,10 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
       this.formOptions.formState.disabled = true;
       this.thirdpartyService.fetchThirdPartyById(this.currentId);
       this.tpSub = this.thirdpartyService.getCurrentThirdparty()
-        .pipe(map((tp: any) => {
-          // Adapting (simplfying) a, maybe, more complete backend TP to the one in the model / form here.
+        .subscribe((tp: Thirdparty | null) => {
           if (tp) {
-            return {
-              id: tp.id,
+            this.currentTP = tp;
+            this.model = {
               Iban: tp.Iban,
               address: tp.address,
               addressComp: tp.addressComp,
@@ -90,15 +89,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
               state: tp.state,
               tpType: tp.tpType,
             }
-          } else {
-            return null;
-          }
-        }))
-        .subscribe((tp: Thirdparty | null) => {
-          if (tp) {
-            this.currentTP = tp;
-            this.model = tp
-            this.initialTpModel = { ...this.model}
+            this.initialTpModel = { ...this.model};
             this.title = tp.fiscalName;
             this.spinnerService.hide();
           }
@@ -134,7 +125,6 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
       console.error('No user found');
       return;
     };
-
     this.spinnerService.show();
     // Create Mode
     if (this.createMode) {
@@ -191,9 +181,10 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   };
 
   // Helper function to update a new Thirdparty
-  private updateTp(): void {
+  private updateTp(): any {
     if (!this.currentTP) {
       console.error('No current TP found');
+      return;
     }
     else {
       // Check if there are changes

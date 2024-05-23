@@ -78,7 +78,6 @@ export class BackUserDetailsComponent implements OnInit {
       // TODO: fetch user by id
       this.currBackUserSub = this.userService.getCurrentUser()
         .subscribe((user: BackUser) => {
-          console.log(user);
           if (user) {
             this.currBackUser = user;
             this.backUserModel = {

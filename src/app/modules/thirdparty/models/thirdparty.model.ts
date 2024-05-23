@@ -10,4 +10,14 @@ export interface Thirdparty {
     postalCode: string;
     state: string;
     tpType: string;
+    createdBy: {
+        id: string;
+        name: string;
+    };
+    createdAt: Date;
+    updatedAt?: Date;
+    updatedBy?: {
+        id: string;
+        name: string;
+    };
 };
