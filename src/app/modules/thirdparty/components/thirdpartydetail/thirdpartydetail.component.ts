@@ -151,18 +151,19 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     let tp = this.tpForm.value as Thirdparty;
     this.thirdpartyService.addThirdparty(tp)
     .then(async (res: any) => {
-        if (!res.data.success) { 
+        if (res.data.success) { 
           // Put the toast here
           this.toastService.show('bg-success text-light', res.data.message , 'Éxito!', 7000);
 
+          // If the user is a customer, then we need to create the contract
+          if (this.currentUser.role === 'customer') {
+            
           const newTpId = res.data.tpId;
           // If the newTpId is null, then there was an error creating the TP
           if (!newTpId) {
             this.spinnerService.hide();
             alert('Error creating TP');
           }
-          // If the user is a customer, then we need to create the contract
-          if (this.currentUser.role === 'customer') {
             // First include the newTpId in the tp object
             tp = { id: newTpId, ...tp };
             // Create the contract
@@ -179,10 +180,12 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
         }
         else {
           this.toastService.show('bg-danger text-light', res.data.message, 'Error!', 7000);
+          this.spinnerService.hide();
         }
       })
       .catch(err => {
         this.toastService.show('bg-danger text-light', err.data.message, 'Error!', 7000);
+        this.spinnerService.hide();
         console.error('err', err);
       });
   };
