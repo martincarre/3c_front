@@ -35,7 +35,7 @@ export class NavbarComponent implements OnInit {
       name: 'Terceros',
       id: 'thirdparty',
       url: '/thirdparty',
-      roles: ['admin']
+      roles: ['admin', 'moderator']
     },
     {
       name: 'Operaciones',
