@@ -16,9 +16,7 @@ export class InformaService {
     private stateList$: BehaviorSubject<{label: string; value: string;}[]> = new BehaviorSubject<{label: string; value: string;}[]>([]);
 
     constructor(
-        private http: HttpClient,
         private spinnerService: SpinnerService,
-        private toastService: ToastService,
         private fns: Functions,
     ) {
         
