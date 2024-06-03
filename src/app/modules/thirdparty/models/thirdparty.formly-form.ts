@@ -50,16 +50,13 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                     hooks: {
                         onInit: (field: FormlyFieldConfig) => {
                             field.formControl?.valueChanges.subscribe((value) => {
-                                console.log(field.parent?.parent);
                                 if (value === 'autonomo') {
                                     const parentForm = field.formControl?.parent;
-                                    console.log(parentForm);
                                     if (parentForm) {
                                         // Clear all fields except tpType and companyType
                                         Object.keys(parentForm.controls).forEach(key => {
                                             if (key !== 'tpType' && key !== 'companyType' && parentForm.get(key)) {
                                                 parentForm.get(key)!.reset();
-        
                                             }
                                         });
                                     }
@@ -109,7 +106,6 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                                         if (resData.success) {
                                             informaInfo = resData.tpInfo;
                                             const parentForm = field.formControl?.parent;
-                                            console.log(parentForm);
                                             if (parentForm) {
                                                 Object.keys(parentForm.controls).forEach(key => {
                                                     if (key !== 'tpType' && key !== 'companyType' && key !== 'fiscalId' && parentForm.get(key) && resData.tpInfo[key]) {
@@ -122,7 +118,6 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                                             return true;
                                         } else {
                                             informaMessage = resData.message;
-                                            console.log(informaMessage);
                                             spinnerService.hide();
                                             return false;
                                         }

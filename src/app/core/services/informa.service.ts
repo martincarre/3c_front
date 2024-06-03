@@ -11,8 +11,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InformaService {
-    private apiUrls: any = environment.informa.apiUrls;
-    private credentials: {user: string; password: string;} = environment.informa.credentials;
     private stateList$: BehaviorSubject<{label: string; value: string;}[]> = new BehaviorSubject<{label: string; value: string;}[]>([]);
 
     constructor(
