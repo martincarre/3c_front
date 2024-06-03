@@ -42,7 +42,6 @@ export class InformaService {
                     for (let i = 0; i < data.stateList.length; i++) {
                         stateListForSelect.push({ label: data.stateList[i], value: data.stateList[i] })
                     }
-                    console.log('stateListForSelect', stateListForSelect);
                     this.stateList$.next(stateListForSelect);
                     this.spinnerService.hide();
                 }
