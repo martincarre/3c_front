@@ -1,9 +1,9 @@
 // Module imports:
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormlyModule } from '@ngx-formly/core';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
 
 // Shared Components:
@@ -28,6 +28,7 @@ import { minLengthValidationMessages } from './validators/minLength.validator';
 import { SignInModalComponent } from './components/sign-in-modal/sign-in-modal.component';
 import { RoleDirective } from 'src/app/core/directives/role.directive';
 import { FooterComponent } from './components/footer/footer.component';
+import { ibanValidationMessage, ibanValidator } from './validators/iban.validator';
 
 
 @NgModule({
@@ -58,10 +59,12 @@ import { FooterComponent } from './components/footer/footer.component';
       validators: [
         { name: 'id', validation: spanishIdValidator },
         { name: 'fieldMatch', validation: fieldMatchValidator},
+        { name: 'iban', validation:  ibanValidator},
       ],
       validationMessages: [
         { name: 'required', message: 'Este campo es obligatorio' },
         { name: 'id', message:  spanishIdValidationMessage },
+        { name: 'iban', message:  ibanValidationMessage},
         { name: 'minLength', message: minLengthValidationMessages },
       ],
       types: [
@@ -110,6 +113,6 @@ import { FooterComponent } from './components/footer/footer.component';
     NgbTypeaheadModule,
     NgSelectModule,
     NgbAccordionModule,
-  ]
+  ],
 })
 export class SharedModule { }

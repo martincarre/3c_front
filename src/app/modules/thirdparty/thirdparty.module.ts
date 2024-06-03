@@ -6,7 +6,6 @@ import { ThirdpartyhomeComponent } from './components/thirdpartyhome/thirdpartyh
 import { SharedModule } from '../shared/shared.module';
 import { ThirdpartylistComponent } from './components/thirdpartylist/thirdpartylist.component';
 
-
 @NgModule({
   declarations: [
     ThirdpartydetailComponent,

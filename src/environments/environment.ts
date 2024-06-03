@@ -9,6 +9,13 @@ export const environment = {
         appId: "1:812435085339:web:53b2ff36d2d46e9e7e00be",
         measurementId: "G-S4G3QN2B4R"
     },
+    informa: {
+        apiUrls: {},
+        credentials: {
+            user: '926071',
+            password: 'xCK8jLz47tUW2'
+        },
+    },
     extInfoService: {
         credentials: {
             client_id: 'm7ud4ufes8xnuyycxxswimoz9bsbcl1ud5sz9nj7.api.einforma.com',

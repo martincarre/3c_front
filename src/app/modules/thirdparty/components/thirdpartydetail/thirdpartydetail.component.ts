@@ -1,18 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { ThirdpartyService } from '../../services/thirdparty.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Thirdparty } from '../../models/thirdparty.model';
-import { Subscription, map } from 'rxjs';
-import { thirdpartyFormlyForm } from '../../models/thirdparty.formly-form';
-import { ExtInfoService } from 'src/app/core/services/extInfo.service';
+import { Subscription } from 'rxjs';
+import { createThirdpartyFormlyFormConfig } from '../../models/thirdparty.formly-form';
 import { SpinnerService } from 'src/app/core/services/spinner.service';
 import { Location } from '@angular/common';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { FormHelper } from 'src/app/modules/shared/utilities/formHelpers';
+import { InformaService } from 'src/app/core/services/informa.service';
 
 
 @Component({
@@ -45,7 +45,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private thirdpartyService: ThirdpartyService,
-    private extInfoService: ExtInfoService,
+    private injector: Injector,
     private router: Router,
     private location: Location,
     private route: ActivatedRoute,
@@ -53,8 +53,9 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private spinnerService: SpinnerService,
     private authService: AuthService,
     private documentService: DocumentService,
+    private informa: InformaService,
   ) {
-    this.fields = thirdpartyFormlyForm;
+    this.fields = createThirdpartyFormlyFormConfig(this.injector);
    }
 
   ngOnInit(): void {
@@ -94,25 +95,24 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
             this.spinnerService.hide();
           }
         });
-    }
-    
+    };
   }
 
   // TODO: Work on this
-  tpLookUp(): void {
-    const fiscalId = this.tpForm.get('fiscalId')?.value;
-    if (fiscalId) {
-      this.spinnerService.show();
-      this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: Thirdparty) => {
-        console.log('response', tpInfo);
-        this.currentTP = tpInfo;
-        this.model = tpInfo;
-        console.log('model', this.model);
-        this.title = tpInfo.fiscalName;
-        this.spinnerService.hide();
-      });
-    }
-  }
+  // tpLookUp(): void {
+  //   const fiscalId = this.tpForm.get('fiscalId')?.value;
+  //   if (fiscalId) {
+  //     this.spinnerService.show();
+  //     this.extInfoService.getTpInfo(fiscalId).subscribe((tpInfo: Thirdparty) => {
+  //       console.log('response', tpInfo);
+  //       this.currentTP = tpInfo;
+  //       this.model = tpInfo;
+  //       console.log('model', this.model);
+  //       this.title = tpInfo.fiscalName;
+  //       this.spinnerService.hide();
+  //     });
+  //   }
+  // }
 
   onEdit(): void {
     this.formOptions.formState.disabled = !this.formOptions.formState.disabled;
@@ -233,5 +233,3 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   }
 
 }
-
-
