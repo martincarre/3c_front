@@ -54,19 +54,22 @@ export class ThirdpartyService {
   getCurrentThirdparty(): Observable<any> {
     return this.currTp$.asObservable();
   };
+
+  public async checkFiscalId(fiscalId: string): Promise<any>{
+    return await httpsCallable(this.fns, 'checkFiscalId')({ fiscalId });
+  };
   
   public async addThirdparty(thirdparty: Thirdparty): Promise<any>{
     return await httpsCallable(this.fns, 'createTp')(thirdparty);
-  }
+  };
 
   public async updateThirdparty(tpId: string, changes: any): Promise<any>{
     return await httpsCallable(this.fns, 'updateTp')({ tpId, changes});
-  }
+  };
 
   public async deleteThirdparty(tpId: string): Promise<any>{
     return await httpsCallable(this.fns, 'deleteTp')({ tpId});
-  }
-
+  };
   public fetchThirdparties(tpType?: string, userBased?: boolean): Observable<any[]> {
     const constraints: any[] = [];
     if (tpType) {
@@ -77,5 +80,5 @@ export class ThirdpartyService {
     }
     const q = query(this.tpCollection, ...constraints);
     return collectionData(q, {idField: 'id'}) as Observable<any[]>;
-  }
+  };
 }

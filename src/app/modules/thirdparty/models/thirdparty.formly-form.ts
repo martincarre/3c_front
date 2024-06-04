@@ -3,14 +3,16 @@ import { AbstractControl, ValidationErrors } from "@angular/forms";
 import { FormlyFieldConfig } from "@ngx-formly/core";
 import { InformaService } from "src/app/core/services/informa.service";
 import { SpinnerService } from "src/app/core/services/spinner.service";
+import { ThirdpartyService } from "../services/thirdparty.service";
 
 export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFieldConfig[] {
     const informaService = injector.get(InformaService);
     const spinnerService = injector.get(SpinnerService);
-    let informaInfo;
-    let informaMessage: string = 'Error en la consulta con el servicio de gestion comercial'
+    const tpService = injector.get(ThirdpartyService);
+    let informaMessage: string = 'Error en la consulta con el servicio de gestion comercial';
+    let fiscalIdCheckMessage: string = 'Error en la consulta con el servidor';
     return [   
-        // Fiscal ID and tp type (client or supplier) 
+        // Company Type and tp type (client or partner) 
         {
             fieldGroupClassName: 'row align-items-end justify-content-left',
             fieldGroup: [
@@ -68,7 +70,7 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                 },
             ]
         },
-        // Fiscal name and type
+        // Fiscal ID and Fiscal name 
         {
             fieldGroupClassName: 'row',
             fieldGroup: 
@@ -89,6 +91,27 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                         validation: ['id']
                     },
                     asyncValidators: {
+                        checkExistence: {
+                            expression: (control: AbstractControl, field: FormlyFieldConfig) => {
+                                if (!control.value) {
+                                    return new Promise((resolve) => { resolve(false) });
+                                }
+                                spinnerService.show();
+                                return tpService.checkFiscalId(control.value)
+                                    .then((res: any) => {
+                                        spinnerService.hide();
+                                        fiscalIdCheckMessage = res.data.message;
+                                        console.log(informaMessage)
+                                        return new Promise(resolve => {resolve(res.data.success)});
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                        fiscalIdCheckMessage = 'Error en la consulta';
+                                        return new Promise((resolve) => { resolve(false) });
+                                    });
+                            },
+                            message: (error: any, field: FormlyFieldConfig) => { return fiscalIdCheckMessage; }
+                        },
                         informTp: {
                             expression: (control: AbstractControl, field: FormlyFieldConfig) => {
                                 
@@ -104,7 +127,6 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                                     .then((res: any) => {
                                         const resData = res.data;
                                         if (resData.success) {
-                                            informaInfo = resData.tpInfo;
                                             const parentForm = field.formControl?.parent;
                                             if (parentForm) {
                                                 Object.keys(parentForm.controls).forEach(key => {
