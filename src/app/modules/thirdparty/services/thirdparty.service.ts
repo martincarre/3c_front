@@ -18,13 +18,13 @@ export class ThirdpartyService {
   constructor(
     private fs: Firestore,
     private fns: Functions,
-    private http: HttpClient,
   ) {
     this.tpCollection = collection(this.fs, 'thirdparties');
   }
   
   public async fetchThirdPartyById(id: string): Promise<any>{
     const tpRef = doc(this.tpCollection, id);
+    this.currTp$.next(null);
     return this.currTpSub$ = onSnapshot(tpRef, (doc) => {
       if (doc.exists()) {
         const tpData: any = {...doc.data(), id: doc.id };
@@ -70,6 +70,7 @@ export class ThirdpartyService {
   public async deleteThirdparty(tpId: string): Promise<any>{
     return await httpsCallable(this.fns, 'deleteTp')({ tpId});
   };
+
   public fetchThirdparties(tpType?: string, userBased?: boolean): Observable<any[]> {
     const constraints: any[] = [];
     if (tpType) {

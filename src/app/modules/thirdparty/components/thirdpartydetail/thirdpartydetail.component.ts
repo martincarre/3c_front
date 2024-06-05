@@ -24,7 +24,7 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   createMode: boolean = true;
   currentId: string | undefined | null;
   editMode: boolean = false;
-  currentTP: Thirdparty | undefined;
+  currentTP: Thirdparty | null = null;
   currentUser: any;
   private auserSub: Subscription = new Subscription();
   private tpSub: Subscription = new Subscription();
@@ -39,7 +39,9 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   formOptions: FormlyFormOptions = {
     formState: {
       disabled: false,
-      currUserCustomer: false
+      currUserCustomer: false,
+      currUserModerator: false,
+      editMode: false,
     },
   };
 
@@ -53,25 +55,24 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
     private spinnerService: SpinnerService,
     private authService: AuthService,
     private documentService: DocumentService,
-    private informa: InformaService,
   ) {
     this.fields = createThirdpartyFormlyFormConfig(this.injector);
    }
 
   ngOnInit(): void {
-    const fromCreate = this.route.snapshot.url[0].path === 'create' ? true : false;
+    this.createMode = this.route.snapshot.url[0].path === 'create' ? true : false;
+    this.createMode ? this.formOptions.formState.editMode = false : this.formOptions.formState.editMode = true;
     this.currentId = this.route.snapshot.params['id'];
 
     this.auserSub = this.authService.getAuthedUser().subscribe((user) => {
       if (user) {
         this.currentUser = user;
         this.currentUser.role === 'customer' ? this.formOptions.formState.currUserCustomer = true : this.formOptions.formState.currUserCustomer = false;
+        this.currentUser.role === 'moderator' ? this.formOptions.formState.currUserModerator = true : this.formOptions.formState.currUserModerator = false;
       }
     });
-
-    if (this.currentId && !fromCreate) {
+    if (this.currentId && !this.createMode) {
       this.spinnerService.show();
-      this.createMode = false;
       this.formOptions.formState.disabled = true;
       this.thirdpartyService.fetchThirdPartyById(this.currentId);
       this.tpSub = this.thirdpartyService.getCurrentThirdparty()
@@ -89,8 +90,8 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
               postalCode: tp.postalCode,
               state: tp.state,
               tpType: tp.tpType,
-            }
-            this.initialTpModel = { ...this.model};
+            };
+            this.initialTpModel = { ...this.model };
             this.title = tp.fiscalName;
             this.spinnerService.hide();
           }
@@ -139,6 +140,20 @@ export class ThirdpartydetailComponent implements OnInit, OnDestroy {
   // Helper function to create a new Thirdparty
   private createTp(): void {
     let tp = this.tpForm.value as Thirdparty;
+    // Depending on the user we need to make sure that there's a corresponding TPType or the server's going to complain.
+    if (!tp.tpType) {
+      switch (this.currentUser.role) {
+        case 'moderator':
+          tp.tpType = 'partner';
+          break;
+        case 'customer':
+          tp.tpType = 'client';
+          break;
+        default:
+          this.toastService.show('bg-danger text-light', 'Hay un error en el formulario. Se requiere especificar la tipologia de tercero...', 'Error!', 7000);
+          break;
+      }
+    }
     this.thirdpartyService.addThirdparty(tp)
     .then(async (res: any) => {
         if (res.data.success) { 

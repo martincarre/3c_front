@@ -45,7 +45,6 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
     this.tpSub = this.tpService.fetchThirdparties()
       .subscribe(
         (data: Thirdparty[]) => {
-          console.log(data);
           this.tpList = data.map((tp: Thirdparty) => {
                 return {
                   fiscalId: tp.fiscalId,

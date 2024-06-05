@@ -8,7 +8,7 @@ export class FormHelper {
         if (Object.keys(deepChanges).length > 0) {
           changes[key] = deepChanges;
         }
-      } else if (initialModel[key] !== currentModel[key]) {
+      } else if (initialModel[key] !== currentModel[key] && typeof currentModel[key] !== 'undefined') {
         changes[key] = currentModel[key];
       }
     });
@@ -25,3 +25,4 @@ export class FormHelper {
 
 }
 
+// ES2800730100510545217508

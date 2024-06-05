@@ -4,6 +4,7 @@ import { FormlyFieldConfig } from "@ngx-formly/core";
 import { InformaService } from "src/app/core/services/informa.service";
 import { SpinnerService } from "src/app/core/services/spinner.service";
 import { ThirdpartyService } from "../services/thirdparty.service";
+import { value } from "@formulajs/formulajs/types/utils/error";
 
 export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFieldConfig[] {
     const informaService = injector.get(InformaService);
@@ -31,8 +32,9 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                     },
                     expressions: {
                         hide: 'formState.currUserCustomer',
-                        'props.disabled': 'formState.disabled',
-                    }
+                        'props.disabled': 'formState.disabled || formState.currUserModerator',
+                        defaultValue: 'formState.currUserModerator ? "partner" : "client"'
+                    },
                 },
                 {
                     className: 'col-lg-3 col-12',
@@ -47,12 +49,12 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                         ],
                     },
                     expressions: {
-                        'props.disabled': 'formState.disabled',
+                        'props.disabled': 'formState.disabled || formState.editMode',
                     },
                     hooks: {
                         onInit: (field: FormlyFieldConfig) => {
                             field.formControl?.valueChanges.subscribe((value) => {
-                                if (value === 'autonomo') {
+                                if (value === 'autonomo' && !field.options?.formState.editMode) {
                                     const parentForm = field.formControl?.parent;
                                     if (parentForm) {
                                         // Clear all fields except tpType and companyType
@@ -96,12 +98,12 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                                 if (!control.value) {
                                     return new Promise((resolve) => { resolve(false) });
                                 }
+                                
                                 spinnerService.show();
                                 return tpService.checkFiscalId(control.value)
                                     .then((res: any) => {
                                         spinnerService.hide();
                                         fiscalIdCheckMessage = res.data.message;
-                                        console.log(informaMessage)
                                         return new Promise(resolve => {resolve(res.data.success)});
                                     })
                                     .catch(err => {
@@ -117,44 +119,52 @@ export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFiel
                                 
                                 if (!control.value) {
                                     return new Promise((resolve) => { resolve(false) });
-                                }
+                                };
+                                // if (field.model.options.formState.editMode) {
+                                //     return new Promise((resolve) => { resolve(true) });
+                                // }
 
                                 if (field.model.companyType === 'autonomo') {
                                     return new Promise((resolve) => { resolve(true) });
-                                }
-                                spinnerService.show();
-                                return informaService.getCompanyInfoByCif(control.value)
-                                    .then((res: any) => {
-                                        const resData = res.data;
-                                        if (resData.success) {
-                                            const parentForm = field.formControl?.parent;
-                                            if (parentForm) {
-                                                Object.keys(parentForm.controls).forEach(key => {
-                                                    if (key !== 'tpType' && key !== 'companyType' && key !== 'fiscalId' && parentForm.get(key) && resData.tpInfo[key]) {
-                                                        parentForm.get(key)!.setValue(resData.tpInfo[key]);
-                                                    }
-                                                });
+                                };
+
+                                if (field.model.companyType === 'empresa') {
+                                    spinnerService.show();
+                                    return informaService.getCompanyInfoByCif(control.value)
+                                        .then((res: any) => {
+                                            const resData = res.data;
+                                            if (resData.success) {
+                                                const parentForm = field.formControl?.parent;
+                                                if (parentForm) {
+                                                    Object.keys(parentForm.controls).forEach(key => {
+                                                        if (key !== 'tpType' && key !== 'companyType' && key !== 'fiscalId' && parentForm.get(key) && resData.tpInfo[key]) {
+                                                            parentForm.get(key)!.setValue(resData.tpInfo[key]);
+                                                        }
+                                                    });
+                                                }
+                                                informaMessage = resData.message;
+                                                spinnerService.hide();
+                                                return true;
+                                            } else {
+                                                informaMessage = resData.message;
+                                                spinnerService.hide();
+                                                return false;
                                             }
-                                            informaMessage = resData.message;
-                                            spinnerService.hide();
-                                            return true;
-                                        } else {
-                                            informaMessage = resData.message;
-                                            spinnerService.hide();
-                                            return false;
-                                        }
-                                    })
-                                    .catch(err => {
-                                        console.error(err);
-                                        informaMessage = 'Error en la consulta';
-                                        return new Promise((resolve) => { resolve(false) });
-                                    });
+                                        })
+                                        .catch(err => {
+                                            console.error(err);
+                                            informaMessage = 'Error en la consulta';
+                                            return new Promise((resolve) => { resolve(false) });
+                                        });
+                                };
+
+                                return new Promise((resolve) => { resolve(true) });
                             },
                             message: (error: any, field: FormlyFieldConfig) => { return informaMessage;}
                         },
                     },
                     expressions: {
-                        'props.disabled': 'formState.disabled',
+                        'props.disabled': 'formState.disabled || formState.editMode',
                     }
                 },
                 {
