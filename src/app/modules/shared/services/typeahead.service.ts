@@ -16,7 +16,7 @@ export class TypeaheadService {
     this.fetchData();
   }
   private fetchData(): void {
-    this.tpSub = this.thirdpartyService.fetchThirdparties()
+    this.tpSub = this.thirdpartyService.fetchThirdparties('partner')
       .subscribe((data: Thirdparty[]) => {
         this.thirdparties.next(data);
       });
