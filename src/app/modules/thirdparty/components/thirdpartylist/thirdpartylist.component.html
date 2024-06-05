@@ -8,9 +8,17 @@
     [columnMode]="columnMode.force"
     >
   
+      <!-- Column for tpType-->
+      <ngx-datatable-column name="Tipo" prop="tpType">
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <span *ngIf="row.tpType === 'client'">Cliente <i class="bi-person-heart"></i></span>
+          <span *ngIf="row.tpType === 'partner'">Partner <i class="bi-person-workspace"></i></span>
+        </ng-template>
+      </ngx-datatable-column>
+
       <!-- Column for Fiscal ID -->
       <ngx-datatable-column name="NIF/CIF" prop="fiscalId"></ngx-datatable-column>
-  
+
       <!-- Column for Fiscal Name -->
       <ngx-datatable-column name="Denominación" prop="fiscalName"></ngx-datatable-column>
   

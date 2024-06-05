@@ -48,6 +48,7 @@ export class ThirdpartylistComponent implements OnInit, OnDestroy {
           this.tpList = data.map((tp: Thirdparty) => {
                 return {
                   fiscalId: tp.fiscalId,
+                  tpType: tp.tpType,
                   fiscalName: tp.fiscalName,
                   postalCode: tp.postalCode,
                   city: tp.city,
