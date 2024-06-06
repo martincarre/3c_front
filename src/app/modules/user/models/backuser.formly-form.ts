@@ -1,3 +1,7 @@
+import { AbstractControl } from "@angular/forms";
+import { FormlyFieldConfig } from "@ngx-formly/core";
+
+// Todo change to function returning FormlyFieldConfig[]
 export const backUserFormFields: any = [
     {
         className: 'section-label',
@@ -93,6 +97,23 @@ export const backUserFormFields: any = [
         },
         expressions: {
             'props.disabled': 'formState.disabled',
+        },
+        modelOptions: {
+            updateOn: 'blur',
+        },
+        asyncValidators: {
+            checkValid: { 
+                expression: (control: AbstractControl, field: FormlyFieldConfig) => {
+                    // TODO Find a free email validation service. to avoid test@test.com
+                },
+                message: 'El email parece no ser válido'
+            
+            },
+            checkExistence: {
+                expression: (control: AbstractControl, field: FormlyFieldConfig) => {
+                },
+                message: 'Parece que este email ya está en uso para otra cuenta de usuario'
+            }
         }
     },
     {
@@ -105,8 +126,13 @@ export const backUserFormFields: any = [
             placeholder: '654 321 098',
             required: true,
         },
+        modelOptions: {
+            updateOn: 'blur',
+        },
         expressions: {
             'props.disabled': 'formState.disabled',
+        },
+        asyncValidators: {
         }
     }
    ]   

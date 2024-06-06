@@ -35,8 +35,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.spinnerService.show();
      this.userSub = this.userService.fetchUsers()
         .subscribe(
-          (users: any[]) => { 
-            console.log(users);
+          (users: any[]) => {
             this.userList = users.map((user: any) => {
               return {
                 id: user.id,
