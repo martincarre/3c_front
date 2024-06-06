@@ -4,7 +4,6 @@ import { FormlyFieldConfig } from "@ngx-formly/core";
 import { InformaService } from "src/app/core/services/informa.service";
 import { SpinnerService } from "src/app/core/services/spinner.service";
 import { ThirdpartyService } from "../services/thirdparty.service";
-import { value } from "@formulajs/formulajs/types/utils/error";
 
 export function createThirdpartyFormlyFormConfig(injector: Injector): FormlyFieldConfig[] {
     const informaService = injector.get(InformaService);

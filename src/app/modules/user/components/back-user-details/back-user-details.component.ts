@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { BackUser } from '../../models/user.model';
-import { backUserFormFields } from '../../models/backuser.formly-form';
+import { createBackUserForm } from '../../models/backuser.formly-form';
 import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,6 +44,7 @@ export class BackUserDetailsComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private injector: Injector,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
@@ -54,7 +55,7 @@ export class BackUserDetailsComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.backUserFormField = backUserFormFields;
+    this.backUserFormField = createBackUserForm(this.injector);
 
     this.aUserSub = this.authService.getAuthedUser()
       .subscribe((user) => {
@@ -65,7 +66,6 @@ export class BackUserDetailsComponent implements OnInit {
           if (this.currUserRole === 'admin') {
             this.backUserOptions.formState.admin = true;
           }
-          console.log(this.backUserForm);
         }
     });
 
@@ -87,10 +87,11 @@ export class BackUserDetailsComponent implements OnInit {
               mobile: user.mobile,
               role: user.role,
               partner: user.partner,
-            };
+              };
             this.initialBackUserModel = { ...this.backUserModel };
           }
         });
+      
     };
   }
 

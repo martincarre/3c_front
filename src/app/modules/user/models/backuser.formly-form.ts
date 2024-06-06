@@ -1,143 +1,156 @@
+import { Injector } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { FormlyFieldConfig } from "@ngx-formly/core";
+import { UserService } from "../services/user.service";
+import { SpinnerService } from "src/app/core/services/spinner.service";
 
 // Todo change to function returning FormlyFieldConfig[]
-export const backUserFormFields: any = [
-    {
-        className: 'section-label',
-        template: '<h5 class="card-title">Datos personales:</h5>',
-    },
-    // BackUser Form
-    {
-        fieldGroupClassName: 'row',
-        fieldGroup: [
-            {
-                className: 'col-lg-6 col-12',
-                key: 'role',
-                type: 'select',
-                defaultValue: 'partner',
-                props: {
-                    label: 'Role',
-                    options: [
-                        { label: 'Socio', value: 'partner' },
-                        { label: 'Moderador', value: 'moderator' },
-                    ],
-                    required: true, 
-                },
-                expressions: 
+export function createBackUserForm(injector: Injector): FormlyFieldConfig[] { 
+    const userService = injector.get(UserService);
+    const spinnerService = injector.get(SpinnerService);
+    let checkEmailMessage = 'Parece que este email ya está en uso para otra cuenta de usuario';
+
+    return [
+        {
+            className: 'section-label',
+            template: '<h5 class="card-title">Datos personales:</h5>',
+        },
+        // BackUser Form
+        {
+            fieldGroupClassName: 'row',
+            fieldGroup: [
                 {
-                    'props.disabled': '!formState.admin || formState.disabled',
-                }
-            },
-            {
-                className: 'col-lg-6 col-12',
-                key: 'partner',
-                type: 'typeahead',
-                props: {
-                  label: 'Partner',
-                  placeholder: 'Buscar un proveedor',
-                  typeSearched: 'partner',
-                  required: true,
+                    className: 'col-lg-6 col-12',
+                    key: 'role',
+                    type: 'select',
+                    defaultValue: 'partner',
+                    props: {
+                        label: 'Role',
+                        options: [
+                            { label: 'Socio', value: 'partner' },
+                            { label: 'Moderador', value: 'moderator' },
+                        ],
+                        required: true, 
+                    },
+                    expressions: 
+                    {
+                        'props.disabled': '!formState.admin || formState.disabled',
+                    }
                 },
-                expressions: 
-                {   
-                    hide: 'model.role !== "partner"',
-                    'props.disabled': 'formState.disabled',
-                }
+                {
+                    className: 'col-lg-6 col-12',
+                    key: 'partner',
+                    type: 'typeahead',
+                    props: {
+                    label: 'Partner',
+                    placeholder: 'Buscar un proveedor',
+                    typeSearched: 'partner',
+                    required: true,
+                    },
+                    expressions: 
+                    {   
+                        hide: 'model.role !== "partner"',
+                        'props.disabled': 'formState.disabled',
+                    }
+                },
+            ]
+        },
+        {
+            fieldGroupClassName: 'row',
+            fieldGroup: 
+            [
+                {
+                    className: 'col-lg-6 col-12',
+                    key: 'name',
+                    type: 'input',
+                    defaultValue: null,
+                    props: {
+                        label: 'Nombre(s)',
+                        placeholder: 'Nombre(s)',
+                        required: true, 
+                    },
+                    expressions: {
+                        'props.disabled': 'formState.disabled',
+                    }
             },
-        ]
-    },
-    {
-        fieldGroupClassName: 'row',
-        fieldGroup: 
-        [
             {
                 className: 'col-lg-6 col-12',
-                key: 'name',
+                key: 'surname',
                 type: 'input',
                 defaultValue: null,
                 props: {
-                    label: 'Nombre(s)',
-                    placeholder: 'Nombre(s)',
-                    required: true, 
+                    label: 'Apellidos',
+                    placeholder: 'Apellido(s)',
+                    required: true,
                 },
                 expressions: {
                     'props.disabled': 'formState.disabled',
                 }
-        },
+            }
+        ]
+    },
+    {
+    fieldGroupClassName: 'row',
+    fieldGroup: 
+    [
         {
             className: 'col-lg-6 col-12',
-            key: 'surname',
+            key: 'email',
             type: 'input',
             defaultValue: null,
             props: {
-                label: 'Apellidos',
-                placeholder: 'Apellido(s)',
+                label: 'Dirección de email',
+                placeholder: 'juanperez@ejemplo.com',
                 required: true,
             },
             expressions: {
                 'props.disabled': 'formState.disabled',
-            }
-        }
-    ]
-  },
-  {
-  fieldGroupClassName: 'row',
-  fieldGroup: 
-  [
-    {
-        className: 'col-lg-6 col-12',
-        key: 'email',
-        type: 'input',
-        defaultValue: null,
-        props: {
-            label: 'Dirección de email',
-            placeholder: 'juanperez@ejemplo.com',
-            required: true,
-        },
-        expressions: {
-            'props.disabled': 'formState.disabled',
-        },
-        modelOptions: {
-            updateOn: 'blur',
-        },
-        asyncValidators: {
-            checkValid: { 
-                expression: (control: AbstractControl, field: FormlyFieldConfig) => {
-                    // TODO Find a free email validation service. to avoid test@test.com
-                },
-                message: 'El email parece no ser válido'
-            
             },
-            checkExistence: {
-                expression: (control: AbstractControl, field: FormlyFieldConfig) => {
-                },
-                message: 'Parece que este email ya está en uso para otra cuenta de usuario'
+            modelOptions: {
+                updateOn: 'blur',
+            },
+            asyncValidators: {
+                checkExistence: {
+                    expression: (control: AbstractControl, field: FormlyFieldConfig) => {
+                        spinnerService.show();
+                        return userService.checkUserEmailExists(control.value)
+                            .then((result: any) => {
+                                console.log(result);
+                                spinnerService.hide();
+                                return new Promise(resolve => resolve(result.data.success));
+                                })
+                            .catch((error: any) => {
+                                spinnerService.hide();
+                                return new Promise(resolve => resolve(false));
+                            });
+                    },
+                    message: checkEmailMessage
+                }
+            }
+        },
+        {
+            className: 'col-lg-6 col-12',
+            key: 'mobile',
+            type: 'input',
+            defaultValue: null,
+            props: {
+                label: 'Número de teléfono móvil',
+                placeholder: '654 321 098',
+                required: true,
+            },
+            modelOptions: {
+                updateOn: 'blur',
+            },
+            expressions: {
+                'props.disabled': 'formState.disabled',
+            },
+            asyncValidators: {
             }
         }
+    ]   
     },
-    {
-        className: 'col-lg-6 col-12',
-        key: 'mobile',
-        type: 'input',
-        defaultValue: null,
-        props: {
-            label: 'Número de teléfono móvil',
-            placeholder: '654 321 098',
-            required: true,
-        },
-        modelOptions: {
-            updateOn: 'blur',
-        },
-        expressions: {
-            'props.disabled': 'formState.disabled',
-        },
-        asyncValidators: {
-        }
-    }
-   ]   
-  },
-];
+    ];
+}
 
 export const backUserConfirmationFields: any = [
     {

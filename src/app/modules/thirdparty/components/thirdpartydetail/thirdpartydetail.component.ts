@@ -12,7 +12,6 @@ import { Location } from '@angular/common';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { DocumentService } from 'src/app/core/services/document.service';
 import { FormHelper } from 'src/app/modules/shared/utilities/formHelpers';
-import { InformaService } from 'src/app/core/services/informa.service';
 
 
 @Component({

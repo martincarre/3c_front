@@ -40,6 +40,10 @@ export class UserService {
         return await httpsCallable(this.fns, 'verifyBackUser')({token: token, password: formValue.password, email: formValue.email});
     };
 
+    public async checkUserEmailExists (email: string): Promise<any> {
+        return await httpsCallable(this.fns, 'checkUserEmailExists')({email: email});
+    };
+
     public async confirmBackUserMail (email: string): Promise<any> {
         // TODO: Need to handle expired links. Right now it's providing in the browser the following JSON: 
         // {
