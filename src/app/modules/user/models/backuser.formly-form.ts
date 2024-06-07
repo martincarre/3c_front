@@ -9,7 +9,7 @@ export function createBackUserForm(injector: Injector): FormlyFieldConfig[] {
     const userService = injector.get(UserService);
     const spinnerService = injector.get(SpinnerService);
     let checkEmailMessage = 'Parece que este email ya está en uso para otra cuenta de usuario';
-
+    let checkPhoneMessage = 'Parece que este número de teléfono no es valido';
     return [
         {
             className: 'section-label',
@@ -113,18 +113,19 @@ export function createBackUserForm(injector: Injector): FormlyFieldConfig[] {
                 checkExistence: {
                     expression: (control: AbstractControl, field: FormlyFieldConfig) => {
                         spinnerService.show();
-                        return userService.checkUserEmailExists(control.value)
+                        return userService.checkUserEmail(control.value)
                             .then((result: any) => {
-                                console.log(result);
                                 spinnerService.hide();
+                                checkEmailMessage = result.data.message;
                                 return new Promise(resolve => resolve(result.data.success));
                                 })
                             .catch((error: any) => {
                                 spinnerService.hide();
+                                console.error('checkUserEmail', error);
                                 return new Promise(resolve => resolve(false));
                             });
                     },
-                    message: checkEmailMessage
+                    message: (error: any, field: FormlyFieldConfig) => { return checkEmailMessage; }
                 }
             }
         },
@@ -138,13 +139,36 @@ export function createBackUserForm(injector: Injector): FormlyFieldConfig[] {
                 placeholder: '654 321 098',
                 required: true,
             },
+            expressions: {
+                'props.disabled': 'formState.disabled',
+                },
             modelOptions: {
                 updateOn: 'blur',
             },
-            expressions: {
-                'props.disabled': 'formState.disabled',
-            },
             asyncValidators: {
+                checkIfValid: {
+                    expression: (control: AbstractControl, field: FormlyFieldConfig) => {
+                        spinnerService.show();
+                        if (!control.value) {
+                            spinnerService.hide();
+                            return new Promise(resolve => resolve(false));
+                        };
+                        console.log(control.value);
+                        return userService.checkUserCelNumber(control.value)
+                            .then((result: any) => {
+                                spinnerService.hide();
+                                checkPhoneMessage = result.data.message;
+                                return new Promise(resolve => resolve(result.data.success));
+                                })
+                            .catch((error: any) => {
+                                spinnerService.hide();
+                                checkPhoneMessage = error.data.message;
+                                console.error('checkUserEmail', error);
+                                return new Promise(resolve => resolve(false));
+                            });
+                    },
+                    message: (error: any, field: FormlyFieldConfig) => { return checkPhoneMessage; }
+                }
             }
         }
     ]   
